@@ -1,0 +1,17 @@
+[project]
+name = "tabletop-character-generators"
+version = "0.1.0"
+description = "AI-powered character, NPC, and party generators for D&D 5e and Mongoose Traveller 2e"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=0.103.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
