@@ -38,7 +38,7 @@
 
 ---
 
-## **Sumak Ñanculef**
+## **Dench Scarhand**
 *Half-Orc Locksmith-turned-Thief — Talks too much when nervous, which is always, and somehow still nobody knows anything real about them.*
 
 | | |
