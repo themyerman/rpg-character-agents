@@ -454,14 +454,17 @@ def save_result(result: str, mode: str) -> Path:
 # ── Entry point ─────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    mode  = input("Mode? (full / npc, default: full): ").strip().lower()
-    mode  = mode if mode in ("full", "npc") else "full"
-    label = "NPC" if mode == "npc" else "character"
+    mode  = input("Mode? (full / npc / jobcontact, default: full): ").strip().lower()
+    mode  = mode if mode in ("full", "npc", "jobcontact") else "full"
+    label = {"full": "character", "npc": "NPC", "jobcontact": "job contact"}[mode]
     desc  = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
 
     if mode == "npc":
         sys_prompt = NPC_SYSTEM_PROMPT
         prompt = f"Generate a Firefly RPG NPC with these constraints: {desc}" if desc else "Generate a fully random Firefly RPG NPC."
+    elif mode == "jobcontact":
+        sys_prompt = JOB_CONTACT_SYSTEM_PROMPT
+        prompt = f"Generate a Firefly RPG job contact encounter with these constraints: {desc}" if desc else "Generate a fully random Firefly RPG job contact encounter."
     else:
         sys_prompt = SYSTEM_PROMPT
         prompt = f"Generate a Firefly RPG character for storytelling purposes with these constraints: {desc}" if desc else "Generate a fully random Firefly RPG character for storytelling purposes."

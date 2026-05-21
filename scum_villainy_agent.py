@@ -601,9 +601,9 @@ def save_result(result: str, mode: str) -> Path:
 # ── Entry point ───────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    mode  = input("Mode? (full / npc, default: full): ").strip().lower()
-    mode  = mode if mode in ("full", "npc") else "full"
-    label = "NPC" if mode == "npc" else "character"
+    mode  = input("Mode? (full / npc / scorecontact, default: full): ").strip().lower()
+    mode  = mode if mode in ("full", "npc", "scorecontact") else "full"
+    label = {"full": "character", "npc": "NPC", "scorecontact": "score contact"}[mode]
     desc  = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
 
     if mode == "npc":
@@ -612,6 +612,13 @@ if __name__ == "__main__":
             f"Generate a Scum and Villainy NPC with these constraints: {desc}"
             if desc else
             "Generate a fully random Scum and Villainy NPC."
+        )
+    elif mode == "scorecontact":
+        sys_prompt = SCORE_CONTACT_SYSTEM_PROMPT
+        prompt = (
+            f"Generate a Scum and Villainy score contact encounter with these constraints: {desc}"
+            if desc else
+            "Generate a fully random Scum and Villainy score contact encounter."
         )
     else:
         sys_prompt = SYSTEM_PROMPT
