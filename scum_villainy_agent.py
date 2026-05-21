@@ -2,7 +2,7 @@
 Scum and Villainy Character Generator (Forged in the Dark)
 Creates crew members for a life of crime at the edge of the Hegemony.
 
-Run with: python scum_agent.py
+Run with: python scum_villainy_agent.py
 """
 
 import json
