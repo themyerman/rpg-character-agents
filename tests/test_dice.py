@@ -3,12 +3,19 @@ Tests for dice.py — all RPG dice-rolling utilities.
 No API calls: pure Python only.
 """
 
+import json
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from dice import roll_stat_dnd, roll_dice_dnd, roll_dice_traveller
+from dice import (
+    roll_stat_dnd,
+    roll_dice_dnd,
+    roll_dice_traveller,
+    get_traveller_title,
+    run_tool_traveller,
+)
 
 
 # ── roll_stat_dnd ───────────────────────────────────────────────────────────────
@@ -60,3 +67,54 @@ class TestRollDiceTraveller:
             result = roll_dice_traveller(sides=6, count=2)
             total = int(result.split("total:")[-1].strip())
             assert 2 <= total <= 12
+
+
+# ── get_traveller_title ─────────────────────────────────────────────────────────
+
+class TestGetTravellerTitle:
+    def test_returns_json_string(self):
+        result = get_traveller_title(11)
+        data = json.loads(result)
+        assert isinstance(data, dict)
+
+    def test_below_noble_has_no_title(self):
+        data = json.loads(get_traveller_title(10))
+        assert data["title"] is None
+
+    def test_soc_11_is_knight(self):
+        data = json.loads(get_traveller_title(11))
+        assert data["rank"] == "Knight"
+        assert data["masculine"] == "Sir"
+        assert data["feminine"] == "Dame"
+
+    def test_soc_12_is_baron(self):
+        data = json.loads(get_traveller_title(12))
+        assert data["rank"] == "Baron"
+        assert data["feminine"] == "Baroness"
+
+    def test_soc_13_is_marquis(self):
+        data = json.loads(get_traveller_title(13))
+        assert data["rank"] == "Marquis"
+
+    def test_soc_14_is_count(self):
+        data = json.loads(get_traveller_title(14))
+        assert data["rank"] == "Count"
+        assert data["feminine"] == "Countess"
+
+    def test_soc_15_is_duke(self):
+        data = json.loads(get_traveller_title(15))
+        assert data["rank"] == "Duke"
+        assert data["feminine"] == "Duchess"
+
+    def test_note_field_present_for_noble(self):
+        data = json.loads(get_traveller_title(11))
+        assert "note" in data and len(data["note"]) > 0
+
+    def test_dispatcher_routes_get_noble_title(self):
+        result = run_tool_traveller("get_noble_title", {"soc": 12})
+        data = json.loads(result)
+        assert data["rank"] == "Baron"
+
+    def test_dispatcher_unknown_tool(self):
+        result = run_tool_traveller("nonexistent", {})
+        assert "Unknown" in result

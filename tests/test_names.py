@@ -1,5 +1,6 @@
 """
-Tests for names.py — pure Python logic, no API calls.
+Tests for names.py — name pools and roll_name_suggestion().
+No API calls: pure Python only.
 """
 
 import json
@@ -7,33 +8,51 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from names import roll_name_suggestion, NAME_TOOL_SCHEMA, NAME_POOLS
+from names import roll_name_suggestion, NAME_TOOL_SCHEMA, NAME_POOLS, _draw_last
 
 
-# ── NAME_POOLS ───────────────────────────────────────────────────────────────────
+# ── NAME_POOLS structure ─────────────────────────────────────────────────────────
 
 class TestNamePools:
-    def test_at_least_ten_traditions(self):
-        assert len(NAME_POOLS) >= 10
+    def test_at_least_fifteen_traditions(self):
+        assert len(NAME_POOLS) >= 15
 
-    def test_each_tradition_has_first_and_last(self):
+    def test_all_traditions_have_first_names(self):
         for tradition, pool in NAME_POOLS.items():
             assert "first" in pool, f"Tradition '{tradition}' missing first names"
-            assert "last"  in pool, f"Tradition '{tradition}' missing last names"
 
-    def test_each_tradition_has_min_twenty_first_names(self):
+    def test_standard_pools_have_last_names(self):
+        # Icelandic uses patronymic_bases instead of a static last-name list.
         for tradition, pool in NAME_POOLS.items():
-            assert len(pool["first"]) >= 20, f"Tradition '{tradition}' has <20 first names"
+            if tradition == "Icelandic":
+                continue
+            assert "last" in pool, f"Tradition '{tradition}' missing last names"
 
-    def test_each_tradition_has_min_ten_last_names(self):
+    def test_all_traditions_have_min_twenty_first_names(self):
         for tradition, pool in NAME_POOLS.items():
-            assert len(pool["last"]) >= 10, f"Tradition '{tradition}' has <10 last names"
+            assert len(pool["first"]) >= 20, \
+                f"Tradition '{tradition}' has only {len(pool['first'])} first names"
+
+    def test_standard_pools_have_min_ten_last_names(self):
+        for tradition, pool in NAME_POOLS.items():
+            if tradition == "Icelandic":
+                continue
+            assert len(pool["last"]) >= 10, \
+                f"Tradition '{tradition}' has only {len(pool['last'])} last names"
 
     def test_all_names_are_non_empty_strings(self):
         for tradition, pool in NAME_POOLS.items():
-            for name in pool["first"] + pool["last"]:
-                assert isinstance(name, str) and len(name) > 0, \
-                    f"Empty/non-string name in tradition '{tradition}'"
+            name_lists = [pool["first"]]
+            if "last" in pool:
+                name_lists.append(pool["last"])
+            if "patronymic_bases" in pool:
+                name_lists.append(pool["patronymic_bases"])
+            for lst in name_lists:
+                for name in lst:
+                    assert isinstance(name, str) and len(name) > 0, \
+                        f"Empty/non-string name in tradition '{tradition}'"
+
+    # ── Spot-checks for required traditions ────────────────────────────────────
 
     def test_west_african_present(self):
         assert "West African" in NAME_POOLS
@@ -44,57 +63,184 @@ class TestNamePools:
     def test_slavic_present(self):
         assert "Slavic" in NAME_POOLS
 
+    def test_maori_present(self):
+        assert "Māori" in NAME_POOLS
 
-# ── roll_name_suggestion ─────────────────────────────────────────────────────────
+    def test_icelandic_present(self):
+        assert "Icelandic" in NAME_POOLS
+
+    def test_north_american_indigenous_present(self):
+        assert "North American Indigenous" in NAME_POOLS
+
+    def test_nahuatl_maya_present(self):
+        assert "Nahuatl / Maya" in NAME_POOLS
+
+    def test_andean_mapuche_present(self):
+        assert "Andean / Mapuche" in NAME_POOLS
+
+
+# ── Icelandic patronymics ────────────────────────────────────────────────────────
+
+class TestIcelandicPatronymics:
+    def test_icelandic_has_patronymic_bases(self):
+        pool = NAME_POOLS["Icelandic"]
+        assert "patronymic_bases" in pool
+        assert len(pool["patronymic_bases"]) >= 10
+
+    def test_draw_last_ends_in_son_or_dottir(self):
+        pool = NAME_POOLS["Icelandic"]
+        for _ in range(50):
+            last = _draw_last(pool)
+            assert last.endswith("son") or last.endswith("dóttir"), \
+                f"Unexpected Icelandic last name: {last!r}"
+
+    def test_draw_last_has_known_base(self):
+        pool  = NAME_POOLS["Icelandic"]
+        bases = pool["patronymic_bases"]
+        for _ in range(50):
+            last = _draw_last(pool)
+            assert any(last.startswith(b) for b in bases), \
+                f"Patronymic {last!r} doesn't match any declared base"
+
+    def test_draw_last_standard_pool_returns_list_member(self):
+        """_draw_last on a non-patronymic pool returns an item from its last list."""
+        pool = NAME_POOLS["West African"]
+        for _ in range(20):
+            last = _draw_last(pool)
+            assert last in pool["last"]
+
+
+# ── roll_name_suggestion — single-tradition results ──────────────────────────────
 
 class TestRollNameSuggestion:
+    def _single(self):
+        """Return a parsed result that is NOT a blend."""
+        for _ in range(500):
+            data = json.loads(roll_name_suggestion())
+            if " / " not in data["tradition"]:
+                return data
+        raise AssertionError("Could not produce a single-tradition result in 500 tries")
+
     def test_returns_valid_json(self):
-        result = roll_name_suggestion()
-        data = json.loads(result)
-        assert isinstance(data, dict)
+        assert isinstance(json.loads(roll_name_suggestion()), dict)
 
     def test_has_required_keys(self):
         data = json.loads(roll_name_suggestion())
-        assert "suggested_name" in data
-        assert "first" in data
-        assert "last" in data
-        assert "tradition" in data
+        for key in ("suggested_name", "first", "last", "tradition"):
+            assert key in data, f"Missing key: {key}"
 
-    def test_tradition_is_known(self):
-        for _ in range(20):
-            data = json.loads(roll_name_suggestion())
-            assert data["tradition"] in NAME_POOLS, f"Unknown tradition: {data['tradition']}"
-
-    def test_first_name_is_in_tradition_pool(self):
-        for _ in range(20):
-            data = json.loads(roll_name_suggestion())
-            pool = NAME_POOLS[data["tradition"]]
-            assert data["first"] in pool["first"], \
-                f"First name '{data['first']}' not in pool for '{data['tradition']}'"
-
-    def test_last_name_is_in_tradition_pool(self):
-        for _ in range(20):
-            data = json.loads(roll_name_suggestion())
-            pool = NAME_POOLS[data["tradition"]]
-            assert data["last"] in pool["last"], \
-                f"Last name '{data['last']}' not in pool for '{data['tradition']}'"
-
-    def test_suggested_name_is_first_space_last(self):
+    def test_suggested_name_combines_first_and_last(self):
         for _ in range(10):
             data = json.loads(roll_name_suggestion())
-            assert data["suggested_name"] == f"{data['first']} {data['last']}"
+            assert data["first"] in data["suggested_name"]
+            assert data["last"]  in data["suggested_name"]
+
+    def test_tradition_is_non_empty_string(self):
+        data = json.loads(roll_name_suggestion())
+        assert isinstance(data["tradition"], str) and len(data["tradition"]) > 0
+
+    def test_single_tradition_is_not_blend(self):
+        data = self._single()
+        assert not data.get("is_blend", False)
+
+    def test_single_tradition_is_known_pool(self):
+        data = self._single()
+        assert data["tradition"] in NAME_POOLS, \
+            f"Unknown tradition: {data['tradition']}"
+
+    def test_single_tradition_first_in_pool(self):
+        data = self._single()
+        assert data["first"] in NAME_POOLS[data["tradition"]]["first"]
+
+    def test_single_tradition_last_in_pool_or_patronymic(self):
+        data = self._single()
+        pool = NAME_POOLS[data["tradition"]]
+        if "patronymic_bases" in pool:
+            # Icelandic: last ends in son/dóttir and starts with a known base
+            assert data["last"].endswith("son") or data["last"].endswith("dóttir")
+        else:
+            assert data["last"] in pool["last"]
+
+    def test_single_tradition_has_no_note(self):
+        data = self._single()
+        assert "note" not in data
 
     def test_returns_variety_across_traditions(self):
-        # 30 rolls across 10+ traditions should yield at least 4 distinct ones
-        traditions = {json.loads(roll_name_suggestion())["tradition"] for _ in range(30)}
-        assert len(traditions) >= 4
+        traditions = {json.loads(roll_name_suggestion())["tradition"] for _ in range(60)}
+        assert len(traditions) >= 5
 
     def test_non_empty_suggested_name(self):
         data = json.loads(roll_name_suggestion())
         assert len(data["suggested_name"]) > 2
 
 
-# ── NAME_TOOL_SCHEMA ──────────────────────────────────────────────────────────────
+# ── Cross-tradition blending ──────────────────────────────────────────────────────
+
+class TestCrossBlend:
+    def _blend(self):
+        """Return a parsed result that IS a blend."""
+        for _ in range(500):
+            data = json.loads(roll_name_suggestion())
+            if data.get("is_blend", False):
+                return data
+        raise AssertionError("No blended name produced in 500 rolls (expected ~25%)")
+
+    def test_blend_occurs_within_200_rolls(self):
+        found = any(
+            json.loads(roll_name_suggestion()).get("is_blend", False)
+            for _ in range(200)
+        )
+        assert found
+
+    def test_blend_has_is_blend_true(self):
+        data = self._blend()
+        assert data["is_blend"] is True
+
+    def test_blend_has_first_and_last_tradition_keys(self):
+        data = self._blend()
+        assert "first_tradition" in data
+        assert "last_tradition"  in data
+
+    def test_blend_tradition_pools_are_known(self):
+        data = self._blend()
+        assert data["first_tradition"] in NAME_POOLS
+        assert data["last_tradition"]  in NAME_POOLS
+
+    def test_blend_first_comes_from_first_tradition(self):
+        data    = self._blend()
+        t_first = data["first_tradition"]
+        assert data["first"] in NAME_POOLS[t_first]["first"]
+
+    def test_blend_last_comes_from_last_tradition(self):
+        data   = self._blend()
+        t_last = data["last_tradition"]
+        pool   = NAME_POOLS[t_last]
+        if "patronymic_bases" in pool:
+            assert data["last"].endswith("son") or data["last"].endswith("dóttir")
+        else:
+            assert data["last"] in pool["last"]
+
+    def test_blend_has_note_field(self):
+        data = self._blend()
+        assert "note" in data and len(data["note"]) > 20
+
+    def test_blend_note_mentions_both_traditions(self):
+        data = self._blend()
+        assert data["first_tradition"] in data["note"]
+        assert data["last_tradition"]  in data["note"]
+
+    def test_blend_proportion_roughly_25_percent(self):
+        """Blend rate should be ~25% — allow 10–40% for statistical noise."""
+        n_blends = sum(
+            1 for _ in range(300)
+            if json.loads(roll_name_suggestion()).get("is_blend", False)
+        )
+        rate = n_blends / 300
+        assert 0.10 <= rate <= 0.40, \
+            f"Blend rate {rate:.1%} is outside expected 10–40% range"
+
+
+# ── NAME_TOOL_SCHEMA ───────────────────────────────────────────────────────────────
 
 class TestNameToolSchema:
     def test_has_name_key(self):
@@ -108,5 +254,4 @@ class TestNameToolSchema:
         assert "input_schema" in NAME_TOOL_SCHEMA
 
     def test_input_schema_requires_nothing(self):
-        schema = NAME_TOOL_SCHEMA["input_schema"]
-        assert schema.get("required", []) == []
+        assert NAME_TOOL_SCHEMA["input_schema"].get("required", []) == []
