@@ -39,6 +39,8 @@ A numbered menu walks you through:
 3. **Which mode** — full character, NPC sketch, or hook encounter
 4. **Optional description** — describe what you want in plain English, or press Enter for fully random
 
+Every generator accepts a plain English prompt at the end — use it to add a swerve, lock in a concept, or push the result in a specific direction. You can be as vague or specific as you like: `"ex-military medic with something to hide"`, `"coward who talks big"`, `"someone the crew will immediately distrust but shouldn't"`. The dice still roll, the rules still apply — the description just tilts the output your way.
+
 Each agent can also be run directly (`python dnd_agent.py`, etc.) if you want to skip the menu.
 
 ---
