@@ -4,7 +4,7 @@ AI-powered character and NPC generators for tabletop RPGs, built with the Anthro
 
 Supports **D&D 5e**, **Mongoose Traveller 2e**, **Firefly RPG (Cortex System)**, and **Scum and Villainy (Forged in the Dark)**.
 
-The output folders contain example characters generated during development — ready to use as NPCs, inspiration, or starting points for your own sessions.
+The `characters/` folders contain example characters generated during development — ready to use as NPCs, inspiration, or starting points for your own sessions.
 
 ---
 
@@ -26,18 +26,31 @@ pytest tests/
 
 ---
 
-## D&D 5e — `dnd_agent.py`
+## Running
 
 ```bash
-python dnd_agent.py
+python main.py
 ```
+
+A numbered menu walks you through:
+
+1. **What to build** — character/NPC or party/crew
+2. **Which game** — D&D 5e, Traveller, Firefly, or Scum and Villainy
+3. **Which mode** — full character, NPC sketch, or hook encounter
+4. **Optional description** — describe what you want in plain English, or press Enter for fully random
+
+Each agent can also be run directly (`python dnd_agent.py`, etc.) if you want to skip the menu.
+
+---
+
+## D&D 5e — `dnd_agent.py`
 
 **Modes:**
 - `full` — Full character sheet with ability scores (4d6 drop lowest), race, class, background, personality, connections, equipment, and backstory
 - `npc` — Quick NPC sketch: stat block, demeanor, want, secret, hook, and one named connection
 - `questgiver` — Hook encounter: who approaches the party, the pitch in direct speech, what they want, what they're offering, and four possible truths. The DM rolls 1d4 in secret — Truth 4 is always The Reversal, where the party is on the wrong side of the story.
 
-You can describe what you want in plain English, or press Enter for fully random. Output saves to `characters/dnd/` as `character-name-full.md`, `character-name-npc.md`, or `character-name-questgiver.md`.
+Output saves to `characters/dnd/` as `character-name-full.md`, `character-name-npc.md`, or `character-name-questgiver.md`.
 
 **Example characters generated:**
 - Pip "Tallowfingers" Underbough — Lightfoot Halfling Rogue, hunting the gang boss who took her brother
@@ -46,10 +59,6 @@ You can describe what you want in plain English, or press Enter for fully random
 ---
 
 ## Mongoose Traveller 2e — `traveller_agent.py`
-
-```bash
-python traveller_agent.py
-```
 
 **Modes:**
 - `full` — Full character with rolled UPP, homeworld (complete UWP), career history (2–6 terms), mishaps, connections, muster out benefits, and backstory. Ship shares are treated as story hooks, not line items.
@@ -67,10 +76,6 @@ Output saves to `characters/traveller/` as `character-name-full.md`, `character-
 ---
 
 ## Firefly RPG — `firefly_agent.py`
-
-```bash
-python firefly_agent.py
-```
 
 Cortex System character generation for the 'Verse. Die sizes (d4–d12) replace numeric scores; Distinctions are story engines that can help or hurt depending on the situation.
 
@@ -91,10 +96,6 @@ Output saves to `characters/firefly/` as `character-name-full.md`, `character-na
 
 ## Scum and Villainy — `scum_villainy_agent.py`
 
-```bash
-python scum_villainy_agent.py
-```
-
 Forged in the Dark character generation for crews operating at the edge of the Hegemony. Action ratings (0–4 dots), playbook special abilities, stress/trauma tracks, and a specific vice with a named purveyor.
 
 **Modes:**
@@ -114,10 +115,6 @@ Output saves to `characters/scum_villainy/` as `character-name-full.md`, `charac
 
 ## Party & Crew Builder — `party_agent.py`
 
-```bash
-python party_agent.py
-```
-
 GM prep tool that assembles a party (D&D) or crew (Traveller, Firefly, Scum and Villainy) with connective tissue — shared history, fault lines, secrets, and a first session hook. Works with your saved characters, generates fresh ones, or mixes both.
 
 **Interactive flow:**
@@ -125,20 +122,16 @@ GM prep tool that assembles a party (D&D) or crew (Traveller, Firefly, Scum and 
 2. Party/crew size (default: 4)
 3. Mode: `folder` (pick from saved characters) / `generate` (all fresh) / `mix` (some of each)
 4. If folder or mix: pick characters by number from a displayed list
-5. Optional theme or constraints in plain English (e.g. "gothic horror, vampire hunters" or "crew stranded on the frontier with a broken drive")
-6. Optional: generate a tailored opening hook at the end (quest giver / patron / job contact / score contact)
+5. Optional theme or constraints in plain English
+6. Optional: generate a tailored opening hook (quest giver / patron / job contact / score contact)
 
-Output saves to `parties/` as `game-party-name-party.md`. Opening hooks save to the appropriate characters folder.
+Output saves to `parties/` as `game-party-name-party.md`. Opening hooks save to `characters/<game>/`.
 
 **Output sections:** Members roster with roles → How They Came Together → What Holds Them Together → The Fault Line → Shared Secret → First Session Hook
 
 ---
 
 ## How it works
-
-`main.py` is the top-level entry point. Run it and a numbered menu walks you through game → mode → optional description, then hands off to the right agent. Each agent can also be run directly (`python dnd_agent.py`, etc.) — they prompt for mode and description on their own.
-
-The agents build on a simple foundation:
 
 1. Claude receives a system prompt with the game's rules and output format
 2. It calls tools (dice rollers, rules lookups) and gets real random results back
@@ -166,9 +159,9 @@ rpg-character-agents/
 │   ├── test_scum.py
 │   └── test_party.py
 ├── characters/              # All character output
-│   ├── dnd/                 # D&D characters
-│   ├── traveller/           # Traveller characters
-│   ├── firefly/             # Firefly characters
-│   └── scum_villainy/       # Scum and Villainy characters
+│   ├── dnd/
+│   ├── traveller/
+│   ├── firefly/
+│   └── scum_villainy/
 └── parties/                 # Party / crew brief output
 ```
