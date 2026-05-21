@@ -777,6 +777,12 @@ def run(mode: str | None = None, desc: str | None = None) -> None:
         prompt = f"Generate a Mongoose Traveller character for storytelling purposes with these constraints: {desc}" if desc else "Generate a fully random Mongoose Traveller character for storytelling purposes."
 
     result = run_agent(prompt, sys_prompt)
+
+    # Strip any preamble before the first ## heading
+    lines = result.strip().splitlines()
+    heading_idx = next((i for i, l in enumerate(lines) if l.startswith("##")), 0)
+    result = "\n".join(lines[heading_idx:])
+
     print("\n" + result)
 
     saved = save_result(result, mode)
