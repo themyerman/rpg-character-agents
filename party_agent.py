@@ -9,6 +9,7 @@ import random
 import re
 from pathlib import Path
 import anthropic
+from utils import pick
 
 client = anthropic.Anthropic()
 
@@ -364,12 +365,16 @@ def save_result(result: str, game: str, suffix: str = "party") -> Path:
 def run() -> None:
 
     # 1. Game
-    game_raw = input("Game? (dnd / traveller / firefly / scum, default: traveller): ").strip().lower()
-    game     = game_raw if game_raw in ("dnd", "traveller", "firefly", "scum") else "traveller"
-    label    = "party" if game == "dnd" else "crew"
+    game  = pick(
+        "Which game?",
+        [("dnd", "D&D 5e"), ("traveller", "Mongoose Traveller 2e"),
+         ("firefly", "Firefly RPG"), ("scum", "Scum and Villainy")],
+        default_idx=1,
+    )
+    label = "party" if game == "dnd" else "crew"
 
     # 2. Party size
-    size_raw = input(f"How many in the {label}? (default: 4): ").strip()
+    size_raw = input(f"\nHow many in the {label}? (default: 4): ").strip()
     try:
         party_size = int(size_raw) if size_raw else 4
         party_size = max(2, min(6, party_size))
@@ -377,12 +382,12 @@ def run() -> None:
         party_size = 4
 
     # 3. Mode
-    print(f"\nMode?")
-    print(f"  folder   — build from saved characters")
-    print(f"  generate — generate a fresh {label}")
-    print(f"  mix      — some from folder, some generated fresh")
-    mode_raw = input("Mode (default: folder): ").strip().lower()
-    mode     = mode_raw if mode_raw in ("folder", "generate", "mix") else "folder"
+    mode = pick(
+        "Mode?",
+        [("folder",   "Build from saved characters"),
+         ("generate", f"Generate all {party_size} fresh"),
+         ("mix",      "Some from folder, some generated fresh")],
+    )
 
     # 4. Gather characters
     sheets      = []
@@ -464,10 +469,13 @@ def run() -> None:
         "firefly":   "job contact",
         "scum":      "score contact",
     }
-    hook_type = HOOK_TYPES[game]
-    hook_raw  = input(f"\nGenerate an opening {hook_type} hook tailored to this {label}? (yes / no, default: no): ").strip().lower()
+    hook_type    = HOOK_TYPES[game]
+    generate_hook = pick(
+        f"Generate an opening {hook_type} hook for this {label}?",
+        [("no", "No"), ("yes", "Yes")],
+    )
 
-    if hook_raw in ("yes", "y"):
+    if generate_hook == "yes":
         if game == "dnd":
             from dnd_agent import (
                 QUEST_GIVER_SYSTEM_PROMPT,
