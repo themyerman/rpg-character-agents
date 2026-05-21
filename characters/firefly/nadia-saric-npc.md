@@ -1,4 +1,4 @@
-## **Nadia Okonkwo-Ruiz**
+## **Nadia Sarić**
 *Hired muscle — sharp eyes, slow words, reads a room before she enters it*
 
 | | |
@@ -17,4 +17,4 @@
 
 **Hook:** Approaches the crew at a Eavesdown bar with a job — escort a "package" (a teenage girl) off-world. Won't say who's paying. The pay's good. The girl is *not* who Nadia was told she'd be.
 
-**Connection:** **Sergeant Bo Vitek**, her old squad leader from Serenity Valley, now drinks himself stupid on Dyton. She sends him coin every month under a false name. If he dies before she sees him sober, she swears she'll burn down the bar that killed him — and she means it literal.
+**Connection:** **Sergeant Bo Vitek**, her old squad leader from Serenity Valley, now running muscle for a protection outfit on Dyton — not the worst work, but not the man he was either. She checks in twice a year, never stays long. He's the only one who knew her before she forgot how to read, and neither of them talks about it.

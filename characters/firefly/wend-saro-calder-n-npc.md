@@ -17,4 +17,4 @@
 
 **Hook:** Approaches the crew in a dockside cantina offering to bless their ship for safe passage in exchange for a berth. Mid-blessing, she'll quietly ask if anyone aboard knows how to forge an Alliance medical transit waiver.
 
-**Connection:** Her younger brother **Tomás Calderón**, currently held in an Alliance correctional hospital on Ariel for "ideological reconditioning." She has six weeks before they declare him cured — meaning lobotomized — and she's the only family he has left.
+**Connection:** Her younger brother **Esteban Calderón**, currently held in an Alliance correctional hospital on Ariel for "ideological reconditioning." She has six weeks before they declare him cured — meaning lobotomized — and she's the only family he has left.

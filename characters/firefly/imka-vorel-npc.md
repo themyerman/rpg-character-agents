@@ -17,4 +17,4 @@
 
 **Hook:** Approaches the crew with a contract that's suspiciously well-paid for the work described. She knows it's a setup. She needs backup she can't afford to hire honestly, so she's omitting the dangerous parts until it's too late to back out.
 
-**Connection:** Her younger brother **Teo Vorel** runs a noodle stall on Eavesdown Docks and thinks she's a freight inspector. Every coin she earns gets wired to his daughter's schooling on Ariel. If he ever found out what she actually does, she'd rather take a bullet than see his face.
+**Connection:** Her younger sister **Petra Vorel**, a schoolteacher on Harvest who doesn't know the lung damage is as bad as it is — Imka sends money every month and claims it's "savings from the freight work." Petra's written three times asking her to come home and rest. Imka hasn't answered any of them, because she can't explain why she won't stop.

@@ -1,4 +1,4 @@
-## **Zarina Okonkwo-Vaal**
+## **Zarina Rashkova**
 *Ex-Marine Corporal — A walking middle finger with a plasma gun, cashiered for what she still calls "the only honest thing in that uniform."*
 
 | | |
@@ -11,8 +11,8 @@
 
 **Wants:** A buyer for a crated PGMP-12 she "liberated" from a quartermaster who owed her — fast, before the serial number gets flagged on the next Imperial sweep.
 
-**Secret:** The affair with Major Tomás Renard wasn't an affair. It was three nights, and on the third he told her about an off-books boarding action that killed civilians on a hauler called the *Beneficent Hand*. She kept his datachip. She doesn't know what to do with it, and that paralysis is the thing she actually hates herself for — not the sex, not the discharge.
+**Secret:** The thing with Commander Vasik Renard wasn't a fling. It was three nights, and on the third he told her about an off-books boarding action that killed civilians on a hauler called the *Beneficent Hand*. She kept his datachip. She doesn't know what to do with it, and that paralysis is the thing she actually hates herself for — not the sex, not the discharge.
 
 **Hook:** She'll pick a fight with the loudest PC in the bar within ten minutes — not to hurt them, but to audition them. If they hold their own without escalating, she offers them the gun deal. If they escalate, she offers them a *job*.
 
-**Connection:** Her younger brother **Ifeanyi**, a medical student on Rhylanor whose tuition she's been paying with increasingly stupid work. He thinks she's still in the service. She will do genuinely unwise things to keep it that way.
+**Connection:** Her older brother **Gavril**, a cargo broker on Forboldn who borrowed protection money from a local cartel to keep his operation afloat, then lost the contract anyway. She's been wiring him coin he keeps wasting, and she knows the cartel's patience has a clock on it. One of these days she's going to have to go there herself and settle it the only way she knows how.

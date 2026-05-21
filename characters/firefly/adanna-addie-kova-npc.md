@@ -1,4 +1,4 @@
-## **Adaeze "Addie" Kovač**
+## **Adanna "Addie" Kovač**
 *Wandering Shepherd — a preacher with calloused hands and a guilty conscience about the war she didn't fight.*
 
 | | |
@@ -17,4 +17,4 @@
 
 **Hook:** She approaches the crew at an Eavesdown cantina on Persephone, offers fair coin plus a sealed letter she swears is "just personal correspondence" — the letter is addressed to a name on an Alliance watch list.
 
-**Connection:** **Mateus Olabode**, a former Independent medic now drinking himself dead in Whittier — he was on the *Liang Yi*'s replacement chaplain roster and survived only because she said no. He doesn't know that. She owes him a truth she can't make herself tell.
+**Connection:** **Mateus Olabode**, a former Independent medic who keeps a tiny clinic above a feed store in Whittier, barely making rent — he was on the *Liang Yi*'s replacement chaplain roster and survived only because she said no. He doesn't know that. She owes him a truth she can't make herself tell.

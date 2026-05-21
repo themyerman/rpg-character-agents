@@ -1,10 +1,10 @@
-## **Bohdana "Bo" Okafor-Ruiz**
+## **Bohdana "Bo" Pavelić**
 *Settlement doctor turned reluctant traveler — patches up bodies with the same patience she uses on a busted still.*
 
 | | |
 |---|---|
 | **Role** | Doctor (frontier-trained, no formal credentials) |
-| **Homeworld** | Jiangyin, Rim |
+| **Homeworld** | Constance, Rim |
 | **Key Attributes** | Willpower d10 / Intelligence d8 / Strength d8 |
 
 **Distinctions:** Learned Medicine From a Book and a Lot of Mistakes / Doesn't Flinch / Keeps a Ledger of Every Patient

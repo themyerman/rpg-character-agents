@@ -20,7 +20,7 @@
 
 ---
 
-## **Mireille Salinas-Okafor**
+## **Mireille Salinas-Devereaux**
 *Drifter Wanderer — A wheezing scarecrow of a cousin who keeps showing up at the wrong airlock with the right warning.*
 
 | | |
@@ -32,12 +32,12 @@
 **Demeanor:** Talks in half-finished sentences, like she lost the thread three stations ago. Bird-thin, perpetually short of breath, wears a heavy coat indoors and laughs at jokes nobody made.
 **Wants:** A bunk on the family's ship for one jump — just one — and to be believed about something for once.
 **Secret:** She isn't slow. The hypoxia damage from a vented cargo hold six years ago is real, but she exaggerates the fog because nobody interrogates someone they've written off. She's been quietly tracking a cousin's creditor across three subsectors.
-**Hook:** Slides a data wafer across the table at the worst possible moment — mid-meal, mid-deal, mid-argument — and says, "I think they're going to kill Tomás. I think it's tonight."
-**Connection:** **Tomás Salinas-Okafor**, her younger brother and the only person in the family who ever stood up for her. He runs a failing hydroponics concern on a backwater and owes the wrong people. She'd walk into vacuum for him, and probably will.
+**Hook:** Slides a data wafer across the table at the worst possible moment — mid-meal, mid-deal, mid-argument — and says, "I think they're going to kill Enrique. I think it's tonight."
+**Connection:** **Enrique Salinas-Devereaux**, her younger brother and the only person in the family who ever stood up for her. He runs a failing hydroponics concern on a backwater and owes the wrong people. She'd walk into vacuum for him, and probably will.
 
 ---
 
-## **Dr. Yelena Okonkwo-Bogdanov**
+## **Dr. Yelena Nwosu-Bogdanov**
 *Scholar Associate Professor — Field surgeon who married into the family and is now the only one holding it together.*
 
 | | |
@@ -50,7 +50,7 @@
 **Wants:** A working cryoberth and twelve hours of uninterrupted access to a proper med bay — one of the family is sick and she's been treating it with field kits and lies.
 **Secret:** She falsified the death certificate on a cousin two years ago. He didn't die of cardiac failure; she ended his suffering at his request, and the paperwork would unravel three planetary insurance claims and a custody case if anyone pulled the thread.
 **Hook:** Approaches the party in a portside cantina with a folded credit chit and an unhurried question: *"How squeamish are you about transporting a patient who legally doesn't exist?"*
-**Connection:** Her husband **Tomas Bogdanov** — the family's nominal patriarch, brilliant, charming, and showing the first tremors of a hereditary neurological disorder he refuses to acknowledge. She loves him and she is quietly, methodically lying to everyone in the family about how much time he has left.
+**Connection:** Her husband **Viktor Bogdanov** — the family's nominal patriarch, brilliant, charming, and showing the first tremors of a hereditary neurological disorder he refuses to acknowledge. She loves him and she is quietly, methodically lying to everyone in the family about how much time he has left.
 
 ---
 
@@ -88,7 +88,7 @@
 
 ---
 
-## **Captain Indira Vashenko-Okafor**
+## **Captain Indira Vashenko-Arora**
 *Merchant Captain — A grandmother who runs the family freighter like a sovereign nation, and her word is the only law that matters at the table.*
 
 | | |
@@ -117,8 +117,16 @@
 - **Adira / Indira:** Indira raised Adira after her parents died in a depressurization, and Adira's farmer's hands learned their patience from the old captain's — the grandmother is the only person Adira would confess to, and the only one she never will.
 - **Mireille / Yelena:** Yelena treats Mireille's hypoxia and pretends not to notice that her cousin's lung scans haven't worsened in three years; they have a quiet understanding built entirely on what neither will say.
 - **Mireille / Hanne:** Hanne finds Mireille fascinating — the only family member whose interior life Hanne genuinely cannot map — and has begun leaving small tests in her path to see what she does with them.
-- **Mireille / Tomás:** Cousin Tomás (the singer) and brother Tomás (the hydroponicist) get confused at family dinners, and Mireille has learned to use that confusion to move money between them without either noticing.
+- **Mireille / Tomás:** Mireille has noticed the discrepancy in the shared accounts and has said nothing — she's been skimming the same fund herself for different reasons, and the last thing either of them needs is Indira doing an audit.
 - **Mireille / Indira:** Indira is the only one who has ever spoken to Mireille like an adult; Mireille would die for her, and Indira knows it, and tries not to use it.
 - **Yelena / Hanne:** Yelena signed the matriarch's death certificate four years ago and didn't look too closely at the pillow fibers — she suspects Hanne, Hanne knows she suspects, and they are unfailingly polite at every holiday.
 - **Yelena / Tomás:** Tomás's daughter is Yelena's secret patient; Yelena has been falsifying the clinic records on her end while Tomás skims the family accounts on his, and neither has told the other they're both lying about the same child.
-- **Yelena / Indira:** Indira has begun to suspect that her husband Tomas Bogdanov is sicker than Yelena admits, and has started watching her daughter-in-law over
+- **Yelena / Indira:** Indira has begun to suspect that her husband Viktor is sicker than Yelena admits, and has started watching her daughter-in-law over dinner the way she once watched weather fronts — looking for the tells before the storm shows itself.
+- **Hanne / Tomás:** Hanne has known about the daughter for eighteen months and considers her a useful pressure point they have chosen, so far, not to use. Tomás senses something, plays louder when Hanne is in the room, and cannot explain why.
+- **Hanne / Indira:** Indira doesn't know what Hanne did to the matriarch — but she knows something is wrong with the death the way a ship captain knows something is wrong with a seal: not by evidence, by feel. She watches Hanne with the same flat patience she uses for long burns.
+- **Tomás / Indira:** He is her favorite and they both know it and neither will say it, and that shared silence is the warmest thing on the ship.
+
+## GM Hooks
+1. A Tukera Legal representative arrives at the docking bay with a thirty-year-old registry transfer document and a polite but firm request to discuss the *Maranatha's Promise* — the debt Indira's late husband buried has been found, and the family has 72 hours to produce a counter-claim or vacate the ship.
+2. Mireille's warning about Enrique comes true: a pair of heavily built men board at the next port asking about "a debtor named Salinas" — they're one step behind, but one step is nothing on a ship with only so many places to hide.
+3. The private investigator the dead matriarch hired — a methodical, soft-spoken Vargr named Ehksash — contacts the player characters directly, having identified them as recent passengers. She doesn't want money. She wants testimony. And she's already decided Hanne is guilty.
