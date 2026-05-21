@@ -759,9 +759,9 @@ def save_result(result: str, mode: str) -> Path:
 
 
 if __name__ == "__main__":
-    mode  = input("Mode? (character / npc / patron, default: character): ").strip().lower()
-    mode  = mode if mode in ("character", "npc", "patron") else "character"
-    label = {"character": "character", "npc": "NPC", "patron": "patron"}[mode]
+    mode  = input("Mode? (full / npc / patron, default: full): ").strip().lower()
+    mode  = mode if mode in ("full", "npc", "patron") else "full"
+    label = {"full": "character", "npc": "NPC", "patron": "patron"}[mode]
     desc  = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
 
     if mode == "npc":
@@ -770,7 +770,7 @@ if __name__ == "__main__":
     elif mode == "patron":
         sys_prompt = PATRON_SYSTEM_PROMPT
         prompt = f"Generate a Mongoose Traveller patron encounter with these constraints: {desc}" if desc else "Generate a fully random Mongoose Traveller patron encounter."
-    else:
+    else:  # full
         sys_prompt = SYSTEM_PROMPT
         prompt = f"Generate a Mongoose Traveller character for storytelling purposes with these constraints: {desc}" if desc else "Generate a fully random Mongoose Traveller character for storytelling purposes."
 

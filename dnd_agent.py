@@ -785,9 +785,9 @@ def save_result(result: str, mode: str) -> Path:
 
 
 if __name__ == "__main__":
-    mode  = input("Mode? (character / npc / questgiver, default: character): ").strip().lower()
-    mode  = mode if mode in ("character", "npc", "questgiver") else "character"
-    label = {"character": "character", "npc": "NPC", "questgiver": "quest giver"}[mode]
+    mode  = input("Mode? (full / npc / questgiver, default: full): ").strip().lower()
+    mode  = mode if mode in ("full", "npc", "questgiver") else "full"
+    label = {"full": "character", "npc": "NPC", "questgiver": "quest giver"}[mode]
     desc  = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
 
     if mode == "npc":
@@ -796,7 +796,7 @@ if __name__ == "__main__":
     elif mode == "questgiver":
         sys_prompt = QUEST_GIVER_SYSTEM_PROMPT
         prompt = f"Generate a D&D 5e quest giver encounter with these constraints: {desc}" if desc else "Generate a fully random D&D 5e quest giver encounter."
-    else:
+    else:  # full
         sys_prompt = SYSTEM_PROMPT
         prompt = f"Generate a D&D 5e character for storytelling purposes with these constraints: {desc}" if desc else "Generate a fully random D&D 5e character for storytelling purposes."
 
