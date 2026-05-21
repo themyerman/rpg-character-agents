@@ -1,5 +1,5 @@
 """
-Tests for scum_agent.py — pure Python logic only, no API calls.
+Tests for scum_villainy_agent.py — pure Python logic only, no API calls.
 """
 
 import json
@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from scum_agent import (
+from scum_villainy_agent import (
     get_playbook_info,
     assign_action_dots,
     roll_heritage,
@@ -255,41 +255,41 @@ class TestDetectPhase:
 
 class TestSaveResult:
     def test_finds_heading_for_filename(self, tmp_path, monkeypatch):
-        import scum_agent
-        monkeypatch.setattr(scum_agent, "__file__", str(tmp_path / "scum_agent.py"))
+        import scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
         content = "## **Reva Marsh**\n*Scoundrel — three fake IDs and a real grudge*\n..."
         path = save_result(content, "character")
         assert "reva-marsh" in path.name
 
     def test_character_suffix(self, tmp_path, monkeypatch):
-        import scum_agent
-        monkeypatch.setattr(scum_agent, "__file__", str(tmp_path / "scum_agent.py"))
+        import scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
         content = "## **Test**\n*Muscle*"
         assert save_result(content, "character").name.endswith("-character.md")
 
     def test_npc_suffix(self, tmp_path, monkeypatch):
-        import scum_agent
-        monkeypatch.setattr(scum_agent, "__file__", str(tmp_path / "scum_agent.py"))
+        import scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
         content = "## **Tess Varo**\n*Fixer*"
         assert save_result(content, "npc").name.endswith("-npc.md")
 
     def test_file_content_written(self, tmp_path, monkeypatch):
-        import scum_agent
-        monkeypatch.setattr(scum_agent, "__file__", str(tmp_path / "scum_agent.py"))
+        import scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
         content = "## **Test Character**\n*Muscle — hits things professionally*"
         path = save_result(content, "character")
         assert path.read_text() == content
 
     def test_saves_to_scum_villainy_characters_dir(self, tmp_path, monkeypatch):
-        import scum_agent
-        monkeypatch.setattr(scum_agent, "__file__", str(tmp_path / "scum_agent.py"))
+        import scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
         content = "## **Test**\n*Role*"
         path = save_result(content, "character")
         assert "scum_villainy_characters" in str(path)
 
     def test_strips_markdown_from_filename(self, tmp_path, monkeypatch):
-        import scum_agent
-        monkeypatch.setattr(scum_agent, "__file__", str(tmp_path / "scum_agent.py"))
+        import scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
         content = "## **Reva Marsh**\n*Scoundrel*"
         path = save_result(content, "character")
         assert "**" not in path.name

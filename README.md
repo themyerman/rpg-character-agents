@@ -84,10 +84,10 @@ Output saves to `firefly_characters/` as `character-name-character.md` or `chara
 
 ---
 
-## Scum and Villainy — `scum_agent.py`
+## Scum and Villainy — `scum_villainy_agent.py`
 
 ```bash
-python scum_agent.py
+python scum_villainy_agent.py
 ```
 
 Forged in the Dark character generation for crews operating at the edge of the Hegemony. Action ratings (0–4 dots), playbook special abilities, stress/trauma tracks, and a specific vice with a named purveyor.
@@ -145,7 +145,7 @@ rpg-character-agents/
 ├── dnd_agent.py             # D&D 5e generator
 ├── traveller_agent.py       # Mongoose Traveller 2e generator
 ├── firefly_agent.py         # Firefly RPG (Cortex System) generator
-├── scum_agent.py            # Scum and Villainy (Forged in the Dark) generator
+├── scum_villainy_agent.py            # Scum and Villainy (Forged in the Dark) generator
 ├── party_agent.py           # Party / crew builder (all four games)
 ├── tests/                   # Unit tests (pure Python logic — no API calls)
 │   ├── test_dnd.py

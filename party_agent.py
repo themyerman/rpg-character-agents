@@ -506,7 +506,7 @@ if __name__ == "__main__":
             hook_result = synthesize(hook_prompt, HOOK_SYSTEM)
 
         elif game == "scum":
-            from scum_agent import SYSTEM_PROMPT as HOOK_SYSTEM
+            from scum_villainy_agent import SYSTEM_PROMPT as HOOK_SYSTEM
             hook_prompt = (
                 f"Generate a Scum and Villainy score contact — a person offering a job, tailored specifically to this crew. "
                 f"The score should connect to their fault line, their shared secret, or a specific crew member's backstory thread. "
