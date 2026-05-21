@@ -206,14 +206,14 @@ class TestSaveResult:
         import firefly_agent
         monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
         content = "## **Cassidy Vane**\n*Pilot — flies like she was born in the black*\n..."
-        path = save_result(content, "character")
+        path = save_result(content, "full")
         assert "cassidy-vane" in path.name
 
     def test_mode_used_as_suffix(self, tmp_path, monkeypatch):
         import firefly_agent
         monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
         content = "## **Rook Delmar**\n*Muscle — professional about it*"
-        assert save_result(content, "character").name.endswith("-character.md")
+        assert save_result(content, "full").name.endswith("-full.md")
         content2 = "## **Siena Mott**\n*Fence — you didn't get it from her*"
         assert save_result(content2, "npc").name.endswith("-npc.md")
 
@@ -221,21 +221,21 @@ class TestSaveResult:
         import firefly_agent
         monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
         content = "## **Test Character**\n*Mechanic — keeps the lights on*"
-        path = save_result(content, "character")
+        path = save_result(content, "full")
         assert path.read_text() == content
 
     def test_saves_to_firefly_characters_dir(self, tmp_path, monkeypatch):
         import firefly_agent
         monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
         content = "## **Test**\n*Role*"
-        path = save_result(content, "character")
+        path = save_result(content, "full")
         assert "firefly_characters" in str(path)
 
     def test_strips_markdown_from_filename(self, tmp_path, monkeypatch):
         import firefly_agent
         monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
         content = "## **Rook Delmar**\n*Muscle*"
-        path = save_result(content, "character")
+        path = save_result(content, "full")
         assert "**" not in path.name
         assert "#" not in path.name
 

@@ -258,14 +258,14 @@ class TestSaveResult:
         import scum_villainy_agent
         monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
         content = "## **Reva Marsh**\n*Scoundrel — three fake IDs and a real grudge*\n..."
-        path = save_result(content, "character")
+        path = save_result(content, "full")
         assert "reva-marsh" in path.name
 
     def test_character_suffix(self, tmp_path, monkeypatch):
         import scum_villainy_agent
         monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
         content = "## **Test**\n*Muscle*"
-        assert save_result(content, "character").name.endswith("-character.md")
+        assert save_result(content, "full").name.endswith("-full.md")
 
     def test_npc_suffix(self, tmp_path, monkeypatch):
         import scum_villainy_agent
@@ -277,21 +277,21 @@ class TestSaveResult:
         import scum_villainy_agent
         monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
         content = "## **Test Character**\n*Muscle — hits things professionally*"
-        path = save_result(content, "character")
+        path = save_result(content, "full")
         assert path.read_text() == content
 
     def test_saves_to_scum_villainy_characters_dir(self, tmp_path, monkeypatch):
         import scum_villainy_agent
         monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
         content = "## **Test**\n*Role*"
-        path = save_result(content, "character")
+        path = save_result(content, "full")
         assert "scum_villainy_characters" in str(path)
 
     def test_strips_markdown_from_filename(self, tmp_path, monkeypatch):
         import scum_villainy_agent
         monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
         content = "## **Reva Marsh**\n*Scoundrel*"
-        path = save_result(content, "character")
+        path = save_result(content, "full")
         assert "**" not in path.name
         assert "#" not in path.name
 

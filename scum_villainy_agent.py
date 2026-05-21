@@ -555,8 +555,8 @@ def save_result(result: str, mode: str) -> Path:
 # ── Entry point ───────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    mode  = input("Mode? (character / npc, default: character): ").strip().lower()
-    mode  = mode if mode in ("character", "npc") else "character"
+    mode  = input("Mode? (full / npc, default: full): ").strip().lower()
+    mode  = mode if mode in ("full", "npc") else "full"
     label = "NPC" if mode == "npc" else "character"
     desc  = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
 
