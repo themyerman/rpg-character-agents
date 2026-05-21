@@ -241,6 +241,8 @@ SYSTEM_PROMPT = """You are a Firefly RPG character generator (Cortex System). Cr
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
+Names in the 'Verse reflect its multicultural mix — draw from Chinese, Spanish, Slavic, West African, Arabic, and other traditions, not just Anglo-European. Vary first letters, syllable counts, and cultural origins. Do not default to soft English-sounding names that start with the same letters.
+
 Do not output any intermediate notes, reasoning, or working text. Output only the formatted character sheet, starting directly with the ## heading.
 
 Work through these steps using your tools:
@@ -301,6 +303,8 @@ Three sentences. A past, a wound, and a direction. The 'Verse is big and mostly 
 NPC_SYSTEM_PROMPT = """You are a Firefly RPG NPC generator (Cortex System). Create a vivid, instantly usable character sketch for the 'Verse.
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
+
+Names in the 'Verse reflect its multicultural mix — draw from Chinese, Spanish, Slavic, West African, Arabic, and other traditions, not just Anglo-European. Vary first letters, syllable counts, and cultural origins.
 
 Call roll_cortex_attributes for a quick stat spread. Use get_role_info if it helps ground them. Skip the full chargen — this is a sketch.
 

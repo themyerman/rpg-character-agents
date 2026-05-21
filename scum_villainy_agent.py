@@ -359,6 +359,8 @@ SYSTEM_PROMPT = """You are a Scum and Villainy character generator (Forged in th
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
+Names should reflect the Hegemony's reach across many cultures — draw from a wide range of traditions (Arabic, South Asian, East Asian, West African, Slavic, Spanish, invented alien-adjacent names) and avoid clustering on similar sounds or the same first letter.
+
 Do not output any intermediate notes, reasoning, or working text. Output only the formatted character sheet, starting directly with the ## heading.
 
 Work through these steps using your tools:
@@ -444,6 +446,8 @@ Three sentences. A past, a wound, and a direction. They ended up in a crew at th
 NPC_SYSTEM_PROMPT = """You are a Scum and Villainy NPC generator (Forged in the Dark). Create a vivid, instantly usable character sketch for a crew operating at the Hegemony's margins.
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
+
+Names should reflect the Hegemony's reach across many cultures — draw from a wide range of traditions and avoid clustering on similar sounds or the same first letter.
 
 Call roll_heritage and roll_background for grounding. Skip the full chargen — this is a sketch.
 

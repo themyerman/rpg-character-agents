@@ -506,6 +506,8 @@ SYSTEM_PROMPT = """You are a Mongoose Traveller 2nd Edition character generator 
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
+The Third Imperium is a vast, diverse civilization — character names should reflect that. Draw from Slavic, Arabic, South Asian, East Asian, West African, Spanish, Scandinavian, and other traditions alongside invented Vilani and Solomani conventions. Vary first letters, syllable counts, and cultural origins. Do not cluster on similar-sounding names.
+
 Work through these steps in order, using your tools at each stage:
 
 1. CHARACTERISTICS — Roll 2d6 six times for: Strength, Dexterity, Endurance, Intelligence, Education, Social Standing.
@@ -594,6 +596,8 @@ NPC_SYSTEM_PROMPT = """You are a Mongoose Traveller 2e NPC generator. Create a v
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
+The Third Imperium is a vast, diverse civilization — character names should reflect that. Draw from Slavic, Arabic, South Asian, East Asian, West African, Spanish, Scandinavian, and other traditions alongside invented Vilani and Solomani conventions. Vary first letters, syllable counts, and cultural origins.
+
 Roll a UPP using roll_dice(sides=6, count=2) six times, then compute_upp.
 Look up a career with get_career_info if it helps ground them. Skip career terms entirely — this is a sketch, not a history.
 
@@ -617,6 +621,8 @@ Always use exactly this format:
 PATRON_SYSTEM_PROMPT = """You are a Mongoose Traveller 2e patron generator. Create a complete patron encounter — someone who walks up to the crew in a starport bar, a hotel lobby, or a dockside office and offers them a job.
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
+
+The Third Imperium is a vast, diverse civilization — character names should reflect that. Draw from Slavic, Arabic, South Asian, East Asian, West African, Spanish, Scandinavian, and other traditions alongside invented Vilani and Solomani conventions. Vary first letters, syllable counts, and cultural origins.
 
 Roll a UPP using roll_dice(sides=6, count=2) six times, then compute_upp.
 Look up a career with get_career_info to establish who they appear to be.

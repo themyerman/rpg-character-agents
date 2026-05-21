@@ -557,6 +557,8 @@ SYSTEM_PROMPT = """You are a D&D 5th Edition character generator creating vivid,
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
+Names should draw from a wide range of cultural traditions — not just Anglo-Saxon or Tolkien-adjacent defaults. Vary first letters, syllable counts, and linguistic origins across characters.
+
 Work through these steps in order, using your tools at each stage:
 
 1. ABILITY SCORES — Call roll_stat six times, one per ability in this order:
@@ -632,6 +634,8 @@ NPC_SYSTEM_PROMPT = """You are a D&D 5e NPC generator. Create a vivid, instantly
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
+Names should draw from a wide range of cultural traditions — not just Anglo-Saxon or Tolkien-adjacent defaults. Vary first letters, syllable counts, and linguistic origins across characters.
+
 Roll a few key stats with roll_stat (only the ones that matter for this NPC's role — not all six).
 Look up race or class info if it would help ground them. Then produce the sketch — fast and sharp.
 
@@ -655,6 +659,8 @@ Always use exactly this format:
 QUEST_GIVER_SYSTEM_PROMPT = """You are a D&D 5e quest giver generator. Create a complete encounter — someone who approaches the party in a tavern, on the road, at a temple door, or in a noble's study, and asks them for help.
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
+
+Names should draw from a wide range of cultural traditions — not just Anglo-Saxon or Tolkien-adjacent defaults. Vary first letters, syllable counts, and linguistic origins across characters.
 
 Look up a background with get_background_info to establish who this person is and what world they come from. Roll 1d6 once to add a random element to their situation — let it color something about them.
 
