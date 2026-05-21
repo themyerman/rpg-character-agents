@@ -10,15 +10,11 @@ Or invoked from main.py.
 import re
 from pathlib import Path
 
-import anthropic
-
 import dnd_agent
 import firefly_agent
 import scum_villainy_agent
 import traveller_agent
-from utils import pick
-
-client = anthropic.Anthropic()
+from utils import get_client, pick, run_agent_loop, strip_preamble
 
 
 # ── Game registry ──────────────────────────────────────────────────────────────
@@ -65,65 +61,32 @@ RELATIONSHIP_TYPES: list[tuple[str, str]] = [
 ]
 
 
-# ── NPC generation loop (with tools) ──────────────────────────────────────────
+# ── NPC generation ─────────────────────────────────────────────────────────────
 
-def _run_npc_agent(prompt: str, system: str, tools: list, tool_runner) -> str:
-    """Generic agentic loop for a single NPC — no phase printing."""
-    messages = [{"role": "user", "content": prompt}]
-
-    while True:
-        response = client.messages.create(
-            model="claude-opus-4-7",
-            max_tokens=2048,
-            system=system,
-            tools=tools,
-            messages=messages,
-        )
-
-        if response.stop_reason == "end_turn":
-            for block in response.content:
-                if hasattr(block, "text"):
-                    return block.text
-            return ""
-
-        if response.stop_reason == "tool_use":
-            messages.append({"role": "assistant", "content": response.content})
-            tool_results = []
-            for block in response.content:
-                if block.type == "tool_use":
-                    result = tool_runner(block.name, block.input)
-                    tool_results.append({
-                        "type":        "tool_result",
-                        "tool_use_id": block.id,
-                        "content":     result,
-                    })
-            messages.append({"role": "user", "content": tool_results})
-
-
-def _strip_preamble(text: str) -> str:
-    """Remove any introductory text before the first ## heading."""
-    lines = text.strip().splitlines()
-    idx   = next((i for i, l in enumerate(lines) if l.startswith("##")), 0)
-    return "\n".join(lines[idx:])
-
-
-def generate_npc(game: str, relationship: str, context_hint: str, desc: str, index: int) -> str:
-    """Generate one NPC using the game's NPC system prompt and tools."""
-    config = GAME_AGENTS[game]
-    label  = config["label"]
+def generate_npc(game: str, relationship: str, context_hint: str,
+                 modifier: str, index: int) -> str:
+    """Generate one NPC silently (no phase printing) using the game's NPC prompt."""
+    config    = GAME_AGENTS[game]
     rel_label = dict(RELATIONSHIP_TYPES).get(relationship, relationship)
 
-    prompt_parts = [
-        f"Generate a {label} NPC.",
+    parts = [
+        f"Generate a {config['label']} NPC.",
         f"This NPC is part of a group whose relationship is: {rel_label}.",
-        f"Context for this cluster: {context_hint}" if context_hint else "",
-        f"NPC #{index} specific direction: {desc}" if desc else f"NPC #{index}: fully random.",
+        f"Shared context: {context_hint}" if context_hint else "",
+        f"Overall group direction: {modifier}" if modifier else "",
+        f"This is NPC #{index} of the cluster — make them distinct from the others.",
         "Keep names culturally diverse and distinct from each other.",
     ]
-    prompt = " ".join(p for p in prompt_parts if p)
+    prompt = " ".join(p for p in parts if p)
 
-    raw    = _run_npc_agent(prompt, config["npc_prompt"], config["tools"], config["run_tool"])
-    return _strip_preamble(raw)
+    raw = run_agent_loop(
+        prompt,
+        config["npc_prompt"],
+        config["tools"],
+        config["run_tool"],
+        max_tokens=2048,
+    )
+    return strip_preamble(raw)
 
 
 # ── Synthesis call (no tools) ──────────────────────────────────────────────────
@@ -151,22 +114,20 @@ Output exactly this format — nothing else:
 
 
 def synthesize_cluster(npcs: list[str], game: str, relationship: str) -> str:
-    """One no-tools call to produce a title, connection web, and GM hooks."""
+    """One no-tools call to produce a group title, connection web, and GM hooks."""
     rel_label = dict(RELATIONSHIP_TYPES).get(relationship, relationship)
     label     = GAME_AGENTS[game]["label"]
-
     npc_block = "\n\n---\n\n".join(npcs)
-    user_msg  = (
-        f"Game: {label}\n"
-        f"Relationship type: {rel_label}\n\n"
-        f"NPC sketches:\n\n{npc_block}"
-    )
 
-    response = client.messages.create(
+    response = get_client().messages.create(
         model="claude-opus-4-7",
         max_tokens=1024,
         system=_SYNTHESIS_SYSTEM,
-        messages=[{"role": "user", "content": user_msg}],
+        messages=[{"role": "user", "content": (
+            f"Game: {label}\n"
+            f"Relationship type: {rel_label}\n\n"
+            f"NPC sketches:\n\n{npc_block}"
+        )}],
     )
     for block in response.content:
         if hasattr(block, "text"):
@@ -180,19 +141,32 @@ def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 
+def _extract_name(npc_text: str) -> str:
+    """Pull the character name from the first ## heading."""
+    for line in npc_text.splitlines():
+        if line.startswith("##"):
+            return re.sub(r"[#*]", "", line).strip()
+    return "Unknown"
+
+
+def _strip_heading(npc_text: str) -> str:
+    """Remove the first ## heading line, keeping everything below it."""
+    lines = npc_text.strip().splitlines()
+    start = next((i + 1 for i, l in enumerate(lines) if l.startswith("##")), 0)
+    return "\n".join(lines[start:]).strip()
+
+
 def save_cluster(synthesis: str, npcs: list[str], game: str, relationship: str) -> Path:
     """
     Assemble and save the full cluster document.
 
     Filename: parties/{game}-npc-{relationship}-{title_slug}-party.md
-    The title slug is extracted from the synthesis header (before the colon).
+    Title slug comes from the synthesis header, before the first colon.
     """
-    # Extract title from first line of synthesis: "# Title: ..."
     first_line = synthesis.strip().splitlines()[0]
     title_text = re.sub(r"^#+\s*", "", first_line).strip()
     title_slug = _slug(title_text.split(":")[0])
-
-    filename = f"{game}-npc-{relationship}-{title_slug}-party.md"
+    filename   = f"{game}-npc-{relationship}-{title_slug}-party.md"
 
     output_dir = Path(__file__).parent / "parties"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -205,12 +179,7 @@ def save_cluster(synthesis: str, npcs: list[str], game: str, relationship: str) 
             filepath = output_dir / f"{stem}-{counter}.md"
             counter  += 1
 
-    # Assemble document: synthesis header + individual NPC blocks
-    divider   = "\n\n---\n\n"
-    npc_block = divider.join(f"## **{_extract_name(npc)}**\n" + _strip_heading(npc) for npc in npcs)
-
-    # synthesis already has # title + connection web + hooks
-    # insert the NPC bodies between the title block and the connection web
+    # Build document: synthesis preamble + individual NPC blocks + connection web + hooks
     synth_lines = synthesis.strip().splitlines()
     web_start   = next(
         (i for i, l in enumerate(synth_lines) if l.startswith("## Web")),
@@ -219,25 +188,14 @@ def save_cluster(synthesis: str, npcs: list[str], game: str, relationship: str) 
     pre_web  = "\n".join(synth_lines[:web_start]).strip()
     post_web = "\n".join(synth_lines[web_start:]).strip()
 
+    divider   = "\n\n---\n\n"
+    npc_block = divider.join(
+        f"## **{_extract_name(npc)}**\n{_strip_heading(npc)}" for npc in npcs
+    )
     content = f"{pre_web}\n\n---\n\n{npc_block}\n\n---\n\n{post_web}\n"
 
     filepath.write_text(content)
     return filepath
-
-
-def _extract_name(npc_text: str) -> str:
-    """Pull the character name from the ## heading line."""
-    for line in npc_text.splitlines():
-        if line.startswith("##"):
-            return re.sub(r"[#*]", "", line).strip()
-    return "Unknown"
-
-
-def _strip_heading(npc_text: str) -> str:
-    """Remove the first ## heading line so we don't double-print it."""
-    lines = npc_text.strip().splitlines()
-    start = next((i + 1 for i, l in enumerate(lines) if l.startswith("##")), 0)
-    return "\n".join(lines[start:]).strip()
 
 
 # ── Entry point ────────────────────────────────────────────────────────────────
@@ -263,8 +221,14 @@ def run(game: str | None = None, relationship: str | None = None,
 
     if not context_hint:
         context_hint = input(
-            "Any shared context for the cluster? (e.g. 'post-war veterans', 'heist crew', or press Enter): "
+            "Shared context for the cluster? "
+            "(e.g. 'post-war veterans on a mining station', or press Enter to skip): "
         ).strip()
+
+    modifier = input(
+        "Any overall direction for the group? "
+        "(e.g. 'all hiding something', 'one of them is lying', or press Enter to skip): "
+    ).strip()
 
     rel_label = dict(RELATIONSHIP_TYPES).get(relationship, relationship)
     label     = GAME_AGENTS[game]["label"]
@@ -274,8 +238,7 @@ def run(game: str | None = None, relationship: str | None = None,
     npcs: list[str] = []
     for i in range(1, count + 1):
         print(f"  [{i}/{count}] Generating NPC...")
-        desc = input(f"    Direction for NPC {i} (or press Enter for random): ").strip()
-        npc  = generate_npc(game, relationship, context_hint, desc, i)
+        npc = generate_npc(game, relationship, context_hint, modifier, i)
         npcs.append(npc)
         print(f"    ✓ {_extract_name(npc)}")
 

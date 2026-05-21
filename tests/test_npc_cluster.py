@@ -15,7 +15,6 @@ from npc_cluster_agent import (
     _slug,
     _extract_name,
     _strip_heading,
-    _strip_preamble,
     save_cluster,
 )
 
@@ -130,26 +129,6 @@ class TestStripHeading:
         result = _strip_heading(text)
         assert "Content line" in result
         assert "More content" in result
-
-
-# ── _strip_preamble ───────────────────────────────────────────────────────────────
-
-class TestStripPreamble:
-    def test_removes_text_before_heading(self):
-        text = "Here is some preamble text.\n\n## **Character Name**\nContent"
-        result = _strip_preamble(text)
-        assert result.startswith("## **Character Name**")
-
-    def test_preserves_heading_and_body(self):
-        text = "Intro\n## **Name**\nBody"
-        result = _strip_preamble(text)
-        assert "## **Name**" in result
-        assert "Body" in result
-
-    def test_no_preamble_unchanged(self):
-        text = "## **Name**\nBody"
-        result = _strip_preamble(text)
-        assert result.startswith("## **Name**")
 
 
 # ── save_cluster ──────────────────────────────────────────────────────────────────

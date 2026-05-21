@@ -7,12 +7,9 @@ Run with: python traveller_agent.py
 
 import json
 import random
-import re
 from pathlib import Path
-import anthropic
 from names import roll_name_suggestion, NAME_TOOL_SCHEMA
-
-client = anthropic.Anthropic()
+from utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
 # ── Constants ──────────────────────────────────────────────────────────────────
@@ -850,71 +847,15 @@ def detect_phase(tool_name: str, seen: set) -> str | None:
 # ── Agentic loop ───────────────────────────────────────────────────────────────
 
 def run_agent(prompt: str, system_prompt: str = SYSTEM_PROMPT) -> str:
-    messages = [{"role": "user", "content": prompt}]
-    seen     = set()
-    phase    = None
-
-    print()
-
-    while True:
-        response = client.messages.create(
-            model="claude-opus-4-7",
-            max_tokens=4096,
-            system=system_prompt,
-            tools=TOOLS,
-            messages=messages,
-        )
-
-        if response.stop_reason == "end_turn":
-            for block in response.content:
-                if hasattr(block, "text"):
-                    return block.text
-
-        if response.stop_reason == "tool_use":
-            messages.append({"role": "assistant", "content": response.content})
-
-            tool_results = []
-            for block in response.content:
-                if block.type == "tool_use":
-                    new_phase = detect_phase(block.name, seen)
-                    if new_phase and new_phase != phase:
-                        phase = new_phase
-                        print(PHASE_MESSAGES[phase])
-
-                    seen.add(block.name)
-                    result = run_tool(block.name, block.input)
-                    tool_results.append({
-                        "type": "tool_result",
-                        "tool_use_id": block.id,
-                        "content": result,
-                    })
-
-            messages.append({"role": "user", "content": tool_results})
+    return run_agent_loop(
+        prompt, system_prompt, TOOLS, run_tool, detect_phase, PHASE_MESSAGES
+    )
 
 
 # ── Entry point ────────────────────────────────────────────────────────────────
 
 def save_result(result: str, mode: str) -> Path:
-    """Save output to characters/traveller/ as {character-name}-{full|npc|patron}.md"""
-    first_line = next(
-        (l for l in result.strip().splitlines() if l.startswith("##")),
-        result.strip().splitlines()[0],
-    )
-    name_raw  = re.sub(r"[#*]", "", first_line).strip()
-    name_slug = re.sub(r"[^a-z0-9]+", "-", name_raw.lower()).strip("-")
-    filename  = f"{name_slug}-{mode}.md"
-
-    output_dir = Path(__file__).parent / "characters" / "traveller"
-    output_dir.mkdir(parents=True, exist_ok=True)
-    filepath = output_dir / filename
-    if filepath.exists():
-        stem = filepath.stem
-        counter = 2
-        while filepath.exists():
-            filepath = output_dir / f"{stem}-{counter}.md"
-            counter += 1
-    filepath.write_text(result)
-    return filepath
+    return save_character(result, mode, "traveller", __file__)
 
 
 def run(mode: str | None = None, desc: str | None = None) -> None:
@@ -935,12 +876,7 @@ def run(mode: str | None = None, desc: str | None = None) -> None:
         sys_prompt = SYSTEM_PROMPT
         prompt = f"Generate a Mongoose Traveller character for storytelling purposes with these constraints: {desc}" if desc else "Generate a fully random Mongoose Traveller character for storytelling purposes."
 
-    result = run_agent(prompt, sys_prompt)
-
-    # Strip any preamble before the first ## heading
-    lines = result.strip().splitlines()
-    heading_idx = next((i for i, l in enumerate(lines) if l.startswith("##")), 0)
-    result = "\n".join(lines[heading_idx:])
+    result = strip_preamble(run_agent(prompt, sys_prompt))
 
     print("\n" + result)
 
