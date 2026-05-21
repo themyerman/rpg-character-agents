@@ -1,0 +1,28 @@
+## The Hannox Detour
+
+### Members
+- **Oziel Vantreaux-Mourran-Kepf** — Half-Elf Bard — The one who knows everyone's name and uses it; smooths every room and complicates every exit.
+- **Vashka "Ash" Yurevin-Thaal** — Dragonborn Paladin — The silent weight at the table; the one whose disapproval lands heavier than anyone's shouting.
+- **Caedren Mol** — Human Rogue (Scout) — The party's eyes and forward edge; speaks plainly when Oziel won't and moves when Vashka won't, and is sleeping with the latter.
+- **Imryn Sath-Velluri** — Tiefling Wizard (Divination) — The bookkeeper of the group's bad decisions; tracks coin, contracts, and consequences, and is married to Caedren.
+
+*(Caedren: STR 13, DEX 16, CON 14, INT 12, WIS 15, CHA 8 — a quiet woman with a hunter's patience and a callus on her draw hand. Imryn: STR 10, DEX 13, CON 10, INT 17, WIS 12, CHA 10 — a thin, watchful tiefling with a ledger she actually uses and a wedding band of braided copper wire matching her wife's grip.)*
+
+### How They Met
+It started in the upstairs room of a coaching inn outside Vellsbruck, on the night Oziel was forty gold short and three hours away from a midwife writing the wrong letter. Imryn was there because someone had hired her to read a contract — a marriage contract, as it turned out, that Oziel had signed under a name that was only two-thirds his — and Caedren was there because Imryn was there. Vashka was there because Brother Olufemi's directions had sent her to that inn to meet a man who never showed; she was eating bread in the corner when six of Iselda Vrasc's "polite, well-dressed people" came up the stairs with knives folded inside their coats.
+
+What it cost: Caedren took a blade across the ribs putting herself between the stairwell and Imryn, who was halfway through a spell and couldn't move. Oziel, who had been climbing out the window with a stolen signet ring, climbed back in. Vashka stood up and absorbed three stab wounds without seeming to notice, and the fight ended with four dead cathedral agents on the floorboards and the innkeeper demanding everyone leave before the watch arrived. They left together because the alternative was leaving separately and being picked off on the road.
+
+By the second night on the road south, Oziel had learned the names of Imryn's dead mother and Caedren's childhood dog. By the third, Vashka had stitched Caedren's ribs with her own hands and said maybe nine words doing it. None of them have spoken about that upstairs room since.
+
+### What Holds Them Together
+Money and the road. Imryn keeps the ledger and the ledger is grim: Oziel's debts, Caedren's medical costs, the bounty Iselda has quietly put on Vashka, and the fact that none of them can safely return to any of the towns where they used to be welcome. They are, functionally, each other's only line of credit. Beyond that — Caedren and Imryn have been married four years and that marriage is the warm stone the rest of the party warms its hands against; both Oziel and Vashka, in different ways, are people who have failed at staying, and being near two people who have not failed at it yields a quiet that none of them will name.
+
+### The Fault Line
+Oziel and Imryn. Imryn has read enough of Oziel's correspondence by now (he leaves letters in his bedroll; she reads them; she is not sorry) to know exactly how many children he has, how many women he has lied to, and how much of the party's expenses he is quietly skimming toward Vellsbruck. She has not told Caedren, because Caedren genuinely likes Oziel and Imryn does not want to be the one who breaks that. But Imryn is a diviner, and she has seen the shape of a night where Oziel's debts catch up to them mid-job and someone — probably Caedren, because it is always Caedren — bleeds for it. When that night comes Imryn will not be merciful, and Oziel does not yet understand that the quiet tiefling who laughs at his songs is the person in the party most likely to leave him in a ditch.
+
+### Shared Secret
+They all know about the child. Vashka told them, once, drunk on bad wine outside Sorrowmouth, about the mitten and the shrine and the eleven years. None of them brought it up again. But Imryn, who tracks things, has been quietly making inquiries along the old caravan routes, and three weeks ago she found a name — a girl, now twelve, taken in by a shrine-keeper and later sold north to a noble household as a ward. Imryn has not told Vashka. She is waiting until she is sure, or until Vashka asks, and Vashka will not ask.
+
+### First Session Hook
+A rider in unmarked livery finds them at a waystation on the Hannox road and delivers a sealed letter addressed to "the dragonborn woman and her companions." Inside: a commission, a heavy purse as down payment, and a personal seal that Imryn recognizes from her contract work and Oziel recognizes because he once forged a lesser version of it. King Halric of Brenneth-Cor wants his daughter back. She vanished from court eighteen months ago; the official story is illness, the actual story is that she fled with a woman — a chambermaid named Wren — and the king's own investigators have lost the trail twice. The commission specifies the daughter is to be brought home unharmed, and the chambermaid is not mentioned at all, which is itself a kind of sentence. The waystation sits one day's ride from the village where Oziel's wife in Hannox lives, and the road to Brenneth-Cor runs straight through the noble household where Imryn believes Vashka's daughter was taken as a ward. The rider is waiting for an answer by dawn.
