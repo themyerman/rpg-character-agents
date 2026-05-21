@@ -154,6 +154,6 @@ rpg-character-agents/
 ├── dnd_characters/          # D&D output
 ├── traveller_characters/    # Traveller output
 ├── firefly_characters/      # Firefly output
-├── scum_characters/         # Scum and Villainy output
+├── scum_villainy_characters/ # Scum and Villainy output
 └── parties/                 # Party / crew brief output
 ```

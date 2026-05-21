@@ -19,7 +19,7 @@ FOLDERS = {
     "dnd":       Path(__file__).parent / "dnd_characters",
     "traveller": Path(__file__).parent / "traveller_characters",
     "firefly":   Path(__file__).parent / "firefly_characters",
-    "scum":      Path(__file__).parent / "scum_characters",
+    "scum":      Path(__file__).parent / "scum_villainy_characters",
 }
 
 PARTIES_DIR = Path(__file__).parent / "parties"
