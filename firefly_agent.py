@@ -241,6 +241,8 @@ SYSTEM_PROMPT = """You are a Firefly RPG character generator (Cortex System). Cr
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
+Do not output any intermediate notes, reasoning, or working text. Output only the formatted character sheet, starting directly with the ## heading.
+
 Work through these steps using your tools:
 
 1. ROLE — Choose a role that fits the story. Look it up with get_role_info.
@@ -418,6 +420,12 @@ if __name__ == "__main__":
         prompt = f"Generate a Firefly RPG character for storytelling purposes with these constraints: {desc}" if desc else "Generate a fully random Firefly RPG character for storytelling purposes."
 
     result = run_agent(prompt, sys_prompt)
+
+    # Strip any preamble before the first ## heading
+    lines = result.strip().splitlines()
+    heading_idx = next((i for i, l in enumerate(lines) if l.startswith("##")), 0)
+    result = "\n".join(lines[heading_idx:])
+
     print("\n" + result)
 
     saved = save_result(result, mode)
