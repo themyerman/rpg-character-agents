@@ -33,7 +33,7 @@ python dnd_agent.py
 ```
 
 **Modes:**
-- `character` — Full character sheet with ability scores (4d6 drop lowest), race, class, background, personality, connections, equipment, and backstory
+- `full` — Full character sheet with ability scores (4d6 drop lowest), race, class, background, personality, connections, equipment, and backstory
 - `npc` — Quick NPC sketch: stat block, demeanor, want, secret, hook, and one named connection
 - `questgiver` — Hook encounter: who approaches the party, the pitch in direct speech, what they want, what they're offering, and four possible truths. The DM rolls 1d4 in secret — Truth 4 is always The Reversal, where the party is on the wrong side of the story.
 
@@ -52,7 +52,7 @@ python traveller_agent.py
 ```
 
 **Modes:**
-- `character` — Full character with rolled UPP, homeworld (complete UWP), career history (2–6 terms), mishaps, connections, muster out benefits, and backstory. Ship shares are treated as story hooks, not line items.
+- `full` — Full character with rolled UPP, homeworld (complete UWP), career history (2–6 terms), mishaps, connections, muster out benefits, and backstory. Ship shares are treated as story hooks, not line items.
 - `npc` — Quick NPC sketch in Traveller format: UPP, career, demeanor, want, secret, hook
 - `patron` — Classic Traveller patron encounter: the job, the pitch (in direct speech), the payment, and four possible truths. The referee rolls 1d4 in secret — Truth 4 is always The Reversal, where the crew is on the wrong side of the job.
 
@@ -75,12 +75,17 @@ python firefly_agent.py
 Cortex System character generation for the 'Verse. Die sizes (d4–d12) replace numeric scores; Distinctions are story engines that can help or hurt depending on the situation.
 
 **Modes:**
-- `character` — Full character sheet: role, homeworld (Core/Border/Rim), Unification War history, six attributes with die ratings, 6–8 skills, three Distinctions with story notes, Signature Asset, Complications, and backstory
+- `full` — Full character sheet: role, homeworld (Core/Border/Rim), Unification War history, six attributes with die ratings, 6–8 skills, three Distinctions with story notes, Signature Asset, Complications, and backstory
 - `npc` — Quick NPC sketch: role, homeworld, key attributes, distinctions, wants, secret, and one hook
+- `jobcontact` — Hook encounter: who's hiring, the pitch in direct speech, what they want, what they're offering, and four possible truths. The GM rolls 1d4 in secret — Truth 4 is always The Reversal, where the crew is on the wrong side of the job.
 
 The generator rolls war history randomly and distributes attribute dice (d4–d10) across the six Cortex attributes. Roles available: Captain, Pilot, First Mate, Mechanic, Doctor, Shepherd, Muscle, Grifter, Thief.
 
-Output saves to `firefly_characters/` as `character-name-character.md` or `character-name-npc.md`.
+Output saves to `firefly_characters/` as `character-name-full.md`, `character-name-npc.md`, or `character-name-jobcontact.md`.
+
+**Example characters generated:**
+- Kezia "Halberd" Ramos — Captain, Beaumonde Border, Browncoat vet with a stolen ship and a score to settle
+- Liora Aldermere-Sato — Grifter, Osiris Core, Alliance-educated and deliberately running from it
 
 ---
 
@@ -93,12 +98,17 @@ python scum_villainy_agent.py
 Forged in the Dark character generation for crews operating at the edge of the Hegemony. Action ratings (0–4 dots), playbook special abilities, stress/trauma tracks, and a specific vice with a named purveyor.
 
 **Modes:**
-- `character` — Full crew member: playbook, heritage, background, vice, starting action dots grouped by attribute (Insight/Prowess/Resolve), one special ability, XP triggers, stress and trauma tracks, and backstory
+- `full` — Full crew member: playbook, heritage, background, vice, starting action dots grouped by attribute (Insight/Prowess/Resolve), one special ability, XP triggers, stress and trauma tracks, and backstory
 - `npc` — Quick NPC sketch: playbook equivalent, heritage, background, key actions, wants, secret, and hook
+- `scorecontact` — Hook encounter: who's offering the score, the pitch in direct speech, what they want, what they're paying, and four possible truths. The GM rolls 1d4 in secret — Truth 4 is always The Reversal, where the crew is on the wrong side of the job.
 
 Playbooks: Muscle, Pilot, Scoundrel, Mystic, Speaker, Stitch. Action dots use filled/empty circles (●○○○). Pilot uses Helm instead of Skirmish; Stitch uses Patch instead of Tinker.
 
-Output saves to `scum_characters/` as `character-name-character.md` or `character-name-npc.md`.
+Output saves to `scum_villainy_characters/` as `character-name-full.md`, `character-name-npc.md`, or `character-name-scorecontact.md`.
+
+**Example characters generated:**
+- Adaeze "Reins" Vukoja — Pilot, Iruvia heritage, Skovlan background, steady hands and a dangerous calm
+- Yusra "Vey" Okonkwo — Scoundrel, Severos heritage, Labor background, owes the wrong people too much
 
 ---
 
@@ -145,11 +155,13 @@ rpg-character-agents/
 ├── dnd_agent.py             # D&D 5e generator
 ├── traveller_agent.py       # Mongoose Traveller 2e generator
 ├── firefly_agent.py         # Firefly RPG (Cortex System) generator
-├── scum_villainy_agent.py            # Scum and Villainy (Forged in the Dark) generator
+├── scum_villainy_agent.py   # Scum and Villainy (Forged in the Dark) generator
 ├── party_agent.py           # Party / crew builder (all four games)
 ├── tests/                   # Unit tests (pure Python logic — no API calls)
 │   ├── test_dnd.py
 │   ├── test_traveller.py
+│   ├── test_firefly.py
+│   ├── test_scum.py
 │   └── test_party.py
 ├── dnd_characters/          # D&D output
 ├── traveller_characters/    # Traveller output
