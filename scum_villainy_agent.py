@@ -160,6 +160,77 @@ BACKGROUND = {
 }
 
 
+# ── Score hooks ──────────────────────────────────────────────────────────────────
+
+SCORE_HOOKS = [
+    {
+        "type":        "Data Theft",
+        "description": "Extract records, codes, or intelligence from a secured system or facility",
+        "complications": ["the data is partitioned and requires physical access at multiple nodes", "someone inside the system notices the intrusion in real time", "what they find is larger and more dangerous than what they came for"],
+    },
+    {
+        "type":        "Asset Seizure",
+        "description": "Take something that belongs to a faction — ship, cargo, property, or a person — before they can move it",
+        "complications": ["the asset has a keeper who wasn't in the briefing", "the faction reports it stolen before the crew can clear the system", "the asset is not where it's supposed to be"],
+    },
+    {
+        "type":        "Assassination",
+        "description": "Eliminate a specific target cleanly and without obvious attribution",
+        "complications": ["the target has a body double or rotation schedule", "the location is more public than contracted", "the window is shorter than promised and closing"],
+    },
+    {
+        "type":        "Smuggling Run",
+        "description": "Move contraband or restricted goods past Hegemony checkpoints to a specific destination",
+        "complications": ["an inspection point that wasn't on the route plan", "the cargo is more volatile than described", "a rival crew knows about the shipment"],
+    },
+    {
+        "type":        "Extraction",
+        "description": "Get a specific person out of somewhere they can't leave — quietly and without leaving evidence",
+        "complications": ["more people need out than contracted", "the target doesn't want to go", "their location has changed since the planning session"],
+    },
+    {
+        "type":        "Frame Job",
+        "description": "Plant evidence to make a specific person or faction look guilty of something career-ending or fatal",
+        "complications": ["the target is already under scrutiny from a different angle", "the evidence requires deeper access than anticipated", "someone close to the target is watching for exactly this"],
+    },
+    {
+        "type":        "Heist",
+        "description": "Break into a secured location and take a specific thing — vault, archive, collection, or cache",
+        "complications": ["security was upgraded after the intel was gathered", "another crew is running the same score", "what they were sent to take is not what's actually there"],
+    },
+    {
+        "type":        "Sabotage",
+        "description": "Destroy or permanently disable a specific target — ship, facility, supply chain, or communications array",
+        "complications": ["collateral damage would expose the crew", "the target is defended by someone genuinely competent", "a secondary system compensates faster than expected"],
+    },
+    {
+        "type":        "Acquisition",
+        "description": "Procure something specific that can't be bought — Ur artifact, restricted tech, black market hardware, or forbidden knowledge",
+        "complications": ["the current holder doesn't know what they have", "another faction is trying to acquire the same thing", "the item has side effects nobody thought to mention"],
+    },
+    {
+        "type":        "Courier",
+        "description": "Move something sensitive from one point to another without being seen, searched, or identified",
+        "complications": ["the handoff location is compromised", "what's being carried is more significant than disclosed", "both ends of the route have watchers the contact knew about"],
+    },
+    {
+        "type":        "Rescue",
+        "description": "Get someone out of a hostile situation — captivity, faction custody, or a deal that went sideways",
+        "complications": ["the target is being used as bait", "rescue requires going deeper before getting out", "there's a deadline the crew wasn't told about"],
+    },
+    {
+        "type":        "Infiltration",
+        "description": "Get a person — or the crew — into a position of access, trust, or proximity to a specific target or location",
+        "complications": ["a cover identity has prior history someone in the room remembers", "the crew needs to stay in place longer than planned", "the person they're impersonating shows up"],
+    },
+    {
+        "type":        "Negotiation",
+        "description": "Broker or enforce a deal between two factions who don't trust each other, with the crew as guarantor",
+        "complications": ["one side came to the table in bad faith", "a third party has a strong interest in the deal failing", "the agreed terms have a gap neither faction noticed — until now"],
+    },
+]
+
+
 # ── Vice ─────────────────────────────────────────────────────────────────────────
 
 VICE = {
@@ -273,6 +344,19 @@ def roll_dice(count: int = 2) -> str:
         outcome = "Failure (1–3)"
     return json.dumps({"rolls": rolls, "best": best, "outcome": outcome})
 
+def roll_score_hook() -> str:
+    """
+    Randomly select a score type and complication seed for a Hegemony-margins job.
+    Call this before building the contact's details.
+    """
+    hook         = random.choice(SCORE_HOOKS)
+    complication = random.choice(hook["complications"])
+    return json.dumps({
+        "score_type":  hook["type"],
+        "description": hook["description"],
+        "complication": complication,
+    })
+
 
 # ── Tool schemas ─────────────────────────────────────────────────────────────────
 
@@ -338,6 +422,11 @@ TOOLS = [
             "required": ["count"],
         },
     },
+    {
+        "name": "roll_score_hook",
+        "description": "Randomly select a score type and complication seed for a Hegemony-margins job encounter. Call this first before writing any contact details — prevents defaulting to assassination or data theft.",
+        "input_schema": {"type": "object", "properties": {}, "required": []},
+    },
 ]
 
 
@@ -350,6 +439,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_background":    return roll_background()
     if name == "roll_vice":          return roll_vice()
     if name == "roll_dice":          return roll_dice(**inputs)
+    if name == "roll_score_hook":    return roll_score_hook()
     return f"Unknown tool: {name}"
 
 
@@ -480,6 +570,8 @@ Names should reflect the Hegemony's reach across many cultures — vary first le
 
 Do not output any intermediate notes or working text. Output only the formatted contact, starting directly with the ## heading.
 
+STEP 0 (before writing anything): Call roll_score_hook() to get a score type and complication seed. Build the entire contact and encounter around what this tool returns. The score type determines the pitch, the payment structure, and what the crew is actually being sent to do. The complication seed should surface in at least one of the four Truths. Do not default to assassination or data theft unless roll_score_hook returns that category.
+
 The GM rolls 1d4 in secret to determine which truth is real — only one is. Truth 4 is always The Reversal, where the crew is on the wrong side of the score. Write all four so any one could be true until contradicted.
 
 Always use exactly this format:
@@ -526,6 +618,7 @@ PHASE_MESSAGES = {
     "background":  "Rolling background...",
     "vice":        "Rolling vice...",
     "actions":     "Assigning action dots...",
+    "score":       "Rolling score hook...",
 }
 
 def detect_phase(tool_name: str) -> str | None:
@@ -534,6 +627,7 @@ def detect_phase(tool_name: str) -> str | None:
     if tool_name == "roll_background":    return "background"
     if tool_name == "roll_vice":          return "vice"
     if tool_name == "assign_action_dots": return "actions"
+    if tool_name == "roll_score_hook":    return "score"
     return None
 
 

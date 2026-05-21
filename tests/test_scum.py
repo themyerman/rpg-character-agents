@@ -15,6 +15,7 @@ from scum_villainy_agent import (
     roll_background,
     roll_vice,
     roll_dice,
+    roll_score_hook,
     save_result,
     detect_phase,
     PLAYBOOKS,
@@ -22,6 +23,7 @@ from scum_villainy_agent import (
     BACKGROUND,
     VICE,
     ACTIONS,
+    SCORE_HOOKS,
 )
 
 
@@ -249,6 +251,56 @@ class TestDetectPhase:
 
     def test_unrelated_tool_returns_none(self):
         assert detect_phase("flip_coin") is None
+
+    def test_roll_score_hook_returns_score(self):
+        assert detect_phase("roll_score_hook") == "score"
+
+
+# ── roll_score_hook ───────────────────────────────────────────────────────────────
+
+class TestRollScoreHook:
+    def test_returns_valid_json(self):
+        result = roll_score_hook()
+        data = json.loads(result)
+        assert isinstance(data, dict)
+
+    def test_has_required_keys(self):
+        data = json.loads(roll_score_hook())
+        assert "score_type" in data
+        assert "description" in data
+        assert "complication" in data
+
+    def test_score_type_is_known(self):
+        known_types = {h["type"] for h in SCORE_HOOKS}
+        for _ in range(20):
+            data = json.loads(roll_score_hook())
+            assert data["score_type"] in known_types
+
+    def test_returns_variety(self):
+        # 30 rolls across 13 types should yield at least 3 distinct score types
+        types = {json.loads(roll_score_hook())["score_type"] for _ in range(30)}
+        assert len(types) >= 3
+
+    def test_complication_is_non_empty_string(self):
+        data = json.loads(roll_score_hook())
+        assert isinstance(data["complication"], str)
+        assert len(data["complication"]) > 0
+
+    def test_complication_belongs_to_score_type(self):
+        for _ in range(20):
+            data = json.loads(roll_score_hook())
+            hook = next(h for h in SCORE_HOOKS if h["type"] == data["score_type"])
+            assert data["complication"] in hook["complications"]
+
+    def test_at_least_ten_score_types(self):
+        assert len(SCORE_HOOKS) >= 10
+
+    def test_no_single_default_dominates(self):
+        # Verify both assassination and data theft are just two options among many
+        known_types = {h["type"] for h in SCORE_HOOKS}
+        assert "Assassination" in known_types
+        assert "Data Theft" in known_types
+        assert len(known_types) > 4  # not just a handful of options
 
 
 # ── save_result ──────────────────────────────────────────────────────────────────
