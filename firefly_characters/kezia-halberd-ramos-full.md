@@ -1,4 +1,4 @@
-## **Wen "Halberd" Ramos**
+## **Kezia "Halberd" Ramos**
 *Captain — An Alliance war hero who came home with one less arm and considerably less faith, and now flies cargo she tries not to ask questions about.*
 
 | | |
@@ -38,4 +38,4 @@
 **Phantom Pain in a Hand That Isn't There** d6 — The prosthetic is good Alliance tech, but the nerves haven't forgiven her; cold weather, stress, and certain frequencies set off a fire in fingers she doesn't have.
 
 ### Backstory
-Wen Ramos enlisted out of a Beaumonde factory district at nineteen because the Alliance recruiter promised her family a stipend and her a way off-world, and she was good enough at soldiering that they pinned medals on her before she understood what she'd been pinning down. She lost the arm at Du-Khang in the last month of the war — not to a Browncoat, but to a panicked Alliance gunship that strafed her own position, and the official commendation she received afterward sits in a drawer she doesn't open. She bought a tired Firefly with her separation pay, hired a crew of people the Alliance had also chewed up in different ways, and now flies the Border looking for jobs honest enough to sleep on and dishonest enough to fuel the ship — the saber is for when those two categories disagree.
+Kezia Ramos enlisted out of a Beaumonde factory district at nineteen because the Alliance recruiter promised her family a stipend and her a way off-world, and she was good enough at soldiering that they pinned medals on her before she understood what she'd been pinning down. She lost the arm at Du-Khang in the last month of the war — not to a Browncoat, but to a panicked Alliance gunship that strafed her own position, and the official commendation she received afterward sits in a drawer she doesn't open. She bought a tired Firefly with her separation pay, hired a crew of people the Alliance had also chewed up in different ways, and now flies the Border looking for jobs honest enough to sleep on and dishonest enough to fuel the ship — the saber is for when those two categories disagree.

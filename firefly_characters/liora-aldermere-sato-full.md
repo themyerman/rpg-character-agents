@@ -1,4 +1,4 @@
-## **Wrenleigh "Wren" Aldermere-Sato**
+## **Liora Aldermere-Sato**
 *Grifter — A runaway Core heiress who learned to kill in the Valley and is taking the long way home to burn her father's house down.*
 
 | | |
@@ -15,7 +15,7 @@
 - **Vitality** d6 — runs on stims and grudges more than sleep
 - **Willpower** d8 — has survived worse than whatever you're threatening her with
 
-*Attribute changes: swapped the rolled Agility d4 with Alertness d6, then bumped Alertness to d8 by trading down — Wren's edge isn't reflexes, it's reading the room two beats before anyone else does.*
+*Attribute changes: swapped the rolled Agility d4 with Alertness d6, then bumped Alertness to d8 by trading down — Liora's edge isn't reflexes, it's reading the room two beats before anyone else does.*
 
 ### Skills
 - Influence d10
@@ -40,4 +40,4 @@
 **Hunted Quietly** d6 — Her family hasn't reported her missing — they've hired private contractors to bring her back or make sure she stays gone, and one of them is good.
 
 ### Backstory
-Wrenleigh Aldermere-Sato was the second daughter of an Osiris shipping dynasty, raised on Latin verbs and the assumption that her body belonged to whoever her father decided it should; when she was sixteen and started asking the wrong questions at the wrong dinners, her father arranged a discreet "finishing year" that turned out to be a private clientele in a walled house on Bernadette. She got out at nineteen by killing a guard with a fireplace poker and walking three days to a Browncoat recruiting station, where she lied about her name and didn't lie about wanting to shoot Alliance soldiers — she came out of Serenity Valley with a limp that's mostly healed and a list of seven names she intends to cross off before she dies. She's on a Firefly now because Firefly crews go everywhere and ask the wrong questions for money, and sooner or later one of those questions is going to take her back to Osiris with a gun in her hand.
+Liora Aldermere-Sato was the second daughter of an Osiris shipping dynasty, raised on Latin verbs and the assumption that her body belonged to whoever her father decided it should; when she was sixteen and started asking the wrong questions at the wrong dinners, her father arranged a discreet "finishing year" that turned out to be a private clientele in a walled house on Bernadette. She got out at nineteen by killing a guard with a fireplace poker and walking three days to a Browncoat recruiting station, where she lied about her name and didn't lie about wanting to shoot Alliance soldiers — she came out of Serenity Valley with a limp that's mostly healed and a list of seven names she intends to cross off before she dies. She's on a Firefly now because Firefly crews go everywhere and ask the wrong questions for money, and sooner or later one of those questions is going to take her back to Osiris with a gun in her hand.
