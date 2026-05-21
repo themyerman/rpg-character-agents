@@ -444,7 +444,7 @@ def save_result(result: str, mode: str) -> Path:
     name_slug = re.sub(r"[^a-z0-9]+", "-", name_raw.lower()).strip("-")
     filename  = f"{name_slug}-{mode}.md"
 
-    output_dir = Path(__file__).parent / "firefly_characters"
+    output_dir = Path(__file__).parent / "characters" / "firefly"
     output_dir.mkdir(exist_ok=True)
     filepath = output_dir / filename
     filepath.write_text(result)

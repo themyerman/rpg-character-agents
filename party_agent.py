@@ -15,11 +15,13 @@ client = anthropic.Anthropic()
 
 # ── Folder locations ────────────────────────────────────────────────────────────
 
+_CHARS = Path(__file__).parent / "characters"
+
 FOLDERS = {
-    "dnd":       Path(__file__).parent / "dnd_characters",
-    "traveller": Path(__file__).parent / "traveller_characters",
-    "firefly":   Path(__file__).parent / "firefly_characters",
-    "scum":      Path(__file__).parent / "scum_villainy_characters",
+    "dnd":       _CHARS / "dnd",
+    "traveller": _CHARS / "traveller",
+    "firefly":   _CHARS / "firefly",
+    "scum":      _CHARS / "scum_villainy",
 }
 
 PARTIES_DIR = Path(__file__).parent / "parties"

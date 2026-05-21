@@ -37,7 +37,7 @@ python dnd_agent.py
 - `npc` — Quick NPC sketch: stat block, demeanor, want, secret, hook, and one named connection
 - `questgiver` — Hook encounter: who approaches the party, the pitch in direct speech, what they want, what they're offering, and four possible truths. The DM rolls 1d4 in secret — Truth 4 is always The Reversal, where the party is on the wrong side of the story.
 
-You can describe what you want in plain English, or press Enter for fully random. Output saves to `dnd_characters/` as `character-name-full.md`, `character-name-npc.md`, or `character-name-questgiver.md`.
+You can describe what you want in plain English, or press Enter for fully random. Output saves to `characters/dnd/` as `character-name-full.md`, `character-name-npc.md`, or `character-name-questgiver.md`.
 
 **Example characters generated:**
 - Pip "Tallowfingers" Underbough — Lightfoot Halfling Rogue, hunting the gang boss who took her brother
@@ -56,7 +56,7 @@ python traveller_agent.py
 - `npc` — Quick NPC sketch in Traveller format: UPP, career, demeanor, want, secret, hook
 - `patron` — Classic Traveller patron encounter: the job, the pitch (in direct speech), the payment, and four possible truths. The referee rolls 1d4 in secret — Truth 4 is always The Reversal, where the crew is on the wrong side of the job.
 
-Output saves to `traveller_characters/` as `character-name-full.md`, `character-name-npc.md`, or `character-name-patron.md`.
+Output saves to `characters/traveller/` as `character-name-full.md`, `character-name-npc.md`, or `character-name-patron.md`.
 
 **Example characters generated:**
 - Séverine "Sev" Aldenberg-Vey — Navy, 4 terms, ship shares and unfinished business
@@ -81,7 +81,7 @@ Cortex System character generation for the 'Verse. Die sizes (d4–d12) replace 
 
 The generator rolls war history randomly and distributes attribute dice (d4–d10) across the six Cortex attributes. Roles available: Captain, Pilot, First Mate, Mechanic, Doctor, Shepherd, Muscle, Grifter, Thief.
 
-Output saves to `firefly_characters/` as `character-name-full.md`, `character-name-npc.md`, or `character-name-jobcontact.md`.
+Output saves to `characters/firefly/` as `character-name-full.md`, `character-name-npc.md`, or `character-name-jobcontact.md`.
 
 **Example characters generated:**
 - Kezia "Halberd" Ramos — Captain, Beaumonde Border, Browncoat vet with a stolen ship and a score to settle
@@ -104,7 +104,7 @@ Forged in the Dark character generation for crews operating at the edge of the H
 
 Playbooks: Muscle, Pilot, Scoundrel, Mystic, Speaker, Stitch. Action dots use filled/empty circles (●○○○). Pilot uses Helm instead of Skirmish; Stitch uses Patch instead of Tinker.
 
-Output saves to `scum_villainy_characters/` as `character-name-full.md`, `character-name-npc.md`, or `character-name-scorecontact.md`.
+Output saves to `characters/scum_villainy/` as `character-name-full.md`, `character-name-npc.md`, or `character-name-scorecontact.md`.
 
 **Example characters generated:**
 - Adaeze "Reins" Vukoja — Pilot, Iruvia heritage, Skovlan background, steady hands and a dangerous calm
@@ -165,9 +165,10 @@ rpg-character-agents/
 │   ├── test_firefly.py
 │   ├── test_scum.py
 │   └── test_party.py
-├── dnd_characters/          # D&D output
-├── traveller_characters/    # Traveller output
-├── firefly_characters/      # Firefly output
-├── scum_villainy_characters/ # Scum and Villainy output
+├── characters/              # All character output
+│   ├── dnd/                 # D&D characters
+│   ├── traveller/           # Traveller characters
+│   ├── firefly/             # Firefly characters
+│   └── scum_villainy/       # Scum and Villainy characters
 └── parties/                 # Party / crew brief output
 ```
