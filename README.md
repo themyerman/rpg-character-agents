@@ -136,7 +136,9 @@ Output saves to `parties/` as `game-party-name-party.md`. Opening hooks save to 
 
 ## How it works
 
-`main.py` is the bare-bones reference — a single API call, nothing more. The agents build on that foundation:
+`main.py` is the top-level entry point. Run it and a numbered menu walks you through game → mode → optional description, then hands off to the right agent. Each agent can also be run directly (`python dnd_agent.py`, etc.) — they prompt for mode and description on their own.
+
+The agents build on a simple foundation:
 
 1. Claude receives a system prompt with the game's rules and output format
 2. It calls tools (dice rollers, rules lookups) and gets real random results back
@@ -151,7 +153,7 @@ The phase tracker prints plain-English progress as generation runs — you see "
 
 ```
 rpg-character-agents/
-├── main.py                  # Stage 1 reference — bare API call
+├── main.py                  # Top-level menu — routes to the right agent
 ├── dnd_agent.py             # D&D 5e generator
 ├── traveller_agent.py       # Mongoose Traveller 2e generator
 ├── firefly_agent.py         # Firefly RPG (Cortex System) generator

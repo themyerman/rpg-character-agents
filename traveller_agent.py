@@ -758,11 +758,13 @@ def save_result(result: str, mode: str) -> Path:
     return filepath
 
 
-if __name__ == "__main__":
-    mode  = input("Mode? (full / npc / patron, default: full): ").strip().lower()
-    mode  = mode if mode in ("full", "npc", "patron") else "full"
+def run(mode: str | None = None, desc: str | None = None) -> None:
+    if mode is None:
+        mode = input("Mode? (full / npc / patron, default: full): ").strip().lower()
+        mode = mode if mode in ("full", "npc", "patron") else "full"
     label = {"full": "character", "npc": "NPC", "patron": "patron"}[mode]
-    desc  = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
+    if desc is None:
+        desc = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
 
     if mode == "npc":
         sys_prompt = NPC_SYSTEM_PROMPT
@@ -779,3 +781,7 @@ if __name__ == "__main__":
 
     saved = save_result(result, mode)
     print(f"\n[saved → {saved}]")
+
+
+if __name__ == "__main__":
+    run()

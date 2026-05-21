@@ -359,7 +359,7 @@ def save_result(result: str, game: str, suffix: str = "party") -> Path:
 
 # ── Entry point ─────────────────────────────────────────────────────────────────
 
-if __name__ == "__main__":
+def run() -> None:
 
     # 1. Game
     game_raw = input("Game? (dnd / traveller / firefly / scum, default: traveller): ").strip().lower()
@@ -528,3 +528,7 @@ if __name__ == "__main__":
         hook_path   = FOLDERS[game] / f"{hook_slug}-{hook_suffix}.md"
         hook_path.write_text(hook_result)
         print(f"[saved → {hook_path}]")
+
+
+if __name__ == "__main__":
+    run()
