@@ -495,22 +495,20 @@ if __name__ == "__main__":
             hook_result = run_agent(hook_prompt, HOOK_SYSTEM, HOOK_TOOLS, hook_run_tool)
 
         elif game == "firefly":
-            from firefly_agent import SYSTEM_PROMPT as HOOK_SYSTEM
+            from firefly_agent import JOB_CONTACT_SYSTEM_PROMPT as HOOK_SYSTEM
             hook_prompt = (
-                f"Generate a Firefly RPG job contact — a person with a job to offer, tailored specifically to this crew. "
+                f"Generate a Firefly RPG job contact tailored specifically to this crew. "
                 f"The job should connect to their fault line, their shared secret, or a specific crew member's backstory thread. "
-                f"Format as an NPC with: name, what they look like, what they need, what they're not saying, and the job offer. "
                 f"Here is the crew brief:\n\n{result}"
             )
             print(f"\nGenerating {hook_type} hook...")
             hook_result = synthesize(hook_prompt, HOOK_SYSTEM)
 
         elif game == "scum":
-            from scum_villainy_agent import SYSTEM_PROMPT as HOOK_SYSTEM
+            from scum_villainy_agent import SCORE_CONTACT_SYSTEM_PROMPT as HOOK_SYSTEM
             hook_prompt = (
-                f"Generate a Scum and Villainy score contact — a person offering a job, tailored specifically to this crew. "
+                f"Generate a Scum and Villainy score contact tailored specifically to this crew. "
                 f"The score should connect to their fault line, their shared secret, or a specific crew member's backstory thread. "
-                f"Format as an NPC with: name, faction affiliation, what they need, what they're hiding, the job offer, and the catch. "
                 f"Here is the crew brief:\n\n{result}"
             )
             print(f"\nGenerating {hook_type} hook...")

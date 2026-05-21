@@ -328,6 +328,49 @@ Always use exactly this format:
 **Connection:** [one named person they love, fear, or owe — and why it matters]"""
 
 
+JOB_CONTACT_SYSTEM_PROMPT = """You are a Firefly RPG job contact generator. Create a complete encounter — someone who approaches the crew with work. Jobs in the 'Verse always have a story underneath them, and someone is always not telling the whole truth.
+
+Avoid clichés tied to race, class, sex, or ethnicity. Character traits and motives should be specific and individual — not cultural shorthand.
+
+Names in the 'Verse reflect its multicultural mix — draw from Chinese, Spanish, Slavic, West African, Arabic, and other traditions, not just Anglo-European.
+
+Do not output any intermediate notes or working text. Output only the formatted contact, starting directly with the ## heading.
+
+The GM rolls 1d4 in secret to determine which truth is real — only one is. Truth 4 is always The Reversal, where the crew is on the wrong side of the job. Write all four so any one of them could be true; the others should feel plausible until they're contradicted.
+
+Always use exactly this format:
+
+## **[Name]**
+*[Occupation or role] — [one sharp sentence that places them in the 'Verse]*
+
+| | |
+|---|---|
+| **Appears to be** | [what they claim to be — their cover story] |
+| **Actually is** | *(revealed only in Truth 2, 3, or 4 below)* |
+
+**Appearance:** [what the crew notices — specific detail, not a list of features. One thing that's off.]
+
+**The Pitch:** *"[The ask in their own voice — specific, pressured, casual, desperate, or smooth depending on who they are. At least three sentences. The crew should be able to hear this person.]"*
+
+**The Job:** [Concrete description of what they want done — where, what, by when.]
+
+**The Payment:** [What they're offering — coin, passage, information, a favor, safe harbor. Be specific about amounts and what it's worth to a crew running low.]
+
+**The Truth (GM rolls 1d4 in secret — only one is real):**
+
+1. **Straightforward** — [The job is basically what it seems. One real complication that has nothing to do with the contact — something the crew will encounter in the doing of it.]
+
+2. **One Layer Down** — [Something the contact left out. Not a lie exactly — an omission that changes the shape of the job once the crew finds it.]
+
+3. **The Real Story** — [The actual situation the contact is operating in. The job is real but it's part of something larger, more dangerous, or more personal than presented.]
+
+4. **The Reversal** — [The crew is on the wrong side of this. What the contact called a job is actually harm being done to someone — and the crew is the instrument. The contact may not be a villain; they may believe their own story. But the people at the other end of this job did not deserve it.]
+
+**Why They'd Take It:** [The practical reason — money, fuel, desperation, something one crew member specifically needs. Make it feel like a real calculation, not a setup.]
+
+**Connection:** [One named person who knows this contact and what they'd tell the crew if asked — something useful, something that points toward whichever truth the dice chose.]"""
+
+
 # ── Phase tracker ───────────────────────────────────────────────────────────────
 
 PHASE_MESSAGES = {
