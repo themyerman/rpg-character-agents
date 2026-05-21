@@ -850,17 +850,18 @@ def run_ship(game: str, desc: str = "") -> str:
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
-def run() -> None:
-    game = pick(
-        "Which game?",
-        [
-            ("dnd",       "D&D 5e"),
-            ("traveller", "Mongoose Traveller 2e"),
-            ("firefly",   "Firefly RPG"),
-            ("scum",      "Scum and Villainy"),
-        ],
-        default_idx=1,
-    )
+def run(game: str | None = None) -> None:
+    if game is None:
+        game = pick(
+            "Which game?",
+            [
+                ("dnd",       "D&D 5e"),
+                ("traveller", "Mongoose Traveller 2e"),
+                ("firefly",   "Firefly RPG"),
+                ("scum",      "Scum and Villainy"),
+            ],
+            default_idx=1,
+        )
 
     desc = input(
         "\nAny constraints or themes? (e.g. 'smuggler, beat up, dark past' or press Enter for fully random):\n> "

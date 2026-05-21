@@ -296,15 +296,16 @@ def save_result(result: str, game: str, suffix: str = "party") -> Path:
 
 # ── Entry point ─────────────────────────────────────────────────────────────────
 
-def run() -> None:
+def run(game: str | None = None) -> None:
 
     # 1. Game
-    game  = pick(
-        "Which game?",
-        [("dnd", "D&D 5e"), ("traveller", "Mongoose Traveller 2e"),
-         ("firefly", "Firefly RPG"), ("scum", "Scum and Villainy")],
-        default_idx=1,
-    )
+    if game is None:
+        game = pick(
+            "Which game?",
+            [("dnd", "D&D 5e"), ("traveller", "Mongoose Traveller 2e"),
+             ("firefly", "Firefly RPG"), ("scum", "Scum and Villainy")],
+            default_idx=1,
+        )
     label = "party" if game == "dnd" else "crew"
 
     # 2. Party size

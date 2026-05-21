@@ -732,17 +732,18 @@ def run_encounter(game: str, desc: str = "", party_brief: str | None = None) -> 
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
-def run() -> None:
-    game = pick(
-        "Which game?",
-        [
-            ("dnd",       "D&D 5e"),
-            ("traveller", "Mongoose Traveller 2e"),
-            ("firefly",   "Firefly RPG"),
-            ("scum",      "Scum and Villainy"),
-        ],
-        default_idx=1,
-    )
+def run(game: str | None = None) -> None:
+    if game is None:
+        game = pick(
+            "Which game?",
+            [
+                ("dnd",       "D&D 5e"),
+                ("traveller", "Mongoose Traveller 2e"),
+                ("firefly",   "Firefly RPG"),
+                ("scum",      "Scum and Villainy"),
+            ],
+            default_idx=1,
+        )
 
     # Optional party brief
     party_brief = pick_party_file(game)
