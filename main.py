@@ -16,6 +16,7 @@ import scum_villainy_agent
 import party_agent
 import npc_cluster_agent
 import encounter_agent
+import ship_agent
 from utils import pick
 
 
@@ -62,6 +63,7 @@ def main() -> None:
             ("party",      "Build a party / crew"),
             ("cluster",    "Build an NPC cluster (connected group with hooks)"),
             ("encounter",  "Generate an encounter"),
+            ("ship",       "Build a ship"),
         ],
     )
 
@@ -75,6 +77,10 @@ def main() -> None:
 
     if action == "encounter":
         encounter_agent.run()
+        return
+
+    if action == "ship":
+        ship_agent.run()
         return
 
     # --- character path ---
