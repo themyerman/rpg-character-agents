@@ -15,6 +15,7 @@ import firefly_agent
 import scum_villainy_agent
 import party_agent
 import npc_cluster_agent
+import encounter_agent
 from utils import pick
 
 
@@ -57,9 +58,10 @@ def main() -> None:
     action = pick(
         "What do you want to do?",
         [
-            ("character", "Build a character or NPC"),
-            ("party",     "Build a party / crew"),
-            ("cluster",   "Build an NPC cluster (connected group with hooks)"),
+            ("character",  "Build a character or NPC"),
+            ("party",      "Build a party / crew"),
+            ("cluster",    "Build an NPC cluster (connected group with hooks)"),
+            ("encounter",  "Generate an encounter"),
         ],
     )
 
@@ -69,6 +71,10 @@ def main() -> None:
 
     if action == "cluster":
         npc_cluster_agent.run()
+        return
+
+    if action == "encounter":
+        encounter_agent.run()
         return
 
     # --- character path ---
