@@ -746,14 +746,23 @@ def run_agent(prompt: str, system_prompt: str = SYSTEM_PROMPT) -> str:
 
 def save_result(result: str, mode: str) -> Path:
     """Save output to characters/traveller/ as {character-name}-{full|npc|patron}.md"""
-    first_line = result.strip().splitlines()[0]
-    name_raw   = re.sub(r"[#*]", "", first_line).strip()
-    name_slug  = re.sub(r"[^a-z0-9]+", "-", name_raw.lower()).strip("-")
-    filename   = f"{name_slug}-{mode}.md"
+    first_line = next(
+        (l for l in result.strip().splitlines() if l.startswith("##")),
+        result.strip().splitlines()[0],
+    )
+    name_raw  = re.sub(r"[#*]", "", first_line).strip()
+    name_slug = re.sub(r"[^a-z0-9]+", "-", name_raw.lower()).strip("-")
+    filename  = f"{name_slug}-{mode}.md"
 
     output_dir = Path(__file__).parent / "characters" / "traveller"
-    output_dir.mkdir(exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
     filepath = output_dir / filename
+    if filepath.exists():
+        stem = filepath.stem
+        counter = 2
+        while filepath.exists():
+            filepath = output_dir / f"{stem}-{counter}.md"
+            counter += 1
     filepath.write_text(result)
     return filepath
 

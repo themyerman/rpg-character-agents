@@ -229,7 +229,29 @@ class TestSaveResult:
         monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
         content = "## **Test**\n*Role*"
         path = save_result(content, "full")
-        assert "firefly_characters" in str(path)
+        assert "characters" in str(path)
+        assert "firefly" in str(path)
+
+    def test_collision_appends_counter(self, tmp_path, monkeypatch):
+        """Second character with the same name gets -2 suffix, not a silent overwrite."""
+        import firefly_agent
+        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
+        content = "## **Cassidy Vane**\n*Pilot — flies like she was born in the black*"
+        path1 = save_result(content, "full")
+        path2 = save_result(content, "full")
+        assert path1 != path2
+        assert path1.exists()
+        assert path2.exists()
+        assert path2.name == "cassidy-vane-full-2.md"
+
+    def test_collision_increments_beyond_two(self, tmp_path, monkeypatch):
+        import firefly_agent
+        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
+        content = "## **Cassidy Vane**\n*Pilot*"
+        save_result(content, "full")
+        save_result(content, "full")
+        path3 = save_result(content, "full")
+        assert path3.name == "cassidy-vane-full-3.md"
 
     def test_strips_markdown_from_filename(self, tmp_path, monkeypatch):
         import firefly_agent

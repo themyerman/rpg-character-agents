@@ -445,8 +445,14 @@ def save_result(result: str, mode: str) -> Path:
     filename  = f"{name_slug}-{mode}.md"
 
     output_dir = Path(__file__).parent / "characters" / "firefly"
-    output_dir.mkdir(exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
     filepath = output_dir / filename
+    if filepath.exists():
+        stem = filepath.stem
+        counter = 2
+        while filepath.exists():
+            filepath = output_dir / f"{stem}-{counter}.md"
+            counter += 1
     filepath.write_text(result)
     return filepath
 

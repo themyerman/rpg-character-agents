@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+import dnd_agent
 from dnd_agent import (
     ability_modifier,
     modifier_str,
@@ -14,6 +15,7 @@ from dnd_agent import (
     get_race_info,
     get_class_info,
     get_background_info,
+    save_result,
     VALID_DICE,
     MIN_ROLLS,
     MAX_ROLLS,
@@ -166,6 +168,73 @@ class TestGetBackgroundInfo:
         for bg in BACKGROUNDS:
             result = get_background_info(bg)
             assert "Error" not in result, f"Background '{bg}' returned an error"
+
+
+# ── save_result ─────────────────────────────────────────────────────────────────
+
+class TestSaveResult:
+    def test_finds_heading_for_filename(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dnd_agent, "__file__", str(tmp_path / "dnd_agent.py"))
+        content = "## **Pip Underbough**\n*Rogue — light fingers, heavy conscience*"
+        path = save_result(content, "full")
+        assert "pip-underbough" in path.name
+
+    def test_preamble_skipped_for_filename(self, tmp_path, monkeypatch):
+        """Preamble before first ## heading must not end up in the filename."""
+        monkeypatch.setattr(dnd_agent, "__file__", str(tmp_path / "dnd_agent.py"))
+        content = "Now I have everything. Let me build her.\n\nHP = 8\n\n## **Iyari Sael**\n*Druid*"
+        path = save_result(content, "full")
+        assert "iyari-sael" in path.name
+        assert "now" not in path.name
+        assert "everything" not in path.name
+
+    def test_collision_appends_counter(self, tmp_path, monkeypatch):
+        """Second character with the same name gets -2 suffix, not a silent overwrite."""
+        monkeypatch.setattr(dnd_agent, "__file__", str(tmp_path / "dnd_agent.py"))
+        content = "## **Aldric Vehr**\n*Fighter — wall of a man*"
+        path1 = save_result(content, "full")
+        path2 = save_result(content, "full")
+        assert path1 != path2
+        assert path1.exists()
+        assert path2.exists()
+        assert path2.name == "aldric-vehr-full-2.md"
+
+    def test_collision_increments_beyond_two(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dnd_agent, "__file__", str(tmp_path / "dnd_agent.py"))
+        content = "## **Aldric Vehr**\n*Fighter*"
+        save_result(content, "full")
+        save_result(content, "full")
+        path3 = save_result(content, "full")
+        assert path3.name == "aldric-vehr-full-3.md"
+
+    def test_mode_used_as_suffix(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dnd_agent, "__file__", str(tmp_path / "dnd_agent.py"))
+        content = "## **Rook Delmar**\n*Paladin*"
+        assert save_result(content, "full").name.endswith("-full.md")
+        content2 = "## **Siena Mott**\n*Warlock*"
+        assert save_result(content2, "npc").name.endswith("-npc.md")
+        content3 = "## **Halben Orriss**\n*Quest giver*"
+        assert save_result(content3, "questgiver").name.endswith("-questgiver.md")
+
+    def test_file_content_written(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dnd_agent, "__file__", str(tmp_path / "dnd_agent.py"))
+        content = "## **Test Character**\n*Cleric — keeps everyone alive, barely*"
+        path = save_result(content, "full")
+        assert path.read_text() == content
+
+    def test_saves_to_correct_dir(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dnd_agent, "__file__", str(tmp_path / "dnd_agent.py"))
+        content = "## **Test**\n*Fighter*"
+        path = save_result(content, "full")
+        assert "characters" in str(path)
+        assert "dnd" in str(path)
+
+    def test_strips_markdown_from_filename(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(dnd_agent, "__file__", str(tmp_path / "dnd_agent.py"))
+        content = "## **Rook Delmar**\n*Fighter*"
+        path = save_result(content, "full")
+        assert "**" not in path.name
+        assert "#" not in path.name
 
 
 # ── Constants sanity checks ─────────────────────────────────────────────────────

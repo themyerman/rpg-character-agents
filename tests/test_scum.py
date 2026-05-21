@@ -285,7 +285,29 @@ class TestSaveResult:
         monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
         content = "## **Test**\n*Role*"
         path = save_result(content, "full")
-        assert "scum_villainy_characters" in str(path)
+        assert "characters" in str(path)
+        assert "scum_villainy" in str(path)
+
+    def test_collision_appends_counter(self, tmp_path, monkeypatch):
+        """Second character with the same name gets -2 suffix, not a silent overwrite."""
+        import scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
+        content = "## **Reva Marsh**\n*Scoundrel — three fake IDs and a real grudge*"
+        path1 = save_result(content, "full")
+        path2 = save_result(content, "full")
+        assert path1 != path2
+        assert path1.exists()
+        assert path2.exists()
+        assert path2.name == "reva-marsh-full-2.md"
+
+    def test_collision_increments_beyond_two(self, tmp_path, monkeypatch):
+        import scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
+        content = "## **Reva Marsh**\n*Scoundrel*"
+        save_result(content, "full")
+        save_result(content, "full")
+        path3 = save_result(content, "full")
+        assert path3.name == "reva-marsh-full-3.md"
 
     def test_strips_markdown_from_filename(self, tmp_path, monkeypatch):
         import scum_villainy_agent

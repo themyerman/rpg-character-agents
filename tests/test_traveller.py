@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+import traveller_agent
 from traveller_agent import (
     characteristic_modifier,
     to_hex_char,
@@ -16,6 +17,7 @@ from traveller_agent import (
     get_career_info,
     get_characteristic_modifier,
     compute_upp,
+    save_result,
     VALID_DICE,
     MIN_ROLLS,
     MAX_ROLLS,
@@ -218,6 +220,73 @@ class TestComputeUpp:
     def test_all_zeros(self):
         result = compute_upp([0, 0, 0, 0, 0, 0])
         assert result == "UPP: 000000"
+
+
+# ── save_result ─────────────────────────────────────────────────────────────────
+
+class TestSaveResult:
+    def test_finds_heading_for_filename(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "traveller_agent.py"))
+        content = "## **Séverine Aldenberg-Vey**\nNavy, 4 terms"
+        path = save_result(content, "full")
+        assert "s-verine-aldenberg-vey" in path.name or "aldeenberg" in path.name or "aldenberg" in path.name
+
+    def test_preamble_skipped_for_filename(self, tmp_path, monkeypatch):
+        """Preamble before first ## heading must not end up in the filename."""
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "traveller_agent.py"))
+        content = "Now let me calculate the UPP.\n\nSTR 7, DEX 9...\n\n## **Korven Drask**\nDrifter, 6 terms"
+        path = save_result(content, "full")
+        assert "korven-drask" in path.name
+        assert "now" not in path.name
+        assert "calculate" not in path.name
+
+    def test_collision_appends_counter(self, tmp_path, monkeypatch):
+        """Second character with the same name gets -2 suffix, not a silent overwrite."""
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "traveller_agent.py"))
+        content = "## **Nasrin al-Qadeer**\nScout, 2 terms"
+        path1 = save_result(content, "full")
+        path2 = save_result(content, "full")
+        assert path1 != path2
+        assert path1.exists()
+        assert path2.exists()
+        assert path2.name == "nasrin-al-qadeer-full-2.md"
+
+    def test_collision_increments_beyond_two(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "traveller_agent.py"))
+        content = "## **Nasrin al-Qadeer**\nScout"
+        save_result(content, "full")
+        save_result(content, "full")
+        path3 = save_result(content, "full")
+        assert path3.name == "nasrin-al-qadeer-full-3.md"
+
+    def test_mode_used_as_suffix(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "traveller_agent.py"))
+        content = "## **Halvar Czeszko**\nMerchant"
+        assert save_result(content, "full").name.endswith("-full.md")
+        content2 = "## **Vesper Lalique**\nDrifter"
+        assert save_result(content2, "npc").name.endswith("-npc.md")
+        content3 = "## **Halvar Czeszko III**\nPatron"
+        assert save_result(content3, "patron").name.endswith("-patron.md")
+
+    def test_file_content_written(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "traveller_agent.py"))
+        content = "## **Test Character**\nNavy, 3 terms"
+        path = save_result(content, "full")
+        assert path.read_text() == content
+
+    def test_saves_to_correct_dir(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "traveller_agent.py"))
+        content = "## **Test**\nScout"
+        path = save_result(content, "full")
+        assert "characters" in str(path)
+        assert "traveller" in str(path)
+
+    def test_strips_markdown_from_filename(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "traveller_agent.py"))
+        content = "## **Korven Drask**\nDrifter"
+        path = save_result(content, "full")
+        assert "**" not in path.name
+        assert "#" not in path.name
 
 
 # ── Constants sanity checks ─────────────────────────────────────────────────────
