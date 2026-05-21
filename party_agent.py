@@ -5,10 +5,10 @@ Assembles a party or crew from saved characters, generates fresh ones, or mixes 
 Run with: python party_agent.py
 """
 
-import random
 import re
 from pathlib import Path
 from utils import get_client, pick
+from dice import DND_TOOLS, TRAVELLER_TOOLS, run_tool_dnd, run_tool_traveller
 
 
 # ── Folder locations ────────────────────────────────────────────────────────────
@@ -55,26 +55,6 @@ def pick_characters(chars: list[tuple[int, str, Path]], count: int) -> list[Path
         print("Couldn't parse — using first characters.")
         return [p for _, _, p in chars[:count]]
 
-
-# ── Dice tools (for fresh character sketches) ───────────────────────────────────
-
-def roll_stat_dnd() -> str:
-    rolls = [random.randint(1, 6) for _ in range(4)]
-    kept  = sorted(rolls, reverse=True)[:3]
-    return f"Rolled 4d6: {sorted(rolls)} → kept {kept} → score: {sum(kept)}"
-
-def roll_dice_dnd(sides: int, count: int = 1) -> str:
-    valid = {4, 6, 8, 10, 12, 20}
-    if sides not in valid:
-        return f"Error: {sides} is not a valid D&D die."
-    rolls = [random.randint(1, sides) for _ in range(count)]
-    return f"Rolled {count}d{sides}: {rolls} — total: {sum(rolls)}"
-
-def roll_dice_traveller(sides: int, count: int = 1) -> str:
-    if sides != 6:
-        return "Error: Traveller only uses d6."
-    rolls = [random.randint(1, 6) for _ in range(count)]
-    return f"Rolled {count}d{sides}: {rolls} — total: {sum(rolls)}"
 
 
 FIREFLY_CREW_PROMPT = """You are a Firefly RPG crew builder and GM prep tool (Cortex System).
@@ -157,52 +137,6 @@ Produce the crew brief in exactly this format:
 [One paragraph. A specific job to open with — a target, a contact with an offer, a rival crew stepping on their territory. Pull on at least two characters' specific backstory threads. Leave the complications for the table to discover.]"""
 
 
-DND_TOOLS = [
-    {
-        "name": "roll_stat",
-        "description": "Roll 4d6 drop lowest for one D&D ability score.",
-        "input_schema": {"type": "object", "properties": {}, "required": []},
-    },
-    {
-        "name": "roll_dice",
-        "description": "Roll dice for D&D (d4, d6, d8, d10, d12, d20).",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "sides": {"type": "integer", "enum": [4, 6, 8, 10, 12, 20]},
-                "count": {"type": "integer", "minimum": 1, "maximum": 20},
-            },
-            "required": ["sides"],
-        },
-    },
-]
-
-TRAVELLER_TOOLS = [
-    {
-        "name": "roll_dice",
-        "description": "Roll d6 dice for Traveller characteristics.",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "sides": {"type": "integer", "enum": [6]},
-                "count": {"type": "integer", "minimum": 1, "maximum": 20},
-            },
-            "required": ["sides"],
-        },
-    },
-]
-
-
-def run_tool_dnd(name: str, inputs: dict) -> str:
-    if name == "roll_stat": return roll_stat_dnd()
-    if name == "roll_dice": return roll_dice_dnd(**inputs)
-    return f"Unknown tool: {name}"
-
-def run_tool_traveller(name: str, inputs: dict) -> str:
-    if name == "roll_dice": return roll_dice_traveller(**inputs)
-    return f"Unknown tool: {name}"
-
-
 # ── System prompts ──────────────────────────────────────────────────────────────
 
 DND_PARTY_PROMPT = """You are a D&D 5e party builder and GM prep tool.
@@ -281,7 +215,7 @@ Produce the crew brief in exactly this format:
 def synthesize(prompt: str, system_prompt: str) -> str:
     """Single-call synthesis — used when all characters are from the folder."""
     print("\nBuilding party brief...")
-    response = client.messages.create(
+    response = get_client().messages.create(
         model="claude-opus-4-7",
         max_tokens=4096,
         system=system_prompt,
