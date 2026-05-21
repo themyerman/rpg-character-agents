@@ -127,6 +127,8 @@ DND_PARTY_PROMPT = """You are a D&D 5e party builder and GM prep tool.
 
 You will receive one or more existing character sheets, and possibly an instruction to generate additional characters to fill out the party. If generating fresh characters, use roll_stat to generate ability scores, then invent a name, race, class, and one-sentence hook for each — make them complement the existing characters in role and personality.
 
+Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
+
 Do not output any intermediate notes, stat summaries, or working text. Output only the formatted party brief, starting directly with the ## heading.
 
 Produce the party brief in exactly this format:
@@ -156,6 +158,8 @@ Produce the party brief in exactly this format:
 TRAVELLER_CREW_PROMPT = """You are a Mongoose Traveller 2e crew builder and GM prep tool.
 
 You will receive one or more existing character sheets, and possibly an instruction to generate additional crew members to fill out the crew. If generating fresh crew, use roll_dice (2d6 six times) to generate characteristics, then invent a name, career, and one-sentence hook for each — make them fill practical gaps in the crew's capabilities.
+
+Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
 Do not output any intermediate notes, stat summaries, or working text. Output only the formatted crew brief, starting directly with the ## heading.
 
@@ -237,6 +241,23 @@ def run_agent(prompt: str, system_prompt: str, tools: list, run_tool_fn) -> str:
             messages.append({"role": "user", "content": tool_results})
 
 
+# ── Prompt builder ─────────────────────────────────────────────────────────────
+
+def build_prompt(sheets: list[str], fresh_count: int, party_size: int,
+                 label: str, theme: str = "") -> str:
+    """Assemble the generation prompt from existing sheets, fresh count, and optional theme."""
+    parts = []
+    if sheets:
+        parts.append(f"Here {'is' if len(sheets) == 1 else 'are'} {len(sheets)} character sheet(s) to build the {label} around:\n\n")
+        for i, sheet in enumerate(sheets, 1):
+            parts.append(f"--- CHARACTER {i} ---\n{sheet}\n\n")
+    if fresh_count:
+        parts.append(f"Generate {fresh_count} additional character sketch(es) to complete a {label} of {party_size}, then synthesize all into the party brief.")
+    if theme:
+        parts.append(f"\n\nTheme / constraints from the GM: {theme}")
+    return "".join(parts)
+
+
 # ── Save ────────────────────────────────────────────────────────────────────────
 
 def save_result(result: str, game: str, suffix: str = "party") -> Path:
@@ -316,18 +337,13 @@ if __name__ == "__main__":
             if fresh_count:
                 print(f"\nUsing {len(sheets)} from folder, generating {fresh_count} fresh.")
 
-    # 5. Build prompt
-    parts = []
-    if sheets:
-        parts.append(f"Here {'is' if len(sheets) == 1 else 'are'} {len(sheets)} character sheet(s) to build the {label} around:\n\n")
-        for i, sheet in enumerate(sheets, 1):
-            parts.append(f"--- CHARACTER {i} ---\n{sheet}\n\n")
-    if fresh_count:
-        parts.append(f"Generate {fresh_count} additional character sketch(es) to complete a {label} of {party_size}, then synthesize all into the party brief.")
+    # 5. Theme / constraints
+    theme = input(f"\nAny themes, constraints, or specifics? (e.g. 'gothic horror, vampire hunters' or press Enter for fully random): ").strip()
 
-    prompt = "".join(parts)
+    # 6. Build prompt
+    prompt = build_prompt(sheets, fresh_count, party_size, label, theme)
 
-    # 6. Run
+    # 7. Run
     system_prompt = DND_PARTY_PROMPT if game == "dnd" else TRAVELLER_CREW_PROMPT
 
     if fresh_count > 0:
@@ -347,7 +363,7 @@ if __name__ == "__main__":
     saved = save_result(result, game)
     print(f"\n[saved → {saved}]")
 
-    # 7. Optional hook
+    # 8. Optional hook
     hook_type = "quest giver" if game == "dnd" else "patron"
     hook_raw  = input(f"\nGenerate an opening {hook_type} hook tailored to this {label}? (yes / no, default: no): ").strip().lower()
 

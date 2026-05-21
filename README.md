@@ -79,7 +79,8 @@ GM prep tool that assembles a party (D&D) or crew (Traveller) with connective ti
 2. Party size (default: 4)
 3. Mode: `folder` (pick from saved characters) / `generate` (all fresh) / `mix` (some of each)
 4. If folder or mix: pick characters by number from a displayed list
-5. Optional: generate a tailored quest giver or patron hook at the end
+5. Optional theme or constraints in plain English (e.g. "gothic horror, vampire hunters" or "crew stranded on the frontier with a broken drive")
+6. Optional: generate a tailored quest giver or patron hook at the end
 
 Output saves to `parties/` as `game-party-name-party.md`. Opening hooks save to the appropriate characters folder.
 

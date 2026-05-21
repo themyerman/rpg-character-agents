@@ -10,6 +10,7 @@ import re
 import pytest
 from party_agent import (
     list_characters,
+    build_prompt,
     save_result,
     roll_stat_dnd,
     roll_dice_dnd,
@@ -64,6 +65,49 @@ class TestListCharacters:
         # Unknown game folder won't exist — should return empty list
         result = list_characters("pathfinder")
         assert result == []
+
+
+# ── build_prompt ────────────────────────────────────────────────────────────────
+
+class TestBuildPrompt:
+    def test_fresh_only_no_theme(self):
+        result = build_prompt([], 4, 4, "party")
+        assert "Generate 4 additional character sketch" in result
+        assert "Theme" not in result
+
+    def test_sheets_only_no_theme(self):
+        result = build_prompt(["Sheet A", "Sheet B"], 0, 2, "crew")
+        assert "CHARACTER 1" in result
+        assert "CHARACTER 2" in result
+        assert "Theme" not in result
+
+    def test_theme_appended_when_provided(self):
+        result = build_prompt([], 3, 3, "party", theme="gothic horror, vampire hunters")
+        assert "gothic horror, vampire hunters" in result
+        assert "Theme / constraints from the GM" in result
+
+    def test_empty_theme_not_appended(self):
+        result = build_prompt([], 3, 3, "party", theme="")
+        assert "Theme" not in result
+
+    def test_whitespace_theme_not_appended(self):
+        # theme is .strip()ped before being passed in — empty string after strip
+        result = build_prompt([], 3, 3, "party", theme="   ".strip())
+        assert "Theme" not in result
+
+    def test_mix_sheets_fresh_and_theme(self):
+        result = build_prompt(["Sheet A"], 2, 3, "party", theme="all rogues, no paladins")
+        assert "CHARACTER 1" in result
+        assert "Generate 2 additional" in result
+        assert "all rogues, no paladins" in result
+
+    def test_single_sheet_uses_singular(self):
+        result = build_prompt(["Sheet A"], 0, 1, "crew")
+        assert "Here is 1 character sheet" in result
+
+    def test_multiple_sheets_uses_plural(self):
+        result = build_prompt(["Sheet A", "Sheet B"], 0, 2, "crew")
+        assert "Here are 2 character sheet(s)" in result
 
 
 # ── save_result ─────────────────────────────────────────────────────────────────

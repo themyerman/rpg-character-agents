@@ -504,6 +504,8 @@ TOOLS = [
 
 SYSTEM_PROMPT = """You are a Mongoose Traveller 2nd Edition character generator creating vivid storytelling characters.
 
+Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
+
 Work through these steps in order, using your tools at each stage:
 
 1. CHARACTERISTICS — Roll 2d6 six times for: Strength, Dexterity, Endurance, Intelligence, Education, Social Standing.
@@ -590,6 +592,8 @@ Let the dice tell the story. A bad survival roll shouldn't be boring — it shou
 
 NPC_SYSTEM_PROMPT = """You are a Mongoose Traveller 2e NPC generator. Create a vivid, instantly usable NPC sketch.
 
+Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
+
 Roll a UPP using roll_dice(sides=6, count=2) six times, then compute_upp.
 Look up a career with get_career_info if it helps ground them. Skip career terms entirely — this is a sketch, not a history.
 
@@ -611,6 +615,8 @@ Always use exactly this format:
 **Connection:** [one named person they love, fear, or owe — and why it matters]"""
 
 PATRON_SYSTEM_PROMPT = """You are a Mongoose Traveller 2e patron generator. Create a complete patron encounter — someone who walks up to the crew in a starport bar, a hotel lobby, or a dockside office and offers them a job.
+
+Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
 Roll a UPP using roll_dice(sides=6, count=2) six times, then compute_upp.
 Look up a career with get_career_info to establish who they appear to be.
