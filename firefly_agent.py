@@ -110,6 +110,128 @@ VERSE_LOCATIONS = {
 }
 
 
+# ── 'Verse worlds (expanded, for random assignment) ─────────────────────────────
+
+VERSE_WORLDS = {
+    "Core": [
+        ("Londinium",   "Parliament's seat — wealth on every surface and surveillance underneath"),
+        ("Sihnon",      "silk, scholarship, and the Academy; cultural capital the Alliance loves to display"),
+        ("Ariel",       "premier medical center; white spires, perfect air, and hidden Blue Sun contracts"),
+        ("Osiris",      "law, finance, and old money; where families like the Tams grew up and paid for it"),
+        ("Bernadette",  "humanity's first foothold in the system; still carries that sense of arrival"),
+        ("Liann Jiun",  "trade hub and cultural anchor; where Core Chinese traditions still run deep"),
+        ("Caprial",     "manor estates and farming wealth; the Core's idea of pastoral, with fences"),
+        ("Albion",      "heavy industry and Alliance fleet support; a world that works for the government"),
+    ],
+    "Border": [
+        ("Persephone",  "gateway world; Eavesdown Docks see everything and ask nothing"),
+        ("Beaumonde",   "factory city of New Dunsmuir; industrial heart of the Border, always hiring"),
+        ("Greenleaf",   "pharmaceutical manufacturing under jungle canopy; the Alliance's medicine cabinet"),
+        ("Pelorum",     "resort world for people with money and loose customs enforcement"),
+        ("Santo",       "tropical and lawless; piracy's an industry, bribes are a currency"),
+        ("Constance",   "quiet farming communities that mind their business and expect others to"),
+        ("Boros",       "Alliance military staging ground and arms manufacturing; uniforms everywhere"),
+        ("Dyton",       "mining colony with strong opinions and weaker safety standards"),
+        ("Verbena",     "self-sufficient settlement; old traditions, tight community, suspicious of outsiders"),
+        ("Whittier",    "rough industrial moon; people come for work and stay because they can't afford to leave"),
+        ("Paquin",      "traveling performers, festivals, and entertainers; a world in motion"),
+    ],
+    "Rim": [
+        ("Whitefall",     "Patience's territory; harsh, dry, and unwelcoming by design"),
+        ("Jiangyin",      "isolated farming moon where the locals solve their problems their own way"),
+        ("Shadow",        "Malcolm Reynolds' homeworld; burned during the war, still smoking in places"),
+        ("Hera",          "Serenity Valley; where the war ended for everyone still alive"),
+        ("Harvest",       "agricultural moon struggling to grow enough to pay the Alliance's new taxes"),
+        ("Regina",        "mining world; Bowden's malady is a way of life here, not a footnote"),
+        ("Higgins' Moon", "clay and Canton and mudder labor; company town, company rules, company law"),
+        ("Deadwood",      "no law, no Alliance, no infrastructure; freedom with consequences attached"),
+        ("Athens",        "Rim farming that actually works, barely; proud people with not much to show for it"),
+        ("Ezra",          "outlaw territory; everyone here is running from something or hiding someone"),
+        ("Silverhold",    "mining moon with Company towns and labor disputes that turn violent"),
+        ("Aberdeen",      "sheep and open sky; pastoral life that looks peaceful until you know what's underneath"),
+        ("Three Hills",   "small farming moon; the kind of place the war touched once and never left"),
+        ("Triumph",       "primitive conditions by choice; folk traditions stronger than modern infrastructure"),
+        ("Anson's World", "rugged settlers who don't want to be found and are very clear about it"),
+    ],
+}
+
+
+# ── Job hooks ────────────────────────────────────────────────────────────────────
+
+JOB_HOOKS = [
+    {
+        "type":        "Cargo Run",
+        "description": "Legitimate goods with a paperwork problem — move them before inspectors arrive",
+        "complications": ["the cargo is alive", "the owner lied about the weight", "someone else has a manifest with their name on it"],
+    },
+    {
+        "type":        "Salvage Claim",
+        "description": "Wartime wreck drifting in the black; legally ownerless, morally complicated, worth a fortune",
+        "complications": ["another crew found it first", "the Alliance knows it's there", "there are survivors"],
+    },
+    {
+        "type":        "Recovery",
+        "description": "Find a missing person and bring them home — dead or alive, though nobody says it that way",
+        "complications": ["they don't want to be found", "someone else is already looking", "home is the dangerous part"],
+    },
+    {
+        "type":        "Extraction",
+        "description": "Get someone out of somewhere they can't leave on their own — quietly",
+        "complications": ["the someone is a fugitive", "there are guards who weren't mentioned", "more people need out than the contact said"],
+    },
+    {
+        "type":        "Courier",
+        "description": "Time-sensitive delivery that can't go through Cortex — documents, data, or a sealed case",
+        "complications": ["someone knows what's being carried", "the recipient isn't who they said", "the contact said don't open it and that's not going to work"],
+    },
+    {
+        "type":        "Escort",
+        "description": "Ride along with cargo or a person expecting trouble — the trouble is real and already on its way",
+        "complications": ["the threat is hired professionals", "the client is the reason for the threat", "the client is armed and paranoid"],
+    },
+    {
+        "type":        "Land Job",
+        "description": "Survey, settle, or defend a contested claim — settlers on one side, a company or government on the other",
+        "complications": ["the deeds are forged", "the settlers are the problem", "the land is already occupied"],
+    },
+    {
+        "type":        "War Relic",
+        "description": "Find and retrieve Alliance or Independent hardware buried at a battle site — illegal, valuable, dangerous",
+        "complications": ["it's booby-trapped", "a veteran has a different plan for it", "the Alliance is watching the site"],
+    },
+    {
+        "type":        "Livestock Run",
+        "description": "Transport animals, seed stock, or specialized agricultural goods to a settlement that needs them",
+        "complications": ["the animals are not well-behaved", "quarantine regulations exist for a reason", "someone is intercepting these shipments"],
+    },
+    {
+        "type":        "Prison Break",
+        "description": "Get someone out who shouldn't be in — or someone in who absolutely should",
+        "complications": ["inside help falls through", "extra people want out", "the prisoner knows something dangerous"],
+    },
+    {
+        "type":        "Heist",
+        "description": "Take something from a facility, estate, or ship that isn't theirs to give — clean and quiet",
+        "complications": ["the security is better than the contact said", "another crew is running the same job", "it's not there"],
+    },
+    {
+        "type":        "Intermediary",
+        "description": "Stand between two parties who don't trust each other; the crew is the neutral ground",
+        "complications": ["one side is lying", "both sides are lying", "the deal is a setup for the other party"],
+    },
+    {
+        "type":        "Passenger Transport",
+        "description": "Take someone from here to there, no questions asked — they have good reasons or very bad ones",
+        "complications": ["Alliance is looking for them", "they brought something aboard", "there's more than one of them now"],
+    },
+    {
+        "type":        "Supply Run",
+        "description": "Deliver necessities to a struggling colony the Alliance doesn't service — food, medicine, parts",
+        "complications": ["the route is watched", "there's not enough to go around", "the colony has a more urgent problem now"],
+    },
+]
+
+
 # ── Alliance / Browncoat war history ───────────────────────────────────────────
 
 WAR_HISTORY = {
@@ -155,6 +277,30 @@ def roll_dice(sides: int, count: int = 1) -> str:
 def roll_war_history() -> str:
     choice = random.choice(list(WAR_HISTORY.keys()))
     return json.dumps({"history": choice, "flavor": WAR_HISTORY[choice]})
+
+def roll_homeworld(region: str) -> str:
+    """
+    Randomly assign a specific world from the given region.
+    Returns the world name and its flavor text.
+    Use the returned world name exactly — do not substitute another.
+    """
+    if region not in VERSE_WORLDS:
+        return f"Unknown region '{region}'. Available: Core, Border, Rim"
+    world, flavor = random.choice(VERSE_WORLDS[region])
+    return json.dumps({"world": world, "region": region, "flavor": flavor})
+
+def roll_job_hook() -> str:
+    """
+    Randomly select a job type and a complication seed for a 'Verse job encounter.
+    Call this first, before building the contact's details.
+    """
+    hook         = random.choice(JOB_HOOKS)
+    complication = random.choice(hook["complications"])
+    return json.dumps({
+        "job_type":    hook["type"],
+        "description": hook["description"],
+        "complication": complication,
+    })
 
 
 # ── Tool schemas ────────────────────────────────────────────────────────────────
@@ -221,6 +367,26 @@ TOOLS = [
         "description": "Randomly determine the character's relationship to the Unification War.",
         "input_schema": {"type": "object", "properties": {}, "required": []},
     },
+    {
+        "name": "roll_homeworld",
+        "description": "Randomly assign a specific world from a region of the 'Verse. Use the returned world name exactly — do not substitute a different world.",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "region": {
+                    "type": "string",
+                    "description": "Region of the 'Verse.",
+                    "enum": ["Core", "Border", "Rim"],
+                },
+            },
+            "required": ["region"],
+        },
+    },
+    {
+        "name": "roll_job_hook",
+        "description": "Randomly select a job type and complication seed for a 'Verse job encounter. Call this first before building the contact's details. This prevents defaulting to pharmaceutical runs.",
+        "input_schema": {"type": "object", "properties": {}, "required": []},
+    },
 ]
 
 
@@ -232,6 +398,8 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "get_location_info":      return get_location_info(**inputs)
     if name == "roll_dice":              return roll_dice(**inputs)
     if name == "roll_war_history":       return roll_war_history()
+    if name == "roll_homeworld":         return roll_homeworld(**inputs)
+    if name == "roll_job_hook":          return roll_job_hook()
     return f"Unknown tool: {name}"
 
 
@@ -249,7 +417,7 @@ Work through these steps using your tools:
 
 1. ROLE — Choose a role that fits the story. Look it up with get_role_info.
 
-2. HOMEWORLD — Choose a region (Core, Border, or Rim) with get_location_info. Pick a specific world from the list. The region shapes the character's worldview, accent, and expectations.
+2. HOMEWORLD — Choose a region (Core, Border, or Rim). Call get_location_info for regional flavor and background color, then call roll_homeworld(region) to get the specific assigned world. Use the world name returned by roll_homeworld exactly — do not substitute another. The region and world shape the character's worldview, accent, and expectations.
 
 3. WAR HISTORY — Call roll_war_history to determine their relationship to the Unification War. Let it color the backstory without defining it entirely.
 
@@ -336,6 +504,8 @@ Names in the 'Verse reflect its multicultural mix — draw from Chinese, Spanish
 
 Do not output any intermediate notes or working text. Output only the formatted contact, starting directly with the ## heading.
 
+STEP 0 (before writing anything): Call roll_job_hook() to get a job type and complication seed. Build the entire contact and encounter around what this tool returns. The job type determines the pitch, the payment structure, and what the crew is actually being asked to do. The complication seed should surface in at least one of the four Truths. Do not default to pharmaceutical runs, medical cargo, or drug smuggling unless roll_job_hook explicitly returns that category.
+
 The GM rolls 1d4 in secret to determine which truth is real — only one is. Truth 4 is always The Reversal, where the crew is on the wrong side of the job. Write all four so any one of them could be true; the others should feel plausible until they're contradicted.
 
 Always use exactly this format:
@@ -378,13 +548,16 @@ PHASE_MESSAGES = {
     "homeworld":  "Finding homeworld...",
     "war":        "Rolling war history...",
     "attributes": "Distributing attributes...",
+    "job":        "Rolling job hook...",
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
     if tool_name == "get_role_info":          return "role"
     if tool_name == "get_location_info":      return "homeworld"
+    if tool_name == "roll_homeworld":         return "homeworld"
     if tool_name == "roll_war_history":       return "war"
     if tool_name == "roll_cortex_attributes": return "attributes"
+    if tool_name == "roll_job_hook":          return "job"
     return None
 
 

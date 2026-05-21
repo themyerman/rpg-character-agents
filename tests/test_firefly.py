@@ -14,12 +14,16 @@ from firefly_agent import (
     get_location_info,
     roll_dice,
     roll_war_history,
+    roll_homeworld,
+    roll_job_hook,
     save_result,
     detect_phase,
     VALID_DICE_SIZES,
     CORTEX_LADDER,
     ROLES,
     VERSE_LOCATIONS,
+    VERSE_WORLDS,
+    JOB_HOOKS,
     WAR_HISTORY,
 )
 
@@ -198,6 +202,12 @@ class TestDetectPhase:
     def test_unrelated_tool_returns_none(self):
         assert detect_phase("flip_coin", set()) is None
 
+    def test_roll_homeworld_returns_homeworld(self):
+        assert detect_phase("roll_homeworld", set()) == "homeworld"
+
+    def test_roll_job_hook_returns_job(self):
+        assert detect_phase("roll_job_hook", set()) == "job"
+
 
 # ── save_result ──────────────────────────────────────────────────────────────────
 
@@ -260,6 +270,100 @@ class TestSaveResult:
         path = save_result(content, "full")
         assert "**" not in path.name
         assert "#" not in path.name
+
+
+# ── roll_homeworld ───────────────────────────────────────────────────────────────
+
+class TestRollHomeworld:
+    def test_returns_valid_json(self):
+        result = roll_homeworld("Core")
+        data = json.loads(result)
+        assert isinstance(data, dict)
+
+    def test_has_world_region_and_flavor(self):
+        for region in ("Core", "Border", "Rim"):
+            data = json.loads(roll_homeworld(region))
+            assert "world" in data
+            assert "region" in data
+            assert "flavor" in data
+
+    def test_world_is_in_known_list(self):
+        for region in ("Core", "Border", "Rim"):
+            data = json.loads(roll_homeworld(region))
+            world_names = [w for w, _ in VERSE_WORLDS[region]]
+            assert data["world"] in world_names, f"Unknown world '{data['world']}' for {region}"
+
+    def test_region_matches_input(self):
+        for region in ("Core", "Border", "Rim"):
+            data = json.loads(roll_homeworld(region))
+            assert data["region"] == region
+
+    def test_invalid_region_returns_error(self):
+        result = roll_homeworld("Deep Space")
+        assert "Unknown" in result
+
+    def test_flavor_is_non_empty_string(self):
+        data = json.loads(roll_homeworld("Rim"))
+        assert isinstance(data["flavor"], str)
+        assert len(data["flavor"]) > 0
+
+    def test_returns_variety_across_calls(self):
+        # 50 rolls on the Rim (15 worlds) should yield more than one distinct world
+        worlds = {json.loads(roll_homeworld("Rim"))["world"] for _ in range(50)}
+        assert len(worlds) > 1
+
+    def test_border_worlds_expanded(self):
+        # Border should have well more worlds than the old VERSE_LOCATIONS list
+        assert len(VERSE_WORLDS["Border"]) > len(VERSE_LOCATIONS["Border"]["worlds"])
+
+    def test_rim_worlds_expanded(self):
+        assert len(VERSE_WORLDS["Rim"]) > len(VERSE_LOCATIONS["Rim"]["worlds"])
+
+
+# ── roll_job_hook ────────────────────────────────────────────────────────────────
+
+class TestRollJobHook:
+    def test_returns_valid_json(self):
+        result = roll_job_hook()
+        data = json.loads(result)
+        assert isinstance(data, dict)
+
+    def test_has_required_keys(self):
+        data = json.loads(roll_job_hook())
+        assert "job_type" in data
+        assert "description" in data
+        assert "complication" in data
+
+    def test_job_type_is_known(self):
+        known_types = {h["type"] for h in JOB_HOOKS}
+        for _ in range(20):
+            data = json.loads(roll_job_hook())
+            assert data["job_type"] in known_types
+
+    def test_returns_variety(self):
+        # 30 rolls should produce at least 3 distinct job types (14 options)
+        types = {json.loads(roll_job_hook())["job_type"] for _ in range(30)}
+        assert len(types) >= 3
+
+    def test_complication_is_non_empty_string(self):
+        data = json.loads(roll_job_hook())
+        assert isinstance(data["complication"], str)
+        assert len(data["complication"]) > 0
+
+    def test_complication_belongs_to_job(self):
+        for _ in range(20):
+            data = json.loads(roll_job_hook())
+            hook = next(h for h in JOB_HOOKS if h["type"] == data["job_type"])
+            assert data["complication"] in hook["complications"]
+
+    def test_no_pharmaceutical_default_type(self):
+        # Pharmaceutical/medical cargo should not be a standalone job type
+        known_types = {h["type"] for h in JOB_HOOKS}
+        assert "Pharmaceutical Run" not in known_types
+        assert "Medical Cargo" not in known_types
+
+    def test_at_least_ten_job_types(self):
+        assert len(JOB_HOOKS) >= 10
 
 
 # ── Constants ────────────────────────────────────────────────────────────────────
