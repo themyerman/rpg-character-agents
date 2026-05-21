@@ -10,6 +10,7 @@ import random
 import re
 from pathlib import Path
 import anthropic
+from names import roll_name_suggestion, NAME_TOOL_SCHEMA
 
 client = anthropic.Anthropic()
 
@@ -441,6 +442,149 @@ BACKGROUNDS = {
 }
 
 
+# ── Quest hooks ────────────────────────────────────────────────────────────────
+
+QUEST_HOOKS: list[dict] = [
+    {
+        "type": "Monster Hunt",
+        "description": "Something is killing people, livestock, or livelihoods, and the town can't handle it alone.",
+        "complications": [
+            "The monster turns out to be protecting something — or someone.",
+            "Multiple factions want the creature taken alive for different reasons.",
+            "The beast is the last of its kind; scholars will be furious if it dies.",
+        ],
+    },
+    {
+        "type": "Dungeon Delve",
+        "description": "A ruin, tomb, or underground complex holds something the quest giver needs — or needs sealed.",
+        "complications": [
+            "Another party has already entered and stirred things up.",
+            "The dungeon's original purpose is still operating — someone designed it that way.",
+            "Something in there doesn't want to be found, and it's been waiting.",
+        ],
+    },
+    {
+        "type": "Escort",
+        "description": "Get a person, group, or cargo safely from one place to another through dangerous territory.",
+        "complications": [
+            "The person being escorted is the reason they're in danger — they won't say why.",
+            "The route the party planned is no longer safe; improvisation required.",
+            "Someone hired to protect the same charge is working against the party.",
+        ],
+    },
+    {
+        "type": "Investigation",
+        "description": "Find out what happened — a disappearance, a theft, a death that doesn't add up.",
+        "complications": [
+            "The most obvious suspect is innocent; the actual culprit is well-connected.",
+            "Evidence keeps pointing somewhere the quest giver doesn't want looked at.",
+            "The crime is still ongoing; the party is in danger of becoming victims.",
+        ],
+    },
+    {
+        "type": "Retrieval",
+        "description": "Recover a specific object — stolen, lost, cursed, or locked behind people who'd rather keep it.",
+        "complications": [
+            "The object has changed hands more than once; its current holder has a claim.",
+            "Retrieving it requires crossing a faction that will take this personally.",
+            "What it actually does is not what the quest giver described.",
+        ],
+    },
+    {
+        "type": "Rescue",
+        "description": "Someone is being held — captive, imprisoned, or trapped somewhere they cannot leave alone.",
+        "complications": [
+            "The person being rescued doesn't want to be rescued — at least not yet.",
+            "Getting them out means leaving someone else behind.",
+            "Their captors have leverage that outlasts any successful rescue.",
+        ],
+    },
+    {
+        "type": "Defense",
+        "description": "Hold a location, person, or community against a coming threat — buy time, hold the line, survive.",
+        "complications": [
+            "The threat is larger than the briefing suggested, and the timeline is wrong.",
+            "Someone inside the perimeter is giving information to the attackers.",
+            "Holding the position requires making an enemy of a neutral party.",
+        ],
+    },
+    {
+        "type": "Political Mission",
+        "description": "Navigate a negotiation, alliance, or power struggle where swords are the last resort — but never ruled out.",
+        "complications": [
+            "One of the parties is negotiating in bad faith; figuring out which one is the job.",
+            "The party's presence changes the political calculus in ways no one predicted.",
+            "Success requires delivering news that will personally devastate the quest giver.",
+        ],
+    },
+    {
+        "type": "Heist",
+        "description": "Get in, get what's needed, get out — ideally without anyone knowing you were there.",
+        "complications": [
+            "The target is more heavily guarded than the intelligence suggested.",
+            "Someone else is running the same heist on the same night.",
+            "What they're stealing is booby-trapped by the person who hid it.",
+        ],
+    },
+    {
+        "type": "Wilderness Expedition",
+        "description": "Travel into unmapped or dangerous territory — to find something, reach somewhere, or simply survive the journey.",
+        "complications": [
+            "The map the quest giver provided is wrong in at least one critical place.",
+            "The destination has already been reached by someone whose goals conflict with theirs.",
+            "The wilderness isn't uninhabited; the party is the intruder here.",
+        ],
+    },
+    {
+        "type": "Haunting / Curse",
+        "description": "Something from the past has made the present uninhabitable — lift it, find its source, or end it.",
+        "complications": [
+            "The haunting is real but not malevolent; the curse was deserved.",
+            "Ending it requires confronting someone still alive who doesn't want it ended.",
+            "The source of the curse is connected to the quest giver's own family.",
+        ],
+    },
+    {
+        "type": "Ancient Mystery",
+        "description": "Something old and strange has surfaced — an artifact, a prophecy, a ruin that wasn't supposed to exist.",
+        "complications": [
+            "Multiple factions already know about it and are racing to get there first.",
+            "Understanding it requires a sacrifice — information, safety, or something else.",
+            "It's connected to the party's own past in a way none of them expected.",
+        ],
+    },
+    {
+        "type": "Rebellion Support",
+        "description": "A group is fighting an unjust power — they need supplies, information, a strike executed, or simply proof they're not alone.",
+        "complications": [
+            "The faction the party is helping has done something the party cannot condone.",
+            "The power they're fighting against isn't entirely wrong about the situation.",
+            "Supporting the rebellion makes the party wanted across a much wider area.",
+        ],
+    },
+    {
+        "type": "Creature Rescue",
+        "description": "A rare, magical, or intelligent creature needs to be freed, relocated, or protected from those who'd exploit it.",
+        "complications": [
+            "The creature is dangerous — not as a villain, but because it's terrified.",
+            "Its captors have legal possession; breaking it free is technically a crime.",
+            "Relocating it will devastate an ecosystem or community that depends on it.",
+        ],
+    },
+]
+
+
+def roll_quest_hook() -> str:
+    """Randomly select a quest type and complication seed for a D&D encounter."""
+    hook         = random.choice(QUEST_HOOKS)
+    complication = random.choice(hook["complications"])
+    return json.dumps({
+        "quest_type":   hook["type"],
+        "description":  hook["description"],
+        "complication": complication,
+    })
+
+
 # ── Tools (Python side) ────────────────────────────────────────────────────────
 
 def roll_dice(sides: int, count: int = 1) -> str:
@@ -548,6 +692,16 @@ TOOLS = [
             "required": ["background_name"],
         },
     },
+    NAME_TOOL_SCHEMA,
+    {
+        "name": "roll_quest_hook",
+        "description": (
+            "Randomly select a quest type and complication seed for a D&D encounter. "
+            "Call this first before building a quest giver's details. "
+            "This prevents defaulting to the same quest type every time."
+        ),
+        "input_schema": {"type": "object", "properties": {}, "required": []},
+    },
 ]
 
 
@@ -557,7 +711,7 @@ SYSTEM_PROMPT = """You are a D&D 5th Edition character generator creating vivid,
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-Names should draw from a wide range of cultural traditions — not just Anglo-Saxon or Tolkien-adjacent defaults. Vary first letters, syllable counts, and linguistic origins across characters.
+Names should draw from a wide range of cultural traditions — not just Anglo-Saxon or Tolkien-adjacent defaults. Call roll_name_suggestion() as your very first action and use the result as a starting point. Adapt it freely, but let it push you away from familiar defaults. Vary first letters, syllable counts, and linguistic origins across characters.
 
 Work through these steps in order, using your tools at each stage:
 
@@ -634,7 +788,7 @@ NPC_SYSTEM_PROMPT = """You are a D&D 5e NPC generator. Create a vivid, instantly
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-Names should draw from a wide range of cultural traditions — not just Anglo-Saxon or Tolkien-adjacent defaults. Vary first letters, syllable counts, and linguistic origins across characters.
+Names should draw from a wide range of cultural traditions — not just Anglo-Saxon or Tolkien-adjacent defaults. Call roll_name_suggestion() before naming anyone. Use the result as a starting point — adapt it freely, but let it push you away from familiar defaults.
 
 Roll a few key stats with roll_stat (only the ones that matter for this NPC's role — not all six).
 Look up race or class info if it would help ground them. Then produce the sketch — fast and sharp.
@@ -660,7 +814,9 @@ QUEST_GIVER_SYSTEM_PROMPT = """You are a D&D 5e quest giver generator. Create a 
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-Names should draw from a wide range of cultural traditions — not just Anglo-Saxon or Tolkien-adjacent defaults. Vary first letters, syllable counts, and linguistic origins across characters.
+Names should draw from a wide range of cultural traditions — not just Anglo-Saxon or Tolkien-adjacent defaults. Call roll_name_suggestion() before naming anyone. Use the result as a starting point — adapt it freely, but let it push you away from familiar defaults.
+
+STEP 0 (before writing anything): Call roll_quest_hook() to get a quest type and complication seed. Build the entire encounter around what this tool returns. The quest type determines the Ask and what they're offering. The complication seed should surface in at least one of the four Truths. Do not default to the same quest type unless roll_quest_hook returns that category.
 
 Look up a background with get_background_info to establish who this person is and what world they come from. Roll 1d6 once to add a random element to their situation — let it color something about them.
 
@@ -698,28 +854,34 @@ Always use exactly this format:
 # ── Tool dispatcher ────────────────────────────────────────────────────────────
 
 def run_tool(name: str, inputs: dict) -> str:
-    if name == "roll_stat":          return roll_stat()
-    if name == "roll_dice":          return roll_dice(**inputs)
-    if name == "get_race_info":      return get_race_info(**inputs)
-    if name == "get_class_info":     return get_class_info(**inputs)
-    if name == "get_background_info":return get_background_info(**inputs)
+    if name == "roll_stat":           return roll_stat()
+    if name == "roll_dice":           return roll_dice(**inputs)
+    if name == "get_race_info":       return get_race_info(**inputs)
+    if name == "get_class_info":      return get_class_info(**inputs)
+    if name == "get_background_info": return get_background_info(**inputs)
+    if name == "roll_name_suggestion": return roll_name_suggestion()
+    if name == "roll_quest_hook":      return roll_quest_hook()
     return f"Unknown tool: {name}"
 
 
 # ── Phase tracker ──────────────────────────────────────────────────────────────
 
 PHASE_MESSAGES = {
+    "name":       "Rolling name suggestion...",
     "stats":      "Rolling ability scores...",
     "race":       "Choosing race...",
     "class":      "Choosing class...",
     "background": "Building background & connections...",
+    "quest":      "Rolling quest hook...",
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
-    if tool_name == "roll_stat":           return "stats"
-    if tool_name == "get_race_info":       return "race"
-    if tool_name == "get_class_info":      return "class"
-    if tool_name == "get_background_info": return "background"
+    if tool_name == "roll_name_suggestion": return "name"
+    if tool_name == "roll_quest_hook":      return "quest"
+    if tool_name == "roll_stat":            return "stats"
+    if tool_name == "get_race_info":        return "race"
+    if tool_name == "get_class_info":       return "class"
+    if tool_name == "get_background_info":  return "background"
     return None
 
 

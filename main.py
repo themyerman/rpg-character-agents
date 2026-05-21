@@ -14,6 +14,7 @@ import traveller_agent
 import firefly_agent
 import scum_villainy_agent
 import party_agent
+import npc_cluster_agent
 from utils import pick
 
 
@@ -55,11 +56,19 @@ def main() -> None:
 
     action = pick(
         "What do you want to do?",
-        [("character", "Build a character or NPC"), ("party", "Build a party / crew")],
+        [
+            ("character", "Build a character or NPC"),
+            ("party",     "Build a party / crew"),
+            ("cluster",   "Build an NPC cluster (connected group with hooks)"),
+        ],
     )
 
     if action == "party":
         party_agent.run()
+        return
+
+    if action == "cluster":
+        npc_cluster_agent.run()
         return
 
     # --- character path ---

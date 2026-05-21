@@ -10,6 +10,7 @@ import random
 import re
 from pathlib import Path
 import anthropic
+from names import roll_name_suggestion, NAME_TOOL_SCHEMA
 
 client = anthropic.Anthropic()
 
@@ -427,19 +428,21 @@ TOOLS = [
         "description": "Randomly select a score type and complication seed for a Hegemony-margins job encounter. Call this first before writing any contact details — prevents defaulting to assassination or data theft.",
         "input_schema": {"type": "object", "properties": {}, "required": []},
     },
+    NAME_TOOL_SCHEMA,
 ]
 
 
 # ── Tool dispatcher ───────────────────────────────────────────────────────────────
 
 def run_tool(name: str, inputs: dict) -> str:
-    if name == "get_playbook_info":  return get_playbook_info(**inputs)
-    if name == "assign_action_dots": return assign_action_dots(**inputs)
-    if name == "roll_heritage":      return roll_heritage()
-    if name == "roll_background":    return roll_background()
-    if name == "roll_vice":          return roll_vice()
-    if name == "roll_dice":          return roll_dice(**inputs)
-    if name == "roll_score_hook":    return roll_score_hook()
+    if name == "get_playbook_info":    return get_playbook_info(**inputs)
+    if name == "assign_action_dots":   return assign_action_dots(**inputs)
+    if name == "roll_heritage":        return roll_heritage()
+    if name == "roll_background":      return roll_background()
+    if name == "roll_vice":            return roll_vice()
+    if name == "roll_dice":            return roll_dice(**inputs)
+    if name == "roll_score_hook":      return roll_score_hook()
+    if name == "roll_name_suggestion": return roll_name_suggestion()
     return f"Unknown tool: {name}"
 
 
@@ -449,7 +452,7 @@ SYSTEM_PROMPT = """You are a Scum and Villainy character generator (Forged in th
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-Names should reflect the Hegemony's reach across many cultures — draw from a wide range of traditions (Arabic, South Asian, East Asian, West African, Slavic, Spanish, invented alien-adjacent names) and avoid clustering on similar sounds or the same first letter.
+Names should reflect the Hegemony's reach across many cultures. Call roll_name_suggestion() as your very first action and use the result as a starting point. Adapt it freely — combine traditions, add alien-adjacent syllables — but let it push you away from familiar defaults. Avoid clustering on similar sounds or the same first letter.
 
 Do not output any intermediate notes, reasoning, or working text. Output only the formatted character sheet, starting directly with the ## heading.
 
@@ -537,7 +540,7 @@ NPC_SYSTEM_PROMPT = """You are a Scum and Villainy NPC generator (Forged in the 
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-Names should reflect the Hegemony's reach across many cultures — draw from a wide range of traditions and avoid clustering on similar sounds or the same first letter.
+Names should reflect the Hegemony's reach across many cultures. Call roll_name_suggestion() before naming anyone. Use the result as a starting point — adapt freely, but let it push you away from familiar defaults. Avoid clustering on similar sounds or the same first letter.
 
 Call roll_heritage and roll_background for grounding. Skip the full chargen — this is a sketch.
 
@@ -566,11 +569,11 @@ SCORE_CONTACT_SYSTEM_PROMPT = """You are a Scum and Villainy score contact gener
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits and motives should be specific and individual — not cultural shorthand.
 
-Names should reflect the Hegemony's reach across many cultures — vary first letters, syllable counts, and cultural origins.
+Names should reflect the Hegemony's reach across many cultures — vary first letters, syllable counts, and cultural origins. Call roll_name_suggestion() before naming anyone. Adapt the result freely.
 
 Do not output any intermediate notes or working text. Output only the formatted contact, starting directly with the ## heading.
 
-STEP 0 (before writing anything): Call roll_score_hook() to get a score type and complication seed. Build the entire contact and encounter around what this tool returns. The score type determines the pitch, the payment structure, and what the crew is actually being sent to do. The complication seed should surface in at least one of the four Truths. Do not default to assassination or data theft unless roll_score_hook returns that category.
+STEP 0 (before writing anything): Call roll_name_suggestion() for the contact's name, then call roll_score_hook() to get a score type and complication seed. Build the entire contact and encounter around what this tool returns. The score type determines the pitch, the payment structure, and what the crew is actually being sent to do. The complication seed should surface in at least one of the four Truths. Do not default to assassination or data theft unless roll_score_hook returns that category.
 
 The GM rolls 1d4 in secret to determine which truth is real — only one is. Truth 4 is always The Reversal, where the crew is on the wrong side of the score. Write all four so any one could be true until contradicted.
 
@@ -613,6 +616,7 @@ Always use exactly this format:
 # ── Phase tracker ─────────────────────────────────────────────────────────────────
 
 PHASE_MESSAGES = {
+    "name":        "Rolling name suggestion...",
     "playbook":    "Choosing playbook...",
     "heritage":    "Rolling heritage...",
     "background":  "Rolling background...",
@@ -621,13 +625,14 @@ PHASE_MESSAGES = {
     "score":       "Rolling score hook...",
 }
 
-def detect_phase(tool_name: str) -> str | None:
-    if tool_name == "get_playbook_info":  return "playbook"
-    if tool_name == "roll_heritage":      return "heritage"
-    if tool_name == "roll_background":    return "background"
-    if tool_name == "roll_vice":          return "vice"
-    if tool_name == "assign_action_dots": return "actions"
-    if tool_name == "roll_score_hook":    return "score"
+def detect_phase(tool_name: str, seen: set = None) -> str | None:
+    if tool_name == "roll_name_suggestion": return "name"
+    if tool_name == "get_playbook_info":    return "playbook"
+    if tool_name == "roll_heritage":        return "heritage"
+    if tool_name == "roll_background":      return "background"
+    if tool_name == "roll_vice":            return "vice"
+    if tool_name == "assign_action_dots":   return "actions"
+    if tool_name == "roll_score_hook":      return "score"
     return None
 
 
@@ -635,6 +640,7 @@ def detect_phase(tool_name: str) -> str | None:
 
 def run_agent(prompt: str, system_prompt: str = SYSTEM_PROMPT) -> str:
     messages = [{"role": "user", "content": prompt}]
+    seen     = set()
     phase    = None
 
     print()
@@ -659,11 +665,12 @@ def run_agent(prompt: str, system_prompt: str = SYSTEM_PROMPT) -> str:
             tool_results = []
             for block in response.content:
                 if block.type == "tool_use":
-                    new_phase = detect_phase(block.name)
+                    new_phase = detect_phase(block.name, seen)
                     if new_phase and new_phase != phase:
                         phase = new_phase
                         print(PHASE_MESSAGES[phase])
 
+                    seen.add(block.name)
                     result = run_tool(block.name, block.input)
                     tool_results.append({
                         "type": "tool_result",

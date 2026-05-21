@@ -10,6 +10,7 @@ import random
 import re
 from pathlib import Path
 import anthropic
+from names import roll_name_suggestion, NAME_TOOL_SCHEMA
 
 client = anthropic.Anthropic()
 
@@ -385,6 +386,140 @@ BENEFIT_TABLE = ["Low Passage", "INT +1", "EDU +1", "Weapon", "High Passage", "S
 PENSION_TABLE = {5: 10000, 6: 20000, 7: 30000, 8: 40000}
 
 
+# ── Patron hooks ───────────────────────────────────────────────────────────────
+
+PATRON_HOOKS: list[dict] = [
+    {
+        "type": "Survey Commission",
+        "description": "Somebody wants a world surveyed — stellar, geological, or xenobiological — before committing resources to it.",
+        "complications": [
+            "A prior survey team went silent; the patron knows but didn't mention it.",
+            "The world is technically in disputed space; the Imperium has opinions.",
+            "What they want surveyed is already claimed — by someone who will be there.",
+        ],
+    },
+    {
+        "type": "Cargo Transport",
+        "description": "Move goods from point A to point B. The cargo is legal, licensed, and probably fine.",
+        "complications": [
+            "Customs at the destination has been tipped off to search incoming ships.",
+            "A rival shipper is running the same route and doesn't want competition.",
+            "The cargo is time-sensitive; missing the window destroys the contract.",
+        ],
+    },
+    {
+        "type": "Courier Run",
+        "description": "Deliver a sealed package or encrypted message to a specific recipient. No questions asked.",
+        "complications": [
+            "Someone else wants the package and knows the crew has it.",
+            "The recipient at the destination is not who the patron described.",
+            "The package turns out to have a transponder — someone is tracking it.",
+        ],
+    },
+    {
+        "type": "Passenger Charter",
+        "description": "Transport a specific person (or small group) to a destination they can't easily reach commercially.",
+        "complications": [
+            "The passenger is being sought by the authorities for reasons they won't disclose.",
+            "Another passenger aboard has history with this one — dangerous history.",
+            "The passenger's destination is in a system experiencing a political crisis.",
+        ],
+    },
+    {
+        "type": "Salvage Rights",
+        "description": "Retrieve a derelict ship or station — or its cargo — before anyone else does.",
+        "complications": [
+            "Someone has already found the derelict and is not inclined to share.",
+            "The derelict's last log makes clear it didn't drift here on its own.",
+            "The salvage is contested under Imperial law; another party has filed claim.",
+        ],
+    },
+    {
+        "type": "Extraction",
+        "description": "Get someone out of a place they can't leave on their own — a station, a world, a prison.",
+        "complications": [
+            "The person to be extracted has changed their mind and won't cooperate.",
+            "The extraction site has tightened security since the patron's intel was gathered.",
+            "Getting out requires a distraction that will cause collateral damage.",
+        ],
+    },
+    {
+        "type": "Security Contract",
+        "description": "Protect a person, cargo, or installation from a threat the patron can't handle through official channels.",
+        "complications": [
+            "The threat turns out to be better equipped than the briefing suggested.",
+            "The client has been withholding information about why they're a target.",
+            "A third party approaches the crew mid-contract with a better offer.",
+        ],
+    },
+    {
+        "type": "Investigation",
+        "description": "Find out what happened to something — a missing ship, a stolen asset, a person who vanished.",
+        "complications": [
+            "The trail leads to someone with significant institutional protection.",
+            "What happened is clear; who ordered it is the dangerous question.",
+            "Evidence points to the patron themselves being involved.",
+        ],
+    },
+    {
+        "type": "Scout Mission",
+        "description": "Chart or assess an unmapped region, route, or system — officially or off the books.",
+        "complications": [
+            "The region isn't unmapped — someone got there first and wants it kept quiet.",
+            "A natural hazard makes the route genuinely dangerous, not just theoretically.",
+            "The Imperium considers this scouting mission politically inconvenient.",
+        ],
+    },
+    {
+        "type": "Diplomatic Errand",
+        "description": "Carry a message, broker a meeting, or facilitate a negotiation between parties who won't talk directly.",
+        "complications": [
+            "One party is negotiating in bad faith — using this meeting to gather intelligence.",
+            "A faction that wants the negotiation to fail is watching the crew's movements.",
+            "The crew becomes legally complicit in whatever agreement results.",
+        ],
+    },
+    {
+        "type": "Recovery Operation",
+        "description": "Retrieve something that was lost, stolen, or impounded — and bring it back intact.",
+        "complications": [
+            "The item is in the hands of someone who believes they own it legitimately.",
+            "Recovering it cleanly is impossible; the crew will need to make a choice.",
+            "What's being recovered turns out to be worth far more than the patron implied.",
+        ],
+    },
+    {
+        "type": "Interdiction",
+        "description": "Stop a shipment, a person, or a transaction from reaching its destination.",
+        "complications": [
+            "The target has a legitimate reason to be where they're going; the patron does not.",
+            "The window is narrow and the route is unclear until the last moment.",
+            "Stopping it quietly is impossible — this will make noise someone will trace.",
+        ],
+    },
+    {
+        "type": "Biological Survey",
+        "description": "Collect samples, catalogue species, or assess conditions on a world with unusual ecology.",
+        "complications": [
+            "The local fauna is significantly more dangerous than the briefing suggested.",
+            "What they're really after is a specific organism someone else is already harvesting.",
+            "The survey data, if published, would be politically explosive for the patron.",
+        ],
+    },
+]
+
+
+def roll_patron_hook() -> str:
+    """Randomly select a patron job type and complication seed for a Traveller encounter."""
+    hook        = random.choice(PATRON_HOOKS)
+    complication = random.choice(hook["complications"])
+    return json.dumps({
+        "job_type":    hook["type"],
+        "description": hook["description"],
+        "complication": complication,
+    })
+
+
 # ── Tools (Python side) ────────────────────────────────────────────────────────
 
 def roll_dice(sides: int, count: int = 1) -> str:
@@ -497,6 +632,16 @@ TOOLS = [
             "required": ["characteristics"],
         },
     },
+    NAME_TOOL_SCHEMA,
+    {
+        "name": "roll_patron_hook",
+        "description": (
+            "Randomly select a patron job type and complication seed for a Traveller encounter. "
+            "Call this first before building the patron's details. "
+            "This prevents defaulting to courier or cargo runs every time."
+        ),
+        "input_schema": {"type": "object", "properties": {}, "required": []},
+    },
 ]
 
 
@@ -506,7 +651,7 @@ SYSTEM_PROMPT = """You are a Mongoose Traveller 2nd Edition character generator 
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-The Third Imperium is a vast, diverse civilization — character names should reflect that. Draw from Slavic, Arabic, South Asian, East Asian, West African, Spanish, Scandinavian, and other traditions alongside invented Vilani and Solomani conventions. Vary first letters, syllable counts, and cultural origins. Do not cluster on similar-sounding names.
+The Third Imperium is a vast, diverse civilization — character names should reflect that. Call roll_name_suggestion() as your very first action and use the result as a starting point for the character's name. Adapt it freely, but let it push you away from familiar defaults. Vary first letters, syllable counts, and cultural origins. Do not cluster on similar-sounding names.
 
 Work through these steps in order, using your tools at each stage:
 
@@ -596,7 +741,7 @@ NPC_SYSTEM_PROMPT = """You are a Mongoose Traveller 2e NPC generator. Create a v
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-The Third Imperium is a vast, diverse civilization — character names should reflect that. Draw from Slavic, Arabic, South Asian, East Asian, West African, Spanish, Scandinavian, and other traditions alongside invented Vilani and Solomani conventions. Vary first letters, syllable counts, and cultural origins.
+The Third Imperium is a vast, diverse civilization — character names should reflect that. Call roll_name_suggestion() before naming anyone. Use the result as a starting point — adapt it freely, but let it push you away from familiar defaults. Vary first letters, syllable counts, and cultural origins.
 
 Roll a UPP using roll_dice(sides=6, count=2) six times, then compute_upp.
 Look up a career with get_career_info if it helps ground them. Skip career terms entirely — this is a sketch, not a history.
@@ -622,7 +767,9 @@ PATRON_SYSTEM_PROMPT = """You are a Mongoose Traveller 2e patron generator. Crea
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-The Third Imperium is a vast, diverse civilization — character names should reflect that. Draw from Slavic, Arabic, South Asian, East Asian, West African, Spanish, Scandinavian, and other traditions alongside invented Vilani and Solomani conventions. Vary first letters, syllable counts, and cultural origins.
+The Third Imperium is a vast, diverse civilization — character names should reflect that. Call roll_name_suggestion() before naming anyone. Use the result as a starting point — adapt it freely, but let it push you away from familiar defaults. Vary first letters, syllable counts, and cultural origins.
+
+STEP 0 (before writing anything): Call roll_patron_hook() to get a job type and complication seed. Build the entire encounter around what this tool returns. The job type determines the pitch and payment structure. The complication seed should surface in at least one of the four Truths. Do not default to courier or cargo runs unless roll_patron_hook returns that category.
 
 Roll a UPP using roll_dice(sides=6, count=2) six times, then compute_upp.
 Look up a career with get_career_info to establish who they appear to be.
@@ -668,26 +815,29 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "get_career_info":             return get_career_info(**inputs)
     if name == "get_characteristic_modifier": return get_characteristic_modifier(**inputs)
     if name == "compute_upp":                 return compute_upp(**inputs)
+    if name == "roll_name_suggestion":        return roll_name_suggestion()
+    if name == "roll_patron_hook":            return roll_patron_hook()
     return f"Unknown tool: {name}"
 
 
 # ── Phase tracker ──────────────────────────────────────────────────────────────
 
 PHASE_MESSAGES = {
-    "stats":    "Rolling characteristics...",
-    "homeworld":"Creating homeworld...",
-    "career":   "Building career path...",
-    "terms":    "Career terms, events & mishaps...",
-    "muster":   "Mustering out...",
+    "name":      "Rolling name suggestion...",
+    "stats":     "Rolling characteristics...",
+    "homeworld": "Creating homeworld...",
+    "career":    "Building career path...",
+    "terms":     "Career terms, events & mishaps...",
+    "muster":    "Mustering out...",
+    "patron":    "Rolling patron hook...",
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
-    if tool_name == "roll_homeworld_uwp":
-        return "homeworld"
-    if tool_name == "get_career_info":
-        return "career"
-    if tool_name == "roll_d66":
-        return "terms"
+    if tool_name == "roll_name_suggestion":   return "name"
+    if tool_name == "roll_patron_hook":        return "patron"
+    if tool_name == "roll_homeworld_uwp":      return "homeworld"
+    if tool_name == "get_career_info":         return "career"
+    if tool_name == "roll_d66":                return "terms"
     if tool_name == "roll_dice":
         if "roll_homeworld_uwp" not in seen:
             return "stats"

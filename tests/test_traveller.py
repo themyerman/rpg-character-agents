@@ -17,11 +17,14 @@ from traveller_agent import (
     get_career_info,
     get_characteristic_modifier,
     compute_upp,
+    roll_patron_hook,
+    detect_phase,
     save_result,
     VALID_DICE,
     MIN_ROLLS,
     MAX_ROLLS,
     CAREERS,
+    PATRON_HOOKS,
 )
 
 
@@ -287,6 +290,89 @@ class TestSaveResult:
         path = save_result(content, "full")
         assert "**" not in path.name
         assert "#" not in path.name
+
+
+# ── roll_patron_hook ────────────────────────────────────────────────────────────
+
+class TestRollPatronHook:
+    def test_returns_valid_json(self):
+        result = roll_patron_hook()
+        data = json.loads(result)
+        assert isinstance(data, dict)
+
+    def test_has_required_keys(self):
+        data = json.loads(roll_patron_hook())
+        assert "job_type"     in data
+        assert "description"  in data
+        assert "complication" in data
+
+    def test_job_type_is_known(self):
+        known_types = {h["type"] for h in PATRON_HOOKS}
+        for _ in range(20):
+            data = json.loads(roll_patron_hook())
+            assert data["job_type"] in known_types
+
+    def test_returns_variety(self):
+        # 30 rolls should yield at least 4 distinct job types
+        types = {json.loads(roll_patron_hook())["job_type"] for _ in range(30)}
+        assert len(types) >= 4
+
+    def test_complication_is_non_empty_string(self):
+        data = json.loads(roll_patron_hook())
+        assert isinstance(data["complication"], str)
+        assert len(data["complication"]) > 0
+
+    def test_complication_belongs_to_job_type(self):
+        for _ in range(20):
+            data = json.loads(roll_patron_hook())
+            hook = next(h for h in PATRON_HOOKS if h["type"] == data["job_type"])
+            assert data["complication"] in hook["complications"]
+
+    def test_at_least_ten_job_types(self):
+        assert len(PATRON_HOOKS) >= 10
+
+    def test_courier_and_extraction_present(self):
+        known_types = {h["type"] for h in PATRON_HOOKS}
+        assert "Courier Run"  in known_types
+        assert "Extraction"   in known_types
+
+
+# ── detect_phase ─────────────────────────────────────────────────────────────────
+
+class TestDetectPhase:
+    def test_roll_homeworld_uwp_returns_homeworld(self):
+        assert detect_phase("roll_homeworld_uwp", set()) == "homeworld"
+
+    def test_get_career_info_returns_career(self):
+        assert detect_phase("get_career_info", set()) == "career"
+
+    def test_roll_d66_returns_terms(self):
+        assert detect_phase("roll_d66", set()) == "terms"
+
+    def test_roll_dice_before_homeworld_returns_stats(self):
+        # seen does not contain roll_homeworld_uwp → stats phase
+        assert detect_phase("roll_dice", set()) == "stats"
+
+    def test_roll_dice_after_homeworld_returns_career(self):
+        seen = {"roll_homeworld_uwp"}
+        assert detect_phase("roll_dice", seen) == "career"
+
+    def test_roll_dice_after_d66_returns_muster(self):
+        seen = {"roll_homeworld_uwp", "roll_d66"}
+        assert detect_phase("roll_dice", seen) == "muster"
+
+    def test_roll_name_suggestion_returns_name(self):
+        assert detect_phase("roll_name_suggestion", set()) == "name"
+
+    def test_roll_patron_hook_returns_patron(self):
+        assert detect_phase("roll_patron_hook", set()) == "patron"
+
+    def test_unknown_tool_returns_none(self):
+        assert detect_phase("flip_coin", set()) is None
+
+    def test_compute_upp_returns_none(self):
+        # suppressed — should not trigger a phase message
+        assert detect_phase("compute_upp", set()) is None
 
 
 # ── Constants sanity checks ─────────────────────────────────────────────────────

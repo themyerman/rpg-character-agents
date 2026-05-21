@@ -208,6 +208,9 @@ class TestDetectPhase:
     def test_roll_job_hook_returns_job(self):
         assert detect_phase("roll_job_hook", set()) == "job"
 
+    def test_roll_name_suggestion_returns_name(self):
+        assert detect_phase("roll_name_suggestion", set()) == "name"
+
 
 # ── save_result ──────────────────────────────────────────────────────────────────
 

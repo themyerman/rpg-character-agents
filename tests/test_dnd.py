@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+import json
 import dnd_agent
 from dnd_agent import (
     ability_modifier,
@@ -15,6 +16,8 @@ from dnd_agent import (
     get_race_info,
     get_class_info,
     get_background_info,
+    roll_quest_hook,
+    detect_phase,
     save_result,
     VALID_DICE,
     MIN_ROLLS,
@@ -22,6 +25,7 @@ from dnd_agent import (
     RACES,
     CLASSES,
     BACKGROUNDS,
+    QUEST_HOOKS,
 )
 
 
@@ -235,6 +239,79 @@ class TestSaveResult:
         path = save_result(content, "full")
         assert "**" not in path.name
         assert "#" not in path.name
+
+
+# ── roll_quest_hook ──────────────────────────────────────────────────────────────
+
+class TestRollQuestHook:
+    def test_returns_valid_json(self):
+        result = roll_quest_hook()
+        data = json.loads(result)
+        assert isinstance(data, dict)
+
+    def test_has_required_keys(self):
+        data = json.loads(roll_quest_hook())
+        assert "quest_type"   in data
+        assert "description"  in data
+        assert "complication" in data
+
+    def test_quest_type_is_known(self):
+        known_types = {h["type"] for h in QUEST_HOOKS}
+        for _ in range(20):
+            data = json.loads(roll_quest_hook())
+            assert data["quest_type"] in known_types
+
+    def test_returns_variety(self):
+        # 30 rolls should yield at least 4 distinct quest types
+        types = {json.loads(roll_quest_hook())["quest_type"] for _ in range(30)}
+        assert len(types) >= 4
+
+    def test_complication_is_non_empty_string(self):
+        data = json.loads(roll_quest_hook())
+        assert isinstance(data["complication"], str)
+        assert len(data["complication"]) > 0
+
+    def test_complication_belongs_to_quest_type(self):
+        for _ in range(20):
+            data = json.loads(roll_quest_hook())
+            hook = next(h for h in QUEST_HOOKS if h["type"] == data["quest_type"])
+            assert data["complication"] in hook["complications"]
+
+    def test_at_least_twelve_quest_types(self):
+        assert len(QUEST_HOOKS) >= 12
+
+    def test_monster_hunt_and_heist_present(self):
+        known_types = {h["type"] for h in QUEST_HOOKS}
+        assert "Monster Hunt" in known_types
+        assert "Heist"        in known_types
+
+
+# ── detect_phase ─────────────────────────────────────────────────────────────────
+
+class TestDetectPhase:
+    def test_roll_stat_returns_stats(self):
+        assert detect_phase("roll_stat", set()) == "stats"
+
+    def test_get_race_info_returns_race(self):
+        assert detect_phase("get_race_info", set()) == "race"
+
+    def test_get_class_info_returns_class(self):
+        assert detect_phase("get_class_info", set()) == "class"
+
+    def test_get_background_info_returns_background(self):
+        assert detect_phase("get_background_info", set()) == "background"
+
+    def test_roll_name_suggestion_returns_name(self):
+        assert detect_phase("roll_name_suggestion", set()) == "name"
+
+    def test_roll_quest_hook_returns_quest(self):
+        assert detect_phase("roll_quest_hook", set()) == "quest"
+
+    def test_unknown_tool_returns_none(self):
+        assert detect_phase("flip_coin", set()) is None
+
+    def test_roll_dice_returns_none(self):
+        assert detect_phase("roll_dice", set()) is None
 
 
 # ── Constants sanity checks ─────────────────────────────────────────────────────

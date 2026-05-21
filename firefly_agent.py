@@ -10,6 +10,7 @@ import random
 import re
 from pathlib import Path
 import anthropic
+from names import roll_name_suggestion, NAME_TOOL_SCHEMA
 
 client = anthropic.Anthropic()
 
@@ -387,6 +388,7 @@ TOOLS = [
         "description": "Randomly select a job type and complication seed for a 'Verse job encounter. Call this first before building the contact's details. This prevents defaulting to pharmaceutical runs.",
         "input_schema": {"type": "object", "properties": {}, "required": []},
     },
+    NAME_TOOL_SCHEMA,
 ]
 
 
@@ -400,6 +402,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_war_history":       return roll_war_history()
     if name == "roll_homeworld":         return roll_homeworld(**inputs)
     if name == "roll_job_hook":          return roll_job_hook()
+    if name == "roll_name_suggestion":   return roll_name_suggestion()
     return f"Unknown tool: {name}"
 
 
@@ -409,7 +412,7 @@ SYSTEM_PROMPT = """You are a Firefly RPG character generator (Cortex System). Cr
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-Names in the 'Verse reflect its multicultural mix — draw from Chinese, Spanish, Slavic, West African, Arabic, and other traditions, not just Anglo-European. Vary first letters, syllable counts, and cultural origins. Do not default to soft English-sounding names that start with the same letters.
+Names in the 'Verse reflect its multicultural mix — draw from Chinese, Spanish, Slavic, West African, Arabic, and other traditions, not just Anglo-European. Call roll_name_suggestion() as your very first action and use the result as a starting point. Adapt it freely, but let it push you away from familiar defaults. Vary first letters, syllable counts, and cultural origins. Do not default to soft English-sounding names that start with the same letters.
 
 Do not output any intermediate notes, reasoning, or working text. Output only the formatted character sheet, starting directly with the ## heading.
 
@@ -472,7 +475,7 @@ NPC_SYSTEM_PROMPT = """You are a Firefly RPG NPC generator (Cortex System). Crea
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-Names in the 'Verse reflect its multicultural mix — draw from Chinese, Spanish, Slavic, West African, Arabic, and other traditions, not just Anglo-European. Vary first letters, syllable counts, and cultural origins.
+Names in the 'Verse reflect its multicultural mix — draw from Chinese, Spanish, Slavic, West African, Arabic, and other traditions, not just Anglo-European. Call roll_name_suggestion() before naming anyone. Use the result as a starting point — adapt it freely, but let it push you away from familiar defaults.
 
 Call roll_cortex_attributes for a quick stat spread. Use get_role_info if it helps ground them. Skip the full chargen — this is a sketch.
 
@@ -500,11 +503,11 @@ JOB_CONTACT_SYSTEM_PROMPT = """You are a Firefly RPG job contact generator. Crea
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits and motives should be specific and individual — not cultural shorthand.
 
-Names in the 'Verse reflect its multicultural mix — draw from Chinese, Spanish, Slavic, West African, Arabic, and other traditions, not just Anglo-European.
+Names in the 'Verse reflect its multicultural mix — draw from Chinese, Spanish, Slavic, West African, Arabic, and other traditions, not just Anglo-European. Call roll_name_suggestion() before naming anyone. Use the result as a starting point — adapt freely.
 
 Do not output any intermediate notes or working text. Output only the formatted contact, starting directly with the ## heading.
 
-STEP 0 (before writing anything): Call roll_job_hook() to get a job type and complication seed. Build the entire contact and encounter around what this tool returns. The job type determines the pitch, the payment structure, and what the crew is actually being asked to do. The complication seed should surface in at least one of the four Truths. Do not default to pharmaceutical runs, medical cargo, or drug smuggling unless roll_job_hook explicitly returns that category.
+STEP 0 (before writing anything): Call roll_name_suggestion() for the contact's name, then call roll_job_hook() for the job type and complication seed. Build the entire contact and encounter around what this tool returns. The job type determines the pitch, the payment structure, and what the crew is actually being asked to do. The complication seed should surface in at least one of the four Truths. Do not default to pharmaceutical runs, medical cargo, or drug smuggling unless roll_job_hook explicitly returns that category.
 
 The GM rolls 1d4 in secret to determine which truth is real — only one is. Truth 4 is always The Reversal, where the crew is on the wrong side of the job. Write all four so any one of them could be true; the others should feel plausible until they're contradicted.
 
@@ -544,6 +547,7 @@ Always use exactly this format:
 # ── Phase tracker ───────────────────────────────────────────────────────────────
 
 PHASE_MESSAGES = {
+    "name":       "Rolling name suggestion...",
     "role":       "Choosing role...",
     "homeworld":  "Finding homeworld...",
     "war":        "Rolling war history...",
@@ -552,6 +556,7 @@ PHASE_MESSAGES = {
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
+    if tool_name == "roll_name_suggestion":   return "name"
     if tool_name == "get_role_info":          return "role"
     if tool_name == "get_location_info":      return "homeworld"
     if tool_name == "roll_homeworld":         return "homeworld"
