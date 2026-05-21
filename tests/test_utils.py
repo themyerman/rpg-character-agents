@@ -94,6 +94,7 @@ class TestSaveCharacter:
     def test_file_in_characters_subdir(self, tmp_path):
         agent_py = str(tmp_path / "dnd_agent.py")
         path = save_character(self.CONTENT, "npc", "dnd", agent_py)
+        assert "output" in str(path)
         assert "characters" in str(path)
         assert "dnd" in str(path)
 

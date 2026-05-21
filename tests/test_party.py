@@ -118,7 +118,7 @@ class TestSaveResult:
         content = "Some preamble text\n\n## The Iron Crew — Crew Brief\n\n### Members\n..."
         path = save_result(content, "traveller")
         assert "the-iron-crew" in path.name
-        assert path.name.startswith("traveller-")
+        assert "traveller" in str(path)   # game is in the directory, not the filename
         assert path.name.endswith("-party.md")
 
     def test_falls_back_to_first_line_if_no_heading(self, tmp_path, monkeypatch):

@@ -8,24 +8,21 @@ Run with: python party_agent.py
 import random
 import re
 from pathlib import Path
-import anthropic
-from utils import pick
-
-client = anthropic.Anthropic()
+from utils import get_client, pick
 
 
 # ── Folder locations ────────────────────────────────────────────────────────────
 
-_CHARS = Path(__file__).parent / "characters"
+_OUTPUT = Path(__file__).parent / "output"
 
 FOLDERS = {
-    "dnd":       _CHARS / "dnd",
-    "traveller": _CHARS / "traveller",
-    "firefly":   _CHARS / "firefly",
-    "scum":      _CHARS / "scum_villainy",
+    "dnd":       _OUTPUT / "characters" / "dnd",
+    "traveller": _OUTPUT / "characters" / "traveller",
+    "firefly":   _OUTPUT / "characters" / "firefly",
+    "scum":      _OUTPUT / "characters" / "scum_villainy",
 }
 
-PARTIES_DIR = Path(__file__).parent / "parties"
+PARTIES_DIR = _OUTPUT / "parties"
 
 
 # ── Character file discovery ────────────────────────────────────────────────────
@@ -299,7 +296,7 @@ def run_agent(prompt: str, system_prompt: str, tools: list, run_tool_fn) -> str:
     messages = [{"role": "user", "content": prompt}]
 
     while True:
-        response = client.messages.create(
+        response = get_client().messages.create(
             model="claude-opus-4-7",
             max_tokens=4096,
             system=system_prompt,
@@ -351,11 +348,14 @@ def save_result(result: str, game: str, suffix: str = "party") -> Path:
         (line for line in result.strip().splitlines() if line.startswith("##")),
         result.strip().splitlines()[0],
     )
-    name_raw  = re.sub(r"[#*]", "", heading).strip()
-    name_slug = re.sub(r"[^a-z0-9]+", "-", name_raw.lower()).strip("-")
-    filename  = f"{game}-{name_slug}-{suffix}.md"
-    PARTIES_DIR.mkdir(exist_ok=True)
-    filepath = PARTIES_DIR / filename
+    name_raw   = re.sub(r"[#*]", "", heading).strip()
+    name_slug  = re.sub(r"[^a-z0-9]+", "-", name_raw.lower()).strip("-")
+    filename   = f"{name_slug}-{suffix}.md"
+    # Game subfolder: "scum" key → scum_villainy folder
+    game_subdir = "scum_villainy" if game == "scum" else game
+    game_dir    = PARTIES_DIR / game_subdir
+    game_dir.mkdir(parents=True, exist_ok=True)
+    filepath = game_dir / filename
     filepath.write_text(result)
     return filepath
 

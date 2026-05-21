@@ -143,7 +143,7 @@ def save_character(content: str, mode: str, subdir: str, agent_file: str) -> Pat
     name_slug = slug(name_raw)
     filename  = f"{name_slug}-{mode}.md"
 
-    output_dir = Path(agent_file).parent / "characters" / subdir
+    output_dir = Path(agent_file).parent / "output" / "characters" / subdir
     output_dir.mkdir(parents=True, exist_ok=True)
 
     filepath = output_dir / filename

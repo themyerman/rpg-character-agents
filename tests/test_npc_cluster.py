@@ -161,8 +161,8 @@ class TestSaveCluster:
         monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "npc_cluster_agent.py"))
         npcs = [self._make_npc("Vance Rook"), self._make_npc("Mira Soto")]
         path = save_cluster(self._make_synthesis(), npcs, "firefly", "rivals")
-        assert "firefly" in path.name
-        assert "rivals"  in path.name
+        assert "firefly" in str(path)   # game is in the directory, not the filename
+        assert "rivals"  in path.name   # relationship stays in the filename
 
     def test_filename_ends_with_party_md(self, tmp_path, monkeypatch):
         monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "npc_cluster_agent.py"))

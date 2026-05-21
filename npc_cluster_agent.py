@@ -160,15 +160,16 @@ def save_cluster(synthesis: str, npcs: list[str], game: str, relationship: str) 
     """
     Assemble and save the full cluster document.
 
-    Filename: parties/{game}-npc-{relationship}-{title_slug}-party.md
+    Filename: output/parties/{game_subdir}/{relationship}-{title_slug}-party.md
     Title slug comes from the synthesis header, before the first colon.
     """
     first_line = synthesis.strip().splitlines()[0]
     title_text = re.sub(r"^#+\s*", "", first_line).strip()
     title_slug = _slug(title_text.split(":")[0])
-    filename   = f"{game}-npc-{relationship}-{title_slug}-party.md"
+    filename   = f"{relationship}-{title_slug}-party.md"
 
-    output_dir = Path(__file__).parent / "parties"
+    subdir     = GAME_AGENTS[game]["save_subdir"]
+    output_dir = Path(__file__).parent / "output" / "parties" / subdir
     output_dir.mkdir(parents=True, exist_ok=True)
 
     filepath = output_dir / filename
