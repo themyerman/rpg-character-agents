@@ -1,10 +1,17 @@
 """
 Shared name pools for all RPG character generators.
 
-Call roll_name_suggestion() before naming any character to prevent cultural
-clustering across generated output. The model is free to adapt the suggestion —
-changing first name, last name, or blending traditions — but it should use the
-result as a starting point rather than defaulting to familiar patterns.
+Two separate pool sets:
+
+  NAME_POOLS  — Real-world cultural traditions.  Used by all games but
+                especially the sci-fi titles (Traveller, Firefly, Scum &
+                Villainy).  Supports cross-tradition blending (~25% of rolls).
+
+  DND_POOLS   — Fantasy race pools for D&D 5e, keyed by race name.  Passing
+                race="Human" redirects to NAME_POOLS for maximum diversity.
+
+Call roll_name_suggestion() (sci-fi / cultural) or roll_dnd_name_suggestion()
+(D&D) before naming any character.  The model may adapt the result freely.
 """
 
 import json
@@ -300,4 +307,192 @@ NAME_TOOL_SCHEMA: dict = {
         "a starting point rather than defaulting to familiar patterns."
     ),
     "input_schema": {"type": "object", "properties": {}, "required": []},
+}
+
+
+# ── D&D name pools by race ────────────────────────────────────────────────────
+#
+# Surnames for races that don't traditionally use them are invented here:
+#
+#   Dwarf      — compound descriptive epithets (Stronginthearm, Ironfoot…)
+#   Halfling   — compound family names in the Tolkien/cosy-village tradition
+#                (Strongfeet, Warmhearth, Goodbarrel…)
+#   Elf        — house / family names in an elvish register
+#   Tiefling   — compound words built from infernal imagery, carried with
+#                defiance or wry pride (Ashveil, Emberscar, Voidmark…)
+#   Half-Orc   — orcish clan names or earned epithets
+#                (Gorehand, Blacktusk, Skullmend…)
+#   Dragonborn — Draconic clan names (long and unpronounceable is correct)
+#   Gnome      — clan names, a mix of PHB entries and whimsical coinages
+#
+# "Human" is NOT a key here — pass race="Human" to roll_dnd_name_suggestion()
+# and it redirects to the real-world NAME_POOLS for full cultural diversity.
+
+DND_POOLS: dict[str, dict[str, list[str]]] = {
+    "Dwarf": {
+        "first": [
+            "Orin", "Baern", "Tordek", "Darrak", "Harbek", "Kildrak", "Rurik",
+            "Ulfgar", "Vondal", "Thorin", "Flint", "Einkil", "Fargrim", "Eberk",
+            "Brottor", "Artin", "Dagnal", "Eldeth", "Gunnloda", "Helja",
+            "Kathra", "Riswynn", "Torbera", "Vistra", "Hlin",
+        ],
+        "last": [
+            "Stronginthearm", "Ironfoot", "Goldvein", "Hammerfall", "Stoneback",
+            "Deepdelver", "Brighteye", "Broadshoulders", "Heavybrow", "Rockfist",
+            "Ironbeard", "Silverpick", "Gemheart", "Axebiter", "Boulderchest",
+            "Oathkeeper", "Fireforge", "Flintbrow", "Steelgrip", "Coldforge",
+        ],
+    },
+    "Halfling": {
+        "first": [
+            "Milo", "Cade", "Merric", "Corrin", "Roscoe", "Eldon", "Alton",
+            "Wellby", "Lindal", "Finnan", "Posso", "Errich", "Redd", "Garret",
+            "Lyle", "Callie", "Bree", "Kithri", "Lidda", "Portia",
+            "Seraphina", "Nedda", "Lavinia", "Andry", "Cora",
+        ],
+        "last": [
+            "Strongfeet", "Warmhearth", "Sweetriver", "Goodharvest", "Merryfoot",
+            "Brightwater", "Barleycorn", "Rushybank", "Thorngage", "Tealeaf",
+            "Goodbarrel", "Greenbottle", "Brushgather", "Hilltopple", "Tosscobble",
+            "Underbough", "Cornwhisker", "Mossberry", "Bramblewick", "Quickthorn",
+        ],
+    },
+    "Elf": {
+        "first": [
+            "Adrie", "Caelynn", "Enna", "Felosial", "Keyleth", "Lia", "Mialee",
+            "Sariel", "Vadania", "Valanthe", "Silaqui", "Shava", "Naivara",
+            "Quillathe", "Jelenneth", "Adran", "Aelar", "Berrian", "Erdan",
+            "Galinndan", "Hadarai", "Peren", "Rolen", "Thamior", "Varis",
+        ],
+        "last": [
+            "Amakiir", "Galanodel", "Naïlo", "Siannodel", "Moonwhisper",
+            "Starweave", "Dawnsong", "Silverthorn", "Leafwhisper", "Mistwalker",
+            "Dawnfire", "Evenwind", "Goldleaf", "Willowdawn", "Shimmerleaf",
+        ],
+    },
+    # Tiefling first names: a mix of virtue names (carried defiantly or
+    # aspirationally) and Infernal-sounding given names from the PHB.
+    # Surnames: compound words from fire/shadow/ash/void imagery — not shame,
+    # but a kind of dark poetry the lineage has made its own.
+    "Tiefling": {
+        "first": [
+            "Hope", "Torment", "Patience", "Sorrow", "Honor", "Vengeance",
+            "Serenity", "Grace", "Spite", "Mercy", "Damaia", "Kallista",
+            "Makaria", "Lerissa", "Orianna", "Akta", "Bryseis", "Kairon",
+            "Mordai", "Leucis", "Akmenos", "Melech", "Skamos", "Iados", "Therai",
+        ],
+        "last": [
+            "Ashveil", "Emberscar", "Darkmantle", "Voidmark", "Cinderfall",
+            "Coalmark", "Smokewreath", "Cinderveil", "Ironbrand", "Hearthless",
+            "Ashmark", "Flamebrand", "Emberveil", "Shadowmark", "Voidborn",
+            "Duskfall", "Cinderscar", "Ashborn", "Darkscar", "Nightveil",
+        ],
+    },
+    "Dragonborn": {
+        "first": [
+            "Arjhan", "Balasar", "Bharash", "Donaar", "Ghesh", "Kriv", "Medrash",
+            "Nadarr", "Rhogar", "Torinn", "Heskan", "Patrin", "Shedinn", "Mehen",
+            "Pandjed", "Akra", "Biri", "Farideh", "Havilar", "Korinn",
+            "Mishann", "Perra", "Raiann", "Sora", "Thava",
+        ],
+        "last": [
+            "Clethtinthiallor", "Daardendrian", "Delmirev", "Drachedandion",
+            "Kepeshkmolik", "Kerrhylon", "Kimbatuul", "Myastan", "Nemmonis",
+            "Norixius", "Ophinshtalajiir", "Shestendeliath", "Turnuroth",
+            "Verthisathurgiesh", "Yarjerit",
+        ],
+    },
+    "Gnome": {
+        "first": [
+            "Dimble", "Erky", "Fonkin", "Gimble", "Namfoodle", "Orryn", "Seebo",
+            "Warryn", "Zook", "Alvyn", "Burgell", "Glim", "Jebeddo", "Roondar",
+            "Sindri", "Bimpnottin", "Breena", "Caramip", "Ellyjobell", "Lilli",
+            "Loopmottin", "Nissa", "Tana", "Waywocket", "Zanna",
+        ],
+        "last": [
+            "Beren", "Daergel", "Folkor", "Garrick", "Nackle", "Murnig",
+            "Ningel", "Raulnor", "Scheppen", "Timbers", "Turen",
+            "Fizzlewick", "Sparksworth", "Cogsworth", "Fiddlewick",
+        ],
+    },
+    # Half-Orc surnames: orcish clan names or earned epithets.
+    # Those raised among humans may instead carry a human cultural surname
+    # (redirect via race="Human" in that case).
+    "Half-Orc": {
+        "first": [
+            "Dench", "Feng", "Gell", "Henk", "Holg", "Krusk", "Mhurren",
+            "Ront", "Shump", "Thokk", "Imsh", "Keth", "Baggi", "Emen",
+            "Engong", "Kansif", "Myev", "Neega", "Nome", "Shautha",
+            "Sutha", "Vola", "Volen", "Yevelda", "Paya",
+        ],
+        "last": [
+            "Gorehand", "Blacktusk", "Bloodhowl", "Grimfang", "Ironhide",
+            "Boneshield", "Greystone", "Duskhowl", "Stoneshard", "Coldspire",
+            "Darkwater", "Flintback", "Bonebreaker", "Skullmend", "Grimfist",
+            "Warborn", "Ashborn", "Coldblood", "Scarhand", "Steelback",
+        ],
+    },
+}
+
+_DND_RACES: list[str] = sorted(DND_POOLS.keys()) + ["Human"]
+
+
+# ── D&D name function ─────────────────────────────────────────────────────────
+
+def roll_dnd_name_suggestion(race: str = None) -> str:
+    """Return a name suggestion for a D&D character of the given race.
+
+    If race is omitted a race is chosen at random, with Human included so the
+    full cultural NAME_POOLS get occasional use.  Passing race="Human" always
+    redirects to NAME_POOLS (and may produce a cross-tradition blend).
+    """
+    if race is None:
+        race = random.choice(_DND_RACES)
+
+    if race == "Human":
+        data = json.loads(roll_name_suggestion())
+        data["race"] = "Human"
+        return json.dumps(data)
+
+    if race not in DND_POOLS:
+        return json.dumps({
+            "error": f"Unknown race {race!r}. Valid: {_DND_RACES}",
+        })
+
+    pool  = DND_POOLS[race]
+    first = random.choice(pool["first"])
+    last  = random.choice(pool["last"])
+    return json.dumps({
+        "suggested_name": f"{first} {last}",
+        "first":          first,
+        "last":           last,
+        "race":           race,
+    })
+
+
+# ── D&D tool schema ───────────────────────────────────────────────────────────
+
+DND_NAME_TOOL_SCHEMA: dict = {
+    "name": "roll_dnd_name_suggestion",
+    "description": (
+        "Get a name suggestion for a D&D character. "
+        "Pass the character's race for race-appropriate naming conventions — "
+        "Dwarves get compound epithets (Stronginthearm, Ironfoot), Halflings get "
+        "cosy compound family names (Strongfeet, Warmhearth), Tieflings get names "
+        "that carry their infernal heritage with dark poetry, and so on. "
+        "Omit race to pick randomly. Pass race='Human' to draw from real-world "
+        "cultural traditions for maximum diversity. "
+        "You may adapt the suggestion freely — it is a starting point, not a mandate."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "race": {
+                "type": "string",
+                "description": "Character race. Omit to pick randomly.",
+                "enum": _DND_RACES,
+            },
+        },
+        "required": [],
+    },
 }

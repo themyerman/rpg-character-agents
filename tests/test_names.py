@@ -8,7 +8,16 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from names import roll_name_suggestion, NAME_TOOL_SCHEMA, NAME_POOLS, _draw_last
+from names import (
+    roll_name_suggestion,
+    roll_dnd_name_suggestion,
+    NAME_TOOL_SCHEMA,
+    DND_NAME_TOOL_SCHEMA,
+    NAME_POOLS,
+    DND_POOLS,
+    _DND_RACES,
+    _draw_last,
+)
 
 
 # ── NAME_POOLS structure ─────────────────────────────────────────────────────────
@@ -117,7 +126,7 @@ class TestRollNameSuggestion:
         """Return a parsed result that is NOT a blend."""
         for _ in range(500):
             data = json.loads(roll_name_suggestion())
-            if " / " not in data["tradition"]:
+            if not data.get("is_blend", False):
                 return data
         raise AssertionError("Could not produce a single-tradition result in 500 tries")
 
@@ -255,3 +264,154 @@ class TestNameToolSchema:
 
     def test_input_schema_requires_nothing(self):
         assert NAME_TOOL_SCHEMA["input_schema"].get("required", []) == []
+
+
+# ── DND_POOLS structure ────────────────────────────────────────────────────────
+
+class TestDndPools:
+    EXPECTED_RACES = {"Dwarf", "Halfling", "Elf", "Tiefling",
+                      "Dragonborn", "Gnome", "Half-Orc"}
+
+    def test_expected_races_present(self):
+        assert self.EXPECTED_RACES.issubset(set(DND_POOLS.keys()))
+
+    def test_no_human_in_dnd_pools(self):
+        # Human redirects to NAME_POOLS — it must NOT have its own DND_POOLS entry
+        assert "Human" not in DND_POOLS
+
+    def test_human_in_dnd_races_list(self):
+        assert "Human" in _DND_RACES
+
+    def test_each_race_has_first_and_last(self):
+        for race, pool in DND_POOLS.items():
+            assert "first" in pool, f"{race} missing 'first'"
+            assert "last"  in pool, f"{race} missing 'last'"
+
+    def test_each_race_has_adequate_first_names(self):
+        for race, pool in DND_POOLS.items():
+            assert len(pool["first"]) >= 20, f"{race} has <20 first names"
+
+    def test_each_race_has_adequate_last_names(self):
+        for race, pool in DND_POOLS.items():
+            assert len(pool["last"]) >= 10, f"{race} has <10 last names"
+
+    def test_all_dnd_names_non_empty_strings(self):
+        for race, pool in DND_POOLS.items():
+            for lst in (pool["first"], pool["last"]):
+                for name in lst:
+                    assert isinstance(name, str) and len(name) > 0, \
+                        f"Empty/invalid name in {race}"
+
+    # ── Spot-checks for invented surname conventions ───────────────────────
+
+    def test_dwarf_has_compound_epithets(self):
+        last_names = DND_POOLS["Dwarf"]["last"]
+        # At least some should be multi-word compound style (no spaces, mixed case)
+        compounds = [n for n in last_names if len(n) > 6 and n[0].isupper()]
+        assert len(compounds) >= 5
+
+    def test_halfling_has_compound_family_names(self):
+        last_names = DND_POOLS["Halfling"]["last"]
+        assert "Strongfeet" in last_names or "Warmhearth" in last_names
+
+    def test_tiefling_has_virtue_names_in_first(self):
+        first_names = DND_POOLS["Tiefling"]["first"]
+        virtue_set  = {"Hope", "Torment", "Patience", "Sorrow", "Grace", "Mercy"}
+        assert virtue_set & set(first_names), "No virtue names found in Tiefling firsts"
+
+    def test_tiefling_has_infernal_surnames(self):
+        last_names = DND_POOLS["Tiefling"]["last"]
+        dark_words = {"Ash", "Ember", "Void", "Cinder", "Shadow", "Dark", "Night"}
+        assert any(any(w in name for w in dark_words) for name in last_names)
+
+    def test_dragonborn_clan_names_are_long(self):
+        # Draconic clan names are characteristically long
+        last_names = DND_POOLS["Dragonborn"]["last"]
+        long_names = [n for n in last_names if len(n) > 8]
+        assert len(long_names) >= 5
+
+    def test_half_orc_has_orcish_surnames(self):
+        last_names = DND_POOLS["Half-Orc"]["last"]
+        orcish     = {"Gorehand", "Blacktusk", "Grimfang", "Boneshield", "Greystone"}
+        assert orcish & set(last_names)
+
+
+# ── roll_dnd_name_suggestion ───────────────────────────────────────────────────
+
+class TestRollDndNameSuggestion:
+    def test_returns_valid_json(self):
+        assert isinstance(json.loads(roll_dnd_name_suggestion()), dict)
+
+    def test_has_required_keys(self):
+        data = json.loads(roll_dnd_name_suggestion())
+        for key in ("suggested_name", "first", "last", "race"):
+            assert key in data, f"Missing key: {key}"
+
+    def test_race_is_known(self):
+        for _ in range(30):
+            data = json.loads(roll_dnd_name_suggestion())
+            assert data["race"] in _DND_RACES, f"Unknown race: {data['race']}"
+
+    def test_explicit_race_respected(self):
+        for race in DND_POOLS:
+            data = json.loads(roll_dnd_name_suggestion(race=race))
+            assert data["race"] == race
+
+    def test_explicit_race_first_in_pool(self):
+        for race in DND_POOLS:
+            data = json.loads(roll_dnd_name_suggestion(race=race))
+            assert data["first"] in DND_POOLS[race]["first"]
+
+    def test_explicit_race_last_in_pool(self):
+        for race in DND_POOLS:
+            data = json.loads(roll_dnd_name_suggestion(race=race))
+            assert data["last"] in DND_POOLS[race]["last"]
+
+    def test_human_redirects_to_cultural_pools(self):
+        data = json.loads(roll_dnd_name_suggestion(race="Human"))
+        assert data["race"] == "Human"
+        # tradition should come from NAME_POOLS
+        tradition = data.get("tradition", "")
+        assert len(tradition) > 0
+
+    def test_human_first_name_in_name_pools(self):
+        for _ in range(20):
+            data = json.loads(roll_dnd_name_suggestion(race="Human"))
+            tradition = data.get("first_tradition") or data.get("tradition")
+            if tradition in NAME_POOLS:
+                assert data["first"] in NAME_POOLS[tradition]["first"]
+
+    def test_invalid_race_returns_error(self):
+        data = json.loads(roll_dnd_name_suggestion(race="Beholder"))
+        assert "error" in data
+
+    def test_suggested_name_combines_first_and_last(self):
+        for _ in range(10):
+            data = json.loads(roll_dnd_name_suggestion())
+            assert data["first"] in data["suggested_name"]
+            assert data["last"]  in data["suggested_name"]
+
+    def test_returns_variety_across_races(self):
+        races = {json.loads(roll_dnd_name_suggestion())["race"] for _ in range(60)}
+        assert len(races) >= 4
+
+
+# ── DND_NAME_TOOL_SCHEMA ───────────────────────────────────────────────────────
+
+class TestDndNameToolSchema:
+    def test_has_name_key(self):
+        assert DND_NAME_TOOL_SCHEMA["name"] == "roll_dnd_name_suggestion"
+
+    def test_has_description(self):
+        assert len(DND_NAME_TOOL_SCHEMA["description"]) > 20
+
+    def test_race_enum_contains_human(self):
+        enum = DND_NAME_TOOL_SCHEMA["input_schema"]["properties"]["race"]["enum"]
+        assert "Human" in enum
+
+    def test_race_enum_contains_all_dnd_pools(self):
+        enum = set(DND_NAME_TOOL_SCHEMA["input_schema"]["properties"]["race"]["enum"])
+        assert set(DND_POOLS.keys()).issubset(enum)
+
+    def test_race_is_not_required(self):
+        assert DND_NAME_TOOL_SCHEMA["input_schema"].get("required", []) == []
