@@ -4,7 +4,7 @@
 | | |
 |---|---|
 | **Role** | Professional enforcer, contract work only |
-| **Homeworld** | Beaumonde, Border |
+| **Homeworld** | Hera, Rim |
 | **Key Attributes** | Alertness d10 / Strength d8 / Vitality d4 |
 
 **Distinctions:** Watches the exits / Doesn't hit children or medics / Coughs blood when she thinks no one's looking
@@ -17,4 +17,4 @@
 
 **Hook:** Approaches the crew with a contract that's suspiciously well-paid for the work described. She knows it's a setup. She needs backup she can't afford to hire honestly, so she's omitting the dangerous parts until it's too late to back out.
 
-**Connection:** Her younger brother **Teo Vorel** runs a noodle stall on Beaumonde docks and thinks she's a freight inspector. Every coin she earns gets wired to his daughter's schooling on Ariel. If he ever found out what she actually does, she'd rather take a bullet than see his face.
+**Connection:** Her younger brother **Teo Vorel** runs a noodle stall on Eavesdown Docks and thinks she's a freight inspector. Every coin she earns gets wired to his daughter's schooling on Ariel. If he ever found out what she actually does, she'd rather take a bullet than see his face.

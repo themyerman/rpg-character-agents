@@ -4,7 +4,7 @@
 | | |
 |---|---|
 | **Role** | Itinerant preacher, occasional field medic, full-time listener |
-| **Homeworld** | Beaumonde, Border |
+| **Homeworld** | Whitefall, Rim |
 | **Key Attributes** | Willpower d10 / Alertness d8 / Strength d8 |
 
 **Distinctions:** Quiet Iron in the Voice / Avoided the War, Still Carrying It / Reads a Room Like Scripture
@@ -15,6 +15,6 @@
 
 **Secret:** During the war she was offered a chaplain's posting on a Browncoat hospital ship and turned it down out of fear. That ship was the *Liang Yi* — lost with all hands at Du-Khang. She memorizes the crew list like a prayer and has never spoken any of those names aloud.
 
-**Hook:** She approaches the crew at a Beaumonde dockside cantina, offers fair coin plus a sealed letter she swears is "just personal correspondence" — the letter is addressed to a name on an Alliance watch list.
+**Hook:** She approaches the crew at an Eavesdown cantina on Persephone, offers fair coin plus a sealed letter she swears is "just personal correspondence" — the letter is addressed to a name on an Alliance watch list.
 
 **Connection:** **Mateus Olabode**, a former Independent medic now drinking himself dead in Whittier — he was on the *Liang Yi*'s replacement chaplain roster and survived only because she said no. He doesn't know that. She owes him a truth she can't make herself tell.

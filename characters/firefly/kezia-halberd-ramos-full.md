@@ -4,7 +4,7 @@
 | | |
 |---|---|
 | **Role** | Captain |
-| **Homeworld** | Beaumonde (Border) |
+| **Homeworld** | Constance (Border) |
 | **War** | Decorated Alliance infantry — won the war, lost the argument |
 
 ### Attributes
