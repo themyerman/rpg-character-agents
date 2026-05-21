@@ -2,7 +2,7 @@
 
 AI-powered character and NPC generators for tabletop RPGs, built with the Anthropic Claude API. Each generator runs an agentic loop — Claude calls dice-rolling and rules-lookup tools, gets real random results back, and uses them to build characters that feel like they actually lived through something.
 
-Currently supports **D&D 5e** and **Mongoose Traveller 2e**.
+Supports **D&D 5e**, **Mongoose Traveller 2e**, **Firefly RPG (Cortex System)**, and **Scum and Villainy (Forged in the Dark)**.
 
 The output folders contain example characters generated during development — ready to use as NPCs, inspiration, or starting points for your own sessions.
 
@@ -66,25 +66,61 @@ Output saves to `traveller_characters/` as `character-name-full.md`, `character-
 
 ---
 
+## Firefly RPG — `firefly_agent.py`
+
+```bash
+python firefly_agent.py
+```
+
+Cortex System character generation for the 'Verse. Die sizes (d4–d12) replace numeric scores; Distinctions are story engines that can help or hurt depending on the situation.
+
+**Modes:**
+- `character` — Full character sheet: role, homeworld (Core/Border/Rim), Unification War history, six attributes with die ratings, 6–8 skills, three Distinctions with story notes, Signature Asset, Complications, and backstory
+- `npc` — Quick NPC sketch: role, homeworld, key attributes, distinctions, wants, secret, and one hook
+
+The generator rolls war history randomly and distributes attribute dice (d4–d10) across the six Cortex attributes. Roles available: Captain, Pilot, First Mate, Mechanic, Doctor, Shepherd, Muscle, Grifter, Thief.
+
+Output saves to `firefly_characters/` as `character-name-character.md` or `character-name-npc.md`.
+
+---
+
+## Scum and Villainy — `scum_agent.py`
+
+```bash
+python scum_agent.py
+```
+
+Forged in the Dark character generation for crews operating at the edge of the Hegemony. Action ratings (0–4 dots), playbook special abilities, stress/trauma tracks, and a specific vice with a named purveyor.
+
+**Modes:**
+- `character` — Full crew member: playbook, heritage, background, vice, starting action dots grouped by attribute (Insight/Prowess/Resolve), one special ability, XP triggers, stress and trauma tracks, and backstory
+- `npc` — Quick NPC sketch: playbook equivalent, heritage, background, key actions, wants, secret, and hook
+
+Playbooks: Muscle, Pilot, Scoundrel, Mystic, Speaker, Stitch. Action dots use filled/empty circles (●○○○). Pilot uses Helm instead of Skirmish; Stitch uses Patch instead of Tinker.
+
+Output saves to `scum_characters/` as `character-name-character.md` or `character-name-npc.md`.
+
+---
+
 ## Party & Crew Builder — `party_agent.py`
 
 ```bash
 python party_agent.py
 ```
 
-GM prep tool that assembles a party (D&D) or crew (Traveller) with connective tissue — shared history, fault lines, secrets, and a first session hook. Works with your saved characters, generates fresh ones, or mixes both.
+GM prep tool that assembles a party (D&D) or crew (Traveller, Firefly, Scum and Villainy) with connective tissue — shared history, fault lines, secrets, and a first session hook. Works with your saved characters, generates fresh ones, or mixes both.
 
 **Interactive flow:**
-1. D&D or Traveller
-2. Party size (default: 4)
+1. Game: `dnd` / `traveller` / `firefly` / `scum`
+2. Party/crew size (default: 4)
 3. Mode: `folder` (pick from saved characters) / `generate` (all fresh) / `mix` (some of each)
 4. If folder or mix: pick characters by number from a displayed list
 5. Optional theme or constraints in plain English (e.g. "gothic horror, vampire hunters" or "crew stranded on the frontier with a broken drive")
-6. Optional: generate a tailored quest giver or patron hook at the end
+6. Optional: generate a tailored opening hook at the end (quest giver / patron / job contact / score contact)
 
 Output saves to `parties/` as `game-party-name-party.md`. Opening hooks save to the appropriate characters folder.
 
-**Example output sections:** Members roster with roles → How They Met → What Holds Them Together → The Fault Line → Shared Secret → First Session Hook
+**Output sections:** Members roster with roles → How They Came Together → What Holds Them Together → The Fault Line → Shared Secret → First Session Hook
 
 ---
 
@@ -104,16 +140,20 @@ The phase tracker prints plain-English progress as generation runs — you see "
 ## Files
 
 ```
-agents/
+rpg-character-agents/
 ├── main.py                  # Stage 1 reference — bare API call
 ├── dnd_agent.py             # D&D 5e generator
 ├── traveller_agent.py       # Mongoose Traveller 2e generator
-├── party_agent.py           # Party / crew builder
+├── firefly_agent.py         # Firefly RPG (Cortex System) generator
+├── scum_agent.py            # Scum and Villainy (Forged in the Dark) generator
+├── party_agent.py           # Party / crew builder (all four games)
 ├── tests/                   # Unit tests (pure Python logic — no API calls)
 │   ├── test_dnd.py
 │   ├── test_traveller.py
 │   └── test_party.py
 ├── dnd_characters/          # D&D output
 ├── traveller_characters/    # Traveller output
-└── parties/                 # Party brief output
+├── firefly_characters/      # Firefly output
+├── scum_characters/         # Scum and Villainy output
+└── parties/                 # Party / crew brief output
 ```

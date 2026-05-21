@@ -18,6 +18,8 @@ client = anthropic.Anthropic()
 FOLDERS = {
     "dnd":       Path(__file__).parent / "dnd_characters",
     "traveller": Path(__file__).parent / "traveller_characters",
+    "firefly":   Path(__file__).parent / "firefly_characters",
+    "scum":      Path(__file__).parent / "scum_characters",
 }
 
 PARTIES_DIR = Path(__file__).parent / "parties"
@@ -73,6 +75,86 @@ def roll_dice_traveller(sides: int, count: int = 1) -> str:
         return "Error: Traveller only uses d6."
     rolls = [random.randint(1, 6) for _ in range(count)]
     return f"Rolled {count}d{sides}: {rolls} — total: {sum(rolls)}"
+
+
+FIREFLY_CREW_PROMPT = """You are a Firefly RPG crew builder and GM prep tool (Cortex System).
+
+You will receive one or more existing character sheets, and possibly an instruction to generate additional crew members to fill out the crew. If generating fresh crew, invent a name, role (Captain/Pilot/First Mate/Mechanic/Doctor/Shepherd/Muscle/Grifter/Thief), homeworld, war history, and one-sentence hook for each — make them fill gaps in the crew's roles and dynamics.
+
+Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
+
+Do not output any intermediate notes or working text. Output only the formatted crew brief, starting directly with the ## heading.
+
+Produce the crew brief in exactly this format:
+
+## [Ship Name] — Crew Brief
+*[Ship type] — [one evocative phrase about the ship or this crew's reputation in the 'Verse]*
+
+| | |
+|---|---|
+| **Ship** | [Name] ([type: Firefly-class / Tohoku-class / Pelican-class / etc.]) |
+| **Condition** | [one phrase — beat to hell but flying, freshly stolen, running on hope and baling wire, etc.] |
+| **What It Owes** | [debt, obligation, or complication — financial, legal, or moral] |
+
+### Crew
+- **[Name]** — [Role] — [their function in the group dynamic, one sentence]
+[repeat for each member]
+
+### How They Came Together
+[2–3 paragraphs. Specific — who recruited whom, what the circumstances were, what it cost to get this far. Reference specific backstory details from the sheets.]
+
+### What Holds Them Together
+[One paragraph. The practical reason this crew is still flying — shared debt, shared ship, shared enemy, or the uncomfortable fact that they're all each other has out here.]
+
+### The Fault Line
+[One paragraph. The specific tension between specific crew members that will eventually cause a crisis. Name names, name the issue. The 'Verse is hard on cracks.]
+
+### Shared Secret
+[One paragraph. Something the crew knows collectively but doesn't discuss. Connected to at least one member's war history or backstory.]
+
+### First Session Hook
+[One paragraph. A specific situation to open with — a job gone sideways, a face from someone's past at the wrong port, a ship that shouldn't be where it is. Pull on at least two crew members' specific backstory threads.]"""
+
+
+SCUM_CREW_PROMPT = """You are a Scum and Villainy crew builder and GM prep tool (Forged in the Dark).
+
+You will receive one or more existing character sheets, and possibly an instruction to generate additional crew members to fill out the crew. If generating fresh crew, invent a name, playbook (Muscle/Pilot/Scoundrel/Mystic/Speaker/Stitch), heritage, background, and one-sentence hook for each — make them fill gaps in the crew's capabilities and create interesting friction.
+
+Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
+
+Do not output any intermediate notes or working text. Output only the formatted crew brief, starting directly with the ## heading.
+
+Produce the crew brief in exactly this format:
+
+## [Ship Name] — Crew Brief
+*[Crew type: Assassins / Bounty Hunters / Criminals / Heist Crew / Rebels / Smugglers] — [one phrase about their reputation or situation]*
+
+| | |
+|---|---|
+| **Ship** | [Name] ([class]) |
+| **Crew Type** | [Assassins / Bounty Hunters / Criminals / Heist Crew / Rebels / Smugglers] |
+| **Rep** | [0–3 — their current reputation in the underworld] |
+| **Heat** | [0–3 — how much Hegemony attention they're drawing] |
+| **What It Owes** | [debt, obligation, or complication hanging over the crew] |
+
+### Crew
+- **[Name]** — [Playbook] — [their role in the crew dynamic, one sentence]
+[repeat for each member]
+
+### How They Came Together
+[2–3 paragraphs. Specific — who pulled who in, what the first score was, what it cost. Reference specific character details from the sheets.]
+
+### What Holds Them Together
+[One paragraph. The practical reason this crew is still working together — shared heat, shared debt, shared score that went wrong, or the fact that the Hegemony is looking for all of them.]
+
+### The Fault Line
+[One paragraph. The specific tension between specific crew members. Name playbooks, name the issue. Forged in the Dark characters are always one bad score from falling apart.]
+
+### Shared Secret
+[One paragraph. Something the whole crew knows but doesn't discuss — connected to at least one character's background or vice.]
+
+### First Score Hook
+[One paragraph. A specific job to open with — a target, a contact with an offer, a rival crew stepping on their territory. Pull on at least two characters' specific backstory threads. Leave the complications for the table to discover.]"""
 
 
 DND_TOOLS = [
@@ -280,8 +362,8 @@ def save_result(result: str, game: str, suffix: str = "party") -> Path:
 if __name__ == "__main__":
 
     # 1. Game
-    game_raw = input("Game? (dnd / traveller, default: traveller): ").strip().lower()
-    game     = game_raw if game_raw in ("dnd", "traveller") else "traveller"
+    game_raw = input("Game? (dnd / traveller / firefly / scum, default: traveller): ").strip().lower()
+    game     = game_raw if game_raw in ("dnd", "traveller", "firefly", "scum") else "traveller"
     label    = "party" if game == "dnd" else "crew"
 
     # 2. Party size
@@ -344,12 +426,22 @@ if __name__ == "__main__":
     prompt = build_prompt(sheets, fresh_count, party_size, label, theme)
 
     # 7. Run
-    system_prompt = DND_PARTY_PROMPT if game == "dnd" else TRAVELLER_CREW_PROMPT
+    system_prompt = {
+        "dnd":       DND_PARTY_PROMPT,
+        "traveller": TRAVELLER_CREW_PROMPT,
+        "firefly":   FIREFLY_CREW_PROMPT,
+        "scum":      SCUM_CREW_PROMPT,
+    }[game]
 
     if fresh_count > 0:
         tools       = DND_TOOLS if game == "dnd" else TRAVELLER_TOOLS
         run_tool_fn = run_tool_dnd if game == "dnd" else run_tool_traveller
-        result      = run_agent(prompt, system_prompt, tools, run_tool_fn)
+        # Firefly and Scum use a simple single-call synthesis even with fresh chars
+        # (their character sketches don't require dice rolling in the party context)
+        if game in ("firefly", "scum"):
+            result = synthesize(prompt, system_prompt)
+        else:
+            result = run_agent(prompt, system_prompt, tools, run_tool_fn)
     else:
         result = synthesize(prompt, system_prompt)
 
@@ -364,7 +456,13 @@ if __name__ == "__main__":
     print(f"\n[saved → {saved}]")
 
     # 8. Optional hook
-    hook_type = "quest giver" if game == "dnd" else "patron"
+    HOOK_TYPES = {
+        "dnd":       "quest giver",
+        "traveller": "patron",
+        "firefly":   "job contact",
+        "scum":      "score contact",
+    }
+    hook_type = HOOK_TYPES[game]
     hook_raw  = input(f"\nGenerate an opening {hook_type} hook tailored to this {label}? (yes / no, default: no): ").strip().lower()
 
     if hook_raw in ("yes", "y"):
@@ -379,28 +477,56 @@ if __name__ == "__main__":
                 f"The hook should connect to their fault line, their shared secret, or a specific character's backstory thread. "
                 f"Here is the party brief:\n\n{result}"
             )
-        else:
+            print(f"\nGenerating {hook_type} hook...")
+            hook_result = run_agent(hook_prompt, QUEST_GIVER_SYSTEM_PROMPT, HOOK_TOOLS, hook_run_tool)
+
+        elif game == "traveller":
             from traveller_agent import (
                 PATRON_SYSTEM_PROMPT as HOOK_SYSTEM,
                 TOOLS as HOOK_TOOLS,
                 run_tool as hook_run_tool,
             )
-            QUEST_GIVER_SYSTEM_PROMPT = HOOK_SYSTEM
             hook_prompt = (
                 f"Generate a Mongoose Traveller patron encounter tailored specifically to this crew. "
                 f"The job should connect to their fault line, their shared secret, or a specific crew member's backstory thread. "
                 f"Here is the crew brief:\n\n{result}"
             )
+            print(f"\nGenerating {hook_type} hook...")
+            hook_result = run_agent(hook_prompt, HOOK_SYSTEM, HOOK_TOOLS, hook_run_tool)
 
-        print(f"\nGenerating {hook_type} hook...")
-        hook_result = run_agent(hook_prompt, QUEST_GIVER_SYSTEM_PROMPT, HOOK_TOOLS, hook_run_tool)
+        elif game == "firefly":
+            from firefly_agent import SYSTEM_PROMPT as HOOK_SYSTEM
+            hook_prompt = (
+                f"Generate a Firefly RPG job contact — a person with a job to offer, tailored specifically to this crew. "
+                f"The job should connect to their fault line, their shared secret, or a specific crew member's backstory thread. "
+                f"Format as an NPC with: name, what they look like, what they need, what they're not saying, and the job offer. "
+                f"Here is the crew brief:\n\n{result}"
+            )
+            print(f"\nGenerating {hook_type} hook...")
+            hook_result = synthesize(hook_prompt, HOOK_SYSTEM)
+
+        elif game == "scum":
+            from scum_agent import SYSTEM_PROMPT as HOOK_SYSTEM
+            hook_prompt = (
+                f"Generate a Scum and Villainy score contact — a person offering a job, tailored specifically to this crew. "
+                f"The score should connect to their fault line, their shared secret, or a specific crew member's backstory thread. "
+                f"Format as an NPC with: name, faction affiliation, what they need, what they're hiding, the job offer, and the catch. "
+                f"Here is the crew brief:\n\n{result}"
+            )
+            print(f"\nGenerating {hook_type} hook...")
+            hook_result = synthesize(hook_prompt, HOOK_SYSTEM)
+
         print("\n" + hook_result)
 
         # Save hook to the appropriate characters folder
-        first_line  = hook_result.strip().splitlines()[0]
+        first_line  = next(
+            (l for l in hook_result.strip().splitlines() if l.startswith("##")),
+            hook_result.strip().splitlines()[0],
+        )
         name_raw    = re.sub(r"[#*]", "", first_line).strip()
         hook_slug   = re.sub(r"[^a-z0-9]+", "-", name_raw.lower()).strip("-")
-        hook_suffix = "questgiver" if game == "dnd" else "patron"
+        hook_suffix = {"dnd": "questgiver", "traveller": "patron",
+                       "firefly": "jobcontact", "scum": "scorecontact"}[game]
         hook_path   = FOLDERS[game] / f"{hook_slug}-{hook_suffix}.md"
         hook_path.write_text(hook_result)
         print(f"[saved → {hook_path}]")

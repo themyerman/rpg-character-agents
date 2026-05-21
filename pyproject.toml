@@ -1,7 +1,7 @@
 [project]
 name = "tabletop-character-generators"
 version = "0.1.0"
-description = "AI-powered character, NPC, and party generators for D&D 5e and Mongoose Traveller 2e"
+description = "AI-powered character, NPC, and party generators for D&D 5e, Mongoose Traveller 2e, Firefly RPG, and Scum and Villainy"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
