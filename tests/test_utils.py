@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from utils import strip_preamble, slug, save_character
+from lib.utils import strip_preamble, slug, save_character
 
 
 # ── strip_preamble ────────────────────────────────────────────────────────────

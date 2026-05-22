@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from names import (
+from lib.names import (
     roll_name_suggestion,
     roll_dnd_name_suggestion,
     NAME_TOOL_SCHEMA,

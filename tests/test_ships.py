@@ -9,7 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from ships import (
+from lib.ships import (
     SHIP_POOLS,
     roll_ship_name,
     TRAVELLER_SHIP_TOOL_SCHEMA,

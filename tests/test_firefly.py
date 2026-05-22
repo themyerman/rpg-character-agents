@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from firefly_agent import (
+from agents.firefly_agent import (
     roll_cortex_attributes,
     get_role_info,
     get_location_info,
@@ -222,21 +222,21 @@ class TestDetectPhase:
 
 class TestGearWiring:
     def test_gear_phase_message_present(self):
-        import firefly_agent
+        import agents.firefly_agent as firefly_agent
         assert "gear" in firefly_agent.PHASE_MESSAGES
 
     def test_gear_phase_message_is_string(self):
-        import firefly_agent
+        import agents.firefly_agent as firefly_agent
         assert isinstance(firefly_agent.PHASE_MESSAGES["gear"], str)
         assert len(firefly_agent.PHASE_MESSAGES["gear"]) > 0
 
     def test_firefly_gear_schema_in_tools(self):
-        import firefly_agent
+        import agents.firefly_agent as firefly_agent
         tool_names = [t["name"] for t in firefly_agent.TOOLS]
         assert "roll_firefly_gear" in tool_names
 
     def test_run_tool_returns_gear_json(self):
-        import firefly_agent
+        import agents.firefly_agent as firefly_agent
         result = firefly_agent.run_tool("roll_firefly_gear", {"role": "Pilot"})
         data = json.loads(result)
         assert "gear" in data
@@ -244,13 +244,13 @@ class TestGearWiring:
         assert len(data["gear"]) == 4
 
     def test_run_tool_gear_works_for_mechanic(self):
-        import firefly_agent
+        import agents.firefly_agent as firefly_agent
         result = firefly_agent.run_tool("roll_firefly_gear", {"role": "Mechanic"})
         data = json.loads(result)
         assert "gear" in data
 
     def test_system_prompt_mentions_roll_firefly_gear(self):
-        import firefly_agent
+        import agents.firefly_agent as firefly_agent
         assert "roll_firefly_gear" in firefly_agent.SYSTEM_PROMPT
 
 
@@ -258,30 +258,30 @@ class TestGearWiring:
 
 class TestSaveResult:
     def test_finds_heading_for_filename(self, tmp_path, monkeypatch):
-        import firefly_agent
-        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
+        import agents.firefly_agent as firefly_agent
+        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "agents" / "firefly_agent.py"))
         content = "## **Cassidy Vane**\n*Pilot — flies like she was born in the black*\n..."
         path = save_result(content, "full")
         assert "cassidy-vane" in path.name
 
     def test_mode_used_as_suffix(self, tmp_path, monkeypatch):
-        import firefly_agent
-        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
+        import agents.firefly_agent as firefly_agent
+        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "agents" / "firefly_agent.py"))
         content = "## **Rook Delmar**\n*Muscle — professional about it*"
         assert save_result(content, "full").name.endswith("-full.md")
         content2 = "## **Siena Mott**\n*Fence — you didn't get it from her*"
         assert save_result(content2, "npc").name.endswith("-npc.md")
 
     def test_file_content_written(self, tmp_path, monkeypatch):
-        import firefly_agent
-        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
+        import agents.firefly_agent as firefly_agent
+        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "agents" / "firefly_agent.py"))
         content = "## **Test Character**\n*Mechanic — keeps the lights on*"
         path = save_result(content, "full")
         assert path.read_text() == content
 
     def test_saves_to_firefly_characters_dir(self, tmp_path, monkeypatch):
-        import firefly_agent
-        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
+        import agents.firefly_agent as firefly_agent
+        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "agents" / "firefly_agent.py"))
         content = "## **Test**\n*Role*"
         path = save_result(content, "full")
         assert "characters" in str(path)
@@ -289,8 +289,8 @@ class TestSaveResult:
 
     def test_collision_appends_counter(self, tmp_path, monkeypatch):
         """Second character with the same name gets -2 suffix, not a silent overwrite."""
-        import firefly_agent
-        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
+        import agents.firefly_agent as firefly_agent
+        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "agents" / "firefly_agent.py"))
         content = "## **Cassidy Vane**\n*Pilot — flies like she was born in the black*"
         path1 = save_result(content, "full")
         path2 = save_result(content, "full")
@@ -300,8 +300,8 @@ class TestSaveResult:
         assert path2.name == "cassidy-vane-full-2.md"
 
     def test_collision_increments_beyond_two(self, tmp_path, monkeypatch):
-        import firefly_agent
-        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
+        import agents.firefly_agent as firefly_agent
+        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "agents" / "firefly_agent.py"))
         content = "## **Cassidy Vane**\n*Pilot*"
         save_result(content, "full")
         save_result(content, "full")
@@ -309,8 +309,8 @@ class TestSaveResult:
         assert path3.name == "cassidy-vane-full-3.md"
 
     def test_strips_markdown_from_filename(self, tmp_path, monkeypatch):
-        import firefly_agent
-        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "firefly_agent.py"))
+        import agents.firefly_agent as firefly_agent
+        monkeypatch.setattr(firefly_agent, "__file__", str(tmp_path / "agents" / "firefly_agent.py"))
         content = "## **Rook Delmar**\n*Muscle*"
         path = save_result(content, "full")
         assert "**" not in path.name

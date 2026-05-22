@@ -17,15 +17,18 @@ import json
 import random
 import re
 from pathlib import Path
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from names import roll_name_suggestion, NAME_TOOL_SCHEMA
-from ships import roll_ship_name, TRAVELLER_SHIP_TOOL_SCHEMA, FIREFLY_SHIP_TOOL_SCHEMA, SCUM_SHIP_TOOL_SCHEMA
-from utils import get_client, run_agent_loop, slug, pick
+from lib.names import roll_name_suggestion, NAME_TOOL_SCHEMA
+from lib.ships import roll_ship_name, TRAVELLER_SHIP_TOOL_SCHEMA, FIREFLY_SHIP_TOOL_SCHEMA, SCUM_SHIP_TOOL_SCHEMA
+from lib.utils import get_client, run_agent_loop, slug, pick
 
 
 # ── Output path ───────────────────────────────────────────────────────────────
 
-_OUTPUT = Path(__file__).parent / "output"
+_OUTPUT = Path(__file__).parent.parent / "output"
 
 GAME_SUBDIRS: dict[str, str] = {
     "dnd":       "dnd",

@@ -8,10 +8,13 @@ Run with: python scum_villainy_agent.py
 import json
 import random
 from pathlib import Path
-from names import roll_name_suggestion, NAME_TOOL_SCHEMA
-from ships import roll_ship_name, SCUM_SHIP_TOOL_SCHEMA
-from gear import roll_scum_gear, SCUM_GEAR_TOOL_SCHEMA
-from utils import get_client, run_agent_loop, save_character, strip_preamble
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from lib.names import roll_name_suggestion, NAME_TOOL_SCHEMA
+from lib.ships import roll_ship_name, SCUM_SHIP_TOOL_SCHEMA
+from lib.gear import roll_scum_gear, SCUM_GEAR_TOOL_SCHEMA
+from lib.utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
 # ── Playbooks ────────────────────────────────────────────────────────────────────
@@ -661,7 +664,7 @@ def run_agent(prompt: str, system_prompt: str = SYSTEM_PROMPT) -> str:
 # ── Save ──────────────────────────────────────────────────────────────────────────
 
 def save_result(result: str, mode: str) -> Path:
-    return save_character(result, mode, "scum_villainy", __file__)
+    return save_character(result, mode, "scum_villainy", Path(__file__).parent.parent)
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────────

@@ -43,14 +43,14 @@ A numbered menu walks you through the options:
 Each agent can also be run directly:
 
 ```bash
-python dnd_agent.py
-python traveller_agent.py
-python firefly_agent.py
-python scum_villainy_agent.py
-python party_agent.py
-python npc_cluster_agent.py
-python encounter_agent.py
-python ship_agent.py
+python agents/dnd_agent.py
+python agents/traveller_agent.py
+python agents/firefly_agent.py
+python agents/scum_villainy_agent.py
+python agents/party_agent.py
+python agents/npc_cluster_agent.py
+python agents/encounter_agent.py
+python agents/ship_agent.py
 ```
 
 Every generator accepts a plain English prompt — use it to add a concept, a constraint, or a swerve. You can be vague (`"someone with a secret"`) or precise (`"ex-navy medic, cashiered for something she still thinks was right"`). The dice still roll. The description just tilts the output.
@@ -334,25 +334,26 @@ Every generator is designed to prevent defaults: name tools push away from famil
 rpg-character-agents/
 ├── main.py                   # Top-level menu
 │
-├── dnd_agent.py              # D&D 5e — character, NPC, quest giver
-├── traveller_agent.py        # Mongoose Traveller 2e — character, NPC, patron
-├── firefly_agent.py          # Firefly RPG — character, NPC, job contact
-├── scum_villainy_agent.py    # Scum and Villainy — character, NPC, score contact
+├── agents/                   # AI agent runners — each calls Claude via tool-use loop
+│   ├── dnd_agent.py          # D&D 5e — character, NPC, quest giver
+│   ├── traveller_agent.py    # Mongoose Traveller 2e — character, NPC, patron
+│   ├── firefly_agent.py      # Firefly RPG — character, NPC, job contact
+│   ├── scum_villainy_agent.py# Scum and Villainy — character, NPC, score contact
+│   ├── party_agent.py        # Party / crew builder (all four games)
+│   ├── npc_cluster_agent.py  # Connected NPC group with internal relationships
+│   ├── encounter_agent.py    # Encounter generator with seed tables
+│   ├── ship_agent.py         # Ship builder with stats, history, quirks
+│   ├── location_agent.py     # Location generator with atmosphere, NPCs, hooks
+│   ├── rumor_agent.py        # Rumor generator with truth-angle and tone seeds
+│   └── event_agent.py        # Event generator — interruptions that demand response
 │
-├── party_agent.py            # Party / crew builder (all four games)
-├── npc_cluster_agent.py      # Connected NPC group with internal relationships
-├── encounter_agent.py        # Encounter generator with seed tables
-├── ship_agent.py             # Ship builder with stats, history, quirks
-├── location_agent.py         # Location generator with atmosphere, NPCs, hooks
-├── rumor_agent.py            # Rumor generator with truth-angle and tone seeds
-├── event_agent.py            # Event generator — interruptions that demand response
-│
-├── dice.py                   # Dice rolling and rules lookups
-├── gear.py                   # Starting equipment — 4 games, class/career/role-specific
-├── names.py                  # Name pools — 15+ traditions + D&D race pools
-├── ships.py                  # Ship name pools — 4 games, distinct registers
-├── spells.py                 # D&D spell pools — 8 classes, story-first hooks
-├── utils.py                  # Shared infrastructure
+├── lib/                      # Pure Python — no API calls, fully tested
+│   ├── dice.py               # Dice rolling and rules lookups
+│   ├── gear.py               # Starting equipment — 4 games, class/career/role-specific
+│   ├── names.py              # Name pools — 15+ traditions + D&D race pools
+│   ├── ships.py              # Ship name pools — 4 games, distinct registers
+│   ├── spells.py             # D&D spell pools — 8 classes, story-first hooks
+│   └── utils.py              # Shared infrastructure
 │
 ├── tests/
 │   ├── test_dnd.py

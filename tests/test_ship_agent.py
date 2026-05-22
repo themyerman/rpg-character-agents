@@ -10,7 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from ship_agent import (
+from agents.ship_agent import (
     SHIP_SEED_POOLS,
     GAME_SUBDIRS,
     GAME_TOOLS,
@@ -537,37 +537,37 @@ class TestSaveShip:
     SAMPLE = "## The Iron Meridian\n*Type-A Free Trader — twenty years of honest work and one very dishonest year*\n\n### Registry\n..."
 
     def test_saves_to_correct_directory(self, tmp_path, monkeypatch):
-        import ship_agent as sa
+        import agents.ship_agent as sa
         monkeypatch.setattr(sa, "_OUTPUT", tmp_path)
         path = save_ship(self.SAMPLE, "traveller")
         assert path.parent == tmp_path / "traveller" / "ships"
 
     def test_scum_saves_to_scum_villainy(self, tmp_path, monkeypatch):
-        import ship_agent as sa
+        import agents.ship_agent as sa
         monkeypatch.setattr(sa, "_OUTPUT", tmp_path)
         path = save_ship(self.SAMPLE, "scum")
         assert "scum_villainy" in str(path)
 
     def test_filename_ends_with_ship(self, tmp_path, monkeypatch):
-        import ship_agent as sa
+        import agents.ship_agent as sa
         monkeypatch.setattr(sa, "_OUTPUT", tmp_path)
         path = save_ship(self.SAMPLE, "dnd")
         assert path.name.endswith("-ship.md")
 
     def test_filename_slugified_from_title(self, tmp_path, monkeypatch):
-        import ship_agent as sa
+        import agents.ship_agent as sa
         monkeypatch.setattr(sa, "_OUTPUT", tmp_path)
         path = save_ship(self.SAMPLE, "traveller")
         assert "the-iron-meridian" in path.name
 
     def test_file_content_preserved(self, tmp_path, monkeypatch):
-        import ship_agent as sa
+        import agents.ship_agent as sa
         monkeypatch.setattr(sa, "_OUTPUT", tmp_path)
         path = save_ship(self.SAMPLE, "firefly")
         assert path.read_text() == self.SAMPLE
 
     def test_collision_counter(self, tmp_path, monkeypatch):
-        import ship_agent as sa
+        import agents.ship_agent as sa
         monkeypatch.setattr(sa, "_OUTPUT", tmp_path)
         path1 = save_ship(self.SAMPLE, "dnd")
         path2 = save_ship(self.SAMPLE, "dnd")
@@ -575,7 +575,7 @@ class TestSaveShip:
         assert path1.exists() and path2.exists()
 
     def test_directory_created_if_missing(self, tmp_path, monkeypatch):
-        import ship_agent as sa
+        import agents.ship_agent as sa
         monkeypatch.setattr(sa, "_OUTPUT", tmp_path)
         path = save_ship(self.SAMPLE, "firefly")
         assert path.parent.exists()

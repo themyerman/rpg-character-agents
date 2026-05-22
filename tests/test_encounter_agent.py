@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from encounter_agent import (
+from agents.encounter_agent import (
     ENCOUNTER_POOLS,
     GAME_SUBDIRS,
     GAME_TOOLS,
@@ -339,7 +339,7 @@ class TestListPartyFiles:
 
     def test_returns_only_md_files(self, tmp_path, monkeypatch):
         """Files in the party dir are .md only."""
-        import encounter_agent as ea
+        import agents.encounter_agent as ea
         subdir = tmp_path / "dnd" / "parties"
         subdir.mkdir(parents=True)
         (subdir / "my-crew-party.md").write_text("# My Crew")
@@ -351,7 +351,7 @@ class TestListPartyFiles:
         assert len(files) == 1
 
     def test_scum_uses_scum_villainy_subdir(self, tmp_path, monkeypatch):
-        import encounter_agent as ea
+        import agents.encounter_agent as ea
         subdir = tmp_path / "scum_villainy" / "parties"
         subdir.mkdir(parents=True)
         (subdir / "pale-dreamer-crew.md").write_text("# Pale Dreamer Crew")
@@ -367,37 +367,37 @@ class TestSaveEncounter:
     SAMPLE_CONTENT = "## The Wrong Ferryman\n\n*Something is off about the crossing.*\n\n### Setting\nFog."
 
     def test_saves_to_correct_directory(self, tmp_path, monkeypatch):
-        import encounter_agent as ea
+        import agents.encounter_agent as ea
         monkeypatch.setattr(ea, "_OUTPUT", tmp_path)
         path = save_encounter(self.SAMPLE_CONTENT, "dnd")
         assert path.parent == tmp_path / "dnd" / "encounters"
 
     def test_scum_saves_to_scum_villainy(self, tmp_path, monkeypatch):
-        import encounter_agent as ea
+        import agents.encounter_agent as ea
         monkeypatch.setattr(ea, "_OUTPUT", tmp_path)
         path = save_encounter(self.SAMPLE_CONTENT, "scum")
         assert "scum_villainy" in str(path)
 
     def test_filename_ends_with_encounter(self, tmp_path, monkeypatch):
-        import encounter_agent as ea
+        import agents.encounter_agent as ea
         monkeypatch.setattr(ea, "_OUTPUT", tmp_path)
         path = save_encounter(self.SAMPLE_CONTENT, "traveller")
         assert path.name.endswith("-encounter.md")
 
     def test_filename_slugified_from_title(self, tmp_path, monkeypatch):
-        import encounter_agent as ea
+        import agents.encounter_agent as ea
         monkeypatch.setattr(ea, "_OUTPUT", tmp_path)
         path = save_encounter(self.SAMPLE_CONTENT, "dnd")
         assert "the-wrong-ferryman" in path.name
 
     def test_file_content_preserved(self, tmp_path, monkeypatch):
-        import encounter_agent as ea
+        import agents.encounter_agent as ea
         monkeypatch.setattr(ea, "_OUTPUT", tmp_path)
         path = save_encounter(self.SAMPLE_CONTENT, "firefly")
         assert path.read_text() == self.SAMPLE_CONTENT
 
     def test_collision_counter(self, tmp_path, monkeypatch):
-        import encounter_agent as ea
+        import agents.encounter_agent as ea
         monkeypatch.setattr(ea, "_OUTPUT", tmp_path)
         path1 = save_encounter(self.SAMPLE_CONTENT, "dnd")
         path2 = save_encounter(self.SAMPLE_CONTENT, "dnd")
@@ -406,7 +406,7 @@ class TestSaveEncounter:
         assert path2.exists()
 
     def test_directory_created_if_missing(self, tmp_path, monkeypatch):
-        import encounter_agent as ea
+        import agents.encounter_agent as ea
         monkeypatch.setattr(ea, "_OUTPUT", tmp_path)
         path = save_encounter(self.SAMPLE_CONTENT, "dnd")
         assert path.parent.exists()

@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from event_agent import (
+from agents.event_agent import (
     roll_dnd_event_seed,
     roll_traveller_event_seed,
     roll_firefly_event_seed,
@@ -225,7 +225,7 @@ class TestEventDetectPhase:
 
 class TestSaveEvent:
     def test_saves_to_events_directory(self, tmp_path, monkeypatch):
-        import event_agent
+        import agents.event_agent as event_agent
         monkeypatch.setattr(event_agent, "_OUTPUT", tmp_path)
         content = "## **The Factor Appears**\n*A familiar face at the wrong moment*"
         path = save_event(content, "dnd")
@@ -233,35 +233,35 @@ class TestSaveEvent:
         assert "dnd" in str(path)
 
     def test_filename_uses_slug(self, tmp_path, monkeypatch):
-        import event_agent
+        import agents.event_agent as event_agent
         monkeypatch.setattr(event_agent, "_OUTPUT", tmp_path)
         content = "## **The Factor Appears**\n*detail*"
         path = save_event(content, "dnd")
         assert "the-factor-appears" in path.name
 
     def test_filename_ends_with_event_md(self, tmp_path, monkeypatch):
-        import event_agent
+        import agents.event_agent as event_agent
         monkeypatch.setattr(event_agent, "_OUTPUT", tmp_path)
         content = "## **Test Event**\n*detail*"
         path = save_event(content, "dnd")
         assert path.name.endswith("-event.md")
 
     def test_file_content_written(self, tmp_path, monkeypatch):
-        import event_agent
+        import agents.event_agent as event_agent
         monkeypatch.setattr(event_agent, "_OUTPUT", tmp_path)
         content = "## **Jump Anomaly**\n*Something on the sensors that isn't on any chart*"
         path = save_event(content, "traveller")
         assert path.read_text() == content
 
     def test_scum_uses_scum_villainy_subdir(self, tmp_path, monkeypatch):
-        import event_agent
+        import agents.event_agent as event_agent
         monkeypatch.setattr(event_agent, "_OUTPUT", tmp_path)
         content = "## **The Faction Moves**\n*detail*"
         path = save_event(content, "scum")
         assert "scum_villainy" in str(path)
 
     def test_collision_appends_counter(self, tmp_path, monkeypatch):
-        import event_agent
+        import agents.event_agent as event_agent
         monkeypatch.setattr(event_agent, "_OUTPUT", tmp_path)
         content = "## **The Ambush**\n*detail*"
         path1 = save_event(content, "firefly")
@@ -271,7 +271,7 @@ class TestSaveEvent:
         assert path2.name == "the-ambush-event-2.md"
 
     def test_collision_increments_beyond_two(self, tmp_path, monkeypatch):
-        import event_agent
+        import agents.event_agent as event_agent
         monkeypatch.setattr(event_agent, "_OUTPUT", tmp_path)
         content = "## **The Ambush**\n*detail*"
         save_event(content, "firefly")
@@ -280,7 +280,7 @@ class TestSaveEvent:
         assert path3.name == "the-ambush-event-3.md"
 
     def test_strips_markdown_from_filename(self, tmp_path, monkeypatch):
-        import event_agent
+        import agents.event_agent as event_agent
         monkeypatch.setattr(event_agent, "_OUTPUT", tmp_path)
         content = "## **Bold Event**\n*detail*"
         path = save_event(content, "scum")

@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from spells import (
+from lib.spells import (
     get_spell_suggestions,
     SPELL_POOLS,
     SPELLCASTING_CLASSES,

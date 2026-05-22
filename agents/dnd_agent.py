@@ -8,10 +8,13 @@ Run with: python dnd_dice_agent.py
 import json
 import random
 from pathlib import Path
-from names import roll_dnd_name_suggestion, DND_NAME_TOOL_SCHEMA
-from spells import get_spell_suggestions, DND_SPELL_TOOL_SCHEMA
-from gear import roll_dnd_gear, DND_GEAR_TOOL_SCHEMA
-from utils import get_client, run_agent_loop, save_character, strip_preamble
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from lib.names import roll_dnd_name_suggestion, DND_NAME_TOOL_SCHEMA
+from lib.spells import get_spell_suggestions, DND_SPELL_TOOL_SCHEMA
+from lib.gear import roll_dnd_gear, DND_GEAR_TOOL_SCHEMA
+from lib.utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
 # ── Constants ──────────────────────────────────────────────────────────────────
@@ -1045,7 +1048,7 @@ def run_agent(prompt: str, system_prompt: str = SYSTEM_PROMPT) -> str:
 # ── Entry point ────────────────────────────────────────────────────────────────
 
 def save_result(result: str, mode: str) -> Path:
-    return save_character(result, mode, "dnd", __file__)
+    return save_character(result, mode, "dnd", Path(__file__).parent.parent)
 
 
 def run(mode: str | None = None, desc: str | None = None) -> None:

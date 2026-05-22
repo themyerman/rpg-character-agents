@@ -9,12 +9,15 @@ Or invoked from main.py.
 
 import re
 from pathlib import Path
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-import dnd_agent
-import firefly_agent
-import scum_villainy_agent
-import traveller_agent
-from utils import get_client, pick, run_agent_loop, strip_preamble
+from agents import dnd_agent
+from agents import firefly_agent
+from agents import scum_villainy_agent
+from agents import traveller_agent
+from lib.utils import get_client, pick, run_agent_loop, strip_preamble
 
 
 # ── Game registry ──────────────────────────────────────────────────────────────
@@ -169,7 +172,7 @@ def save_cluster(synthesis: str, npcs: list[str], game: str, relationship: str) 
     filename   = f"{relationship}-{title_slug}-party.md"
 
     subdir     = GAME_AGENTS[game]["save_subdir"]
-    output_dir = Path(__file__).parent / "output" / subdir / "clusters"
+    output_dir = Path(__file__).parent.parent / "output" / subdir / "clusters"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     filepath = output_dir / filename

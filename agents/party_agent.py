@@ -7,13 +7,16 @@ Run with: python party_agent.py
 
 import re
 from pathlib import Path
-from utils import get_client, pick
-from dice import DND_TOOLS, TRAVELLER_TOOLS, run_tool_dnd, run_tool_traveller
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from lib.utils import get_client, pick
+from lib.dice import DND_TOOLS, TRAVELLER_TOOLS, run_tool_dnd, run_tool_traveller
 
 
 # ── Folder locations ────────────────────────────────────────────────────────────
 
-_OUTPUT = Path(__file__).parent / "output"
+_OUTPUT = Path(__file__).parent.parent / "output"
 
 FOLDERS = {
     "dnd":       _OUTPUT / "dnd"       / "characters",

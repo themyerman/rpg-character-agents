@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from location_agent import (
+from agents.location_agent import (
     roll_dnd_location_seed,
     roll_traveller_location_seed,
     roll_firefly_location_seed,
@@ -215,7 +215,7 @@ class TestDetectPhase:
 
 class TestSaveLocation:
     def test_saves_to_correct_directory(self, tmp_path, monkeypatch):
-        import location_agent
+        import agents.location_agent as location_agent
         monkeypatch.setattr(location_agent, "_OUTPUT", tmp_path)
         content = "## **The Crossroads Inn**\n*A roadside waystation at the edge of the known*"
         path = save_location(content, "dnd")
@@ -223,35 +223,35 @@ class TestSaveLocation:
         assert "dnd" in str(path)
 
     def test_filename_uses_slug(self, tmp_path, monkeypatch):
-        import location_agent
+        import agents.location_agent as location_agent
         monkeypatch.setattr(location_agent, "_OUTPUT", tmp_path)
         content = "## **The Crossroads Inn**\n*detail*"
         path = save_location(content, "dnd")
         assert "the-crossroads-inn" in path.name
 
     def test_filename_ends_with_location_md(self, tmp_path, monkeypatch):
-        import location_agent
+        import agents.location_agent as location_agent
         monkeypatch.setattr(location_agent, "_OUTPUT", tmp_path)
         content = "## **Test Place**\n*detail*"
         path = save_location(content, "dnd")
         assert path.name.endswith("-location.md")
 
     def test_file_content_written(self, tmp_path, monkeypatch):
-        import location_agent
+        import agents.location_agent as location_agent
         monkeypatch.setattr(location_agent, "_OUTPUT", tmp_path)
         content = "## **Orion Station**\n*A starport that lost its Class A rating*"
         path = save_location(content, "traveller")
         assert path.read_text() == content
 
     def test_scum_uses_scum_villainy_subdir(self, tmp_path, monkeypatch):
-        import location_agent
+        import agents.location_agent as location_agent
         monkeypatch.setattr(location_agent, "_OUTPUT", tmp_path)
         content = "## **The Fringe Station**\n*detail*"
         path = save_location(content, "scum")
         assert "scum_villainy" in str(path)
 
     def test_collision_appends_counter(self, tmp_path, monkeypatch):
-        import location_agent
+        import agents.location_agent as location_agent
         monkeypatch.setattr(location_agent, "_OUTPUT", tmp_path)
         content = "## **Crossroads Inn**\n*detail*"
         path1 = save_location(content, "dnd")
@@ -261,7 +261,7 @@ class TestSaveLocation:
         assert path2.name == "crossroads-inn-location-2.md"
 
     def test_strips_markdown_from_filename(self, tmp_path, monkeypatch):
-        import location_agent
+        import agents.location_agent as location_agent
         monkeypatch.setattr(location_agent, "_OUTPUT", tmp_path)
         content = "## **Bold Place**\n*detail*"
         path = save_location(content, "firefly")

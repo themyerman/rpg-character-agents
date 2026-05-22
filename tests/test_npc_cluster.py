@@ -8,8 +8,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-import npc_cluster_agent
-from npc_cluster_agent import (
+from agents import npc_cluster_agent
+from agents.npc_cluster_agent import (
     GAME_AGENTS,
     RELATIONSHIP_TYPES,
     _slug,
@@ -152,26 +152,26 @@ class TestSaveCluster:
         return f"## **{name}**\n*Muscle — does the hitting professionally*\n\n**Demeanor:** Quiet."
 
     def test_saves_to_parties_dir(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "npc_cluster_agent.py"))
+        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "agents" / "npc_cluster_agent.py"))
         npcs = [self._make_npc("Vance Rook"), self._make_npc("Mira Soto")]
         path = save_cluster(self._make_synthesis(), npcs, "firefly", "rivals")
         assert "clusters" in str(path)
 
     def test_filename_contains_game_and_relationship(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "npc_cluster_agent.py"))
+        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "agents" / "npc_cluster_agent.py"))
         npcs = [self._make_npc("Vance Rook"), self._make_npc("Mira Soto")]
         path = save_cluster(self._make_synthesis(), npcs, "firefly", "rivals")
         assert "firefly" in str(path)   # game is in the directory, not the filename
         assert "rivals"  in path.name   # relationship stays in the filename
 
     def test_filename_ends_with_party_md(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "npc_cluster_agent.py"))
+        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "agents" / "npc_cluster_agent.py"))
         npcs = [self._make_npc("Vance Rook"), self._make_npc("Mira Soto")]
         path = save_cluster(self._make_synthesis(), npcs, "firefly", "rivals")
         assert path.name.endswith("-party.md")
 
     def test_file_content_includes_npc_names(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "npc_cluster_agent.py"))
+        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "agents" / "npc_cluster_agent.py"))
         npcs = [self._make_npc("Vance Rook"), self._make_npc("Mira Soto")]
         path = save_cluster(self._make_synthesis(), npcs, "firefly", "rivals")
         content = path.read_text()
@@ -179,14 +179,14 @@ class TestSaveCluster:
         assert "Mira Soto"  in content
 
     def test_file_content_includes_gm_hooks(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "npc_cluster_agent.py"))
+        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "agents" / "npc_cluster_agent.py"))
         npcs = [self._make_npc("Vance Rook"), self._make_npc("Mira Soto")]
         path = save_cluster(self._make_synthesis(), npcs, "firefly", "rivals")
         content = path.read_text()
         assert "GM Hooks" in content
 
     def test_collision_appends_counter(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "npc_cluster_agent.py"))
+        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "agents" / "npc_cluster_agent.py"))
         npcs = [self._make_npc("Vance Rook"), self._make_npc("Mira Soto")]
         path1 = save_cluster(self._make_synthesis(), npcs, "firefly", "rivals")
         path2 = save_cluster(self._make_synthesis(), npcs, "firefly", "rivals")
@@ -195,7 +195,7 @@ class TestSaveCluster:
         assert path2.exists()
 
     def test_slug_extracted_from_title_before_colon(self, tmp_path, monkeypatch):
-        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "npc_cluster_agent.py"))
+        monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "agents" / "npc_cluster_agent.py"))
         npcs = [self._make_npc("Alpha"), self._make_npc("Beta")]
         # Title has a colon — slug should come from the part before it
         synthesis = self._make_synthesis("Iron Dogs: Firefly RPG — Rivals")

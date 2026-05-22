@@ -8,8 +8,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import re
 import pytest
-import party_agent
-from party_agent import (
+from agents import party_agent
+from agents.party_agent import (
     list_characters,
     build_prompt,
     save_result,

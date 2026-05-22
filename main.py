@@ -2,21 +2,25 @@
 Main entry point — game-first interactive menu.
 
 Pick your game, then pick what you want to build. Each agent can also be
-run directly (python traveller_agent.py, etc.) to skip the menu entirely.
+run directly (python agents/traveller_agent.py, etc.) to skip the menu entirely.
 """
 
-import dnd_agent
-import traveller_agent
-import firefly_agent
-import scum_villainy_agent
-import party_agent
-import npc_cluster_agent
-import encounter_agent
-import ship_agent
-import location_agent
-import rumor_agent
-import event_agent
-from utils import pick
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent))
+
+from agents import dnd_agent
+from agents import traveller_agent
+from agents import firefly_agent
+from agents import scum_villainy_agent
+from agents import party_agent
+from agents import npc_cluster_agent
+from agents import encounter_agent
+from agents import ship_agent
+from agents import location_agent
+from agents import rumor_agent
+from agents import event_agent
+from lib.utils import pick
 
 
 # ── Per-game action menus ─────────────────────────────────────────────────────

@@ -4,7 +4,7 @@ Tests for gear.py — starting equipment for all four games.
 
 import json
 import pytest
-from gear import (
+from lib.gear import (
     _DND_GEAR,
     _DND_PERSONAL,
     roll_dnd_gear,

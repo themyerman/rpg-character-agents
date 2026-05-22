@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from rumor_agent import (
+from agents.rumor_agent import (
     roll_dnd_rumor_seed,
     roll_traveller_rumor_seed,
     roll_firefly_rumor_seed,
@@ -217,7 +217,7 @@ class TestRumorDetectPhase:
 
 class TestSaveRumor:
     def test_saves_to_rumors_directory(self, tmp_path, monkeypatch):
-        import rumor_agent
+        import agents.rumor_agent as rumor_agent
         monkeypatch.setattr(rumor_agent, "_OUTPUT", tmp_path)
         content = "## **The Missing Caravan**\n*What happened on the northern road*"
         path = save_rumor(content, "dnd")
@@ -225,35 +225,35 @@ class TestSaveRumor:
         assert "dnd" in str(path)
 
     def test_filename_uses_slug(self, tmp_path, monkeypatch):
-        import rumor_agent
+        import agents.rumor_agent as rumor_agent
         monkeypatch.setattr(rumor_agent, "_OUTPUT", tmp_path)
         content = "## **The Missing Caravan**\n*detail*"
         path = save_rumor(content, "dnd")
         assert "the-missing-caravan" in path.name
 
     def test_filename_ends_with_rumor_md(self, tmp_path, monkeypatch):
-        import rumor_agent
+        import agents.rumor_agent as rumor_agent
         monkeypatch.setattr(rumor_agent, "_OUTPUT", tmp_path)
         content = "## **Test Rumor**\n*detail*"
         path = save_rumor(content, "dnd")
         assert path.name.endswith("-rumor.md")
 
     def test_file_content_written(self, tmp_path, monkeypatch):
-        import rumor_agent
+        import agents.rumor_agent as rumor_agent
         monkeypatch.setattr(rumor_agent, "_OUTPUT", tmp_path)
         content = "## **The Scout Who Didn't Report**\n*An IISS anomaly in the outer belt*"
         path = save_rumor(content, "traveller")
         assert path.read_text() == content
 
     def test_scum_uses_scum_villainy_subdir(self, tmp_path, monkeypatch):
-        import rumor_agent
+        import agents.rumor_agent as rumor_agent
         monkeypatch.setattr(rumor_agent, "_OUTPUT", tmp_path)
         content = "## **The Faction's New Weapon**\n*detail*"
         path = save_rumor(content, "scum")
         assert "scum_villainy" in str(path)
 
     def test_collision_appends_counter(self, tmp_path, monkeypatch):
-        import rumor_agent
+        import agents.rumor_agent as rumor_agent
         monkeypatch.setattr(rumor_agent, "_OUTPUT", tmp_path)
         content = "## **The Guild War**\n*detail*"
         path1 = save_rumor(content, "dnd")
@@ -263,7 +263,7 @@ class TestSaveRumor:
         assert path2.name == "the-guild-war-rumor-2.md"
 
     def test_strips_markdown_from_filename(self, tmp_path, monkeypatch):
-        import rumor_agent
+        import agents.rumor_agent as rumor_agent
         monkeypatch.setattr(rumor_agent, "_OUTPUT", tmp_path)
         content = "## **Bold Rumor**\n*detail*"
         path = save_rumor(content, "firefly")

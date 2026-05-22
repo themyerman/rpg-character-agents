@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
-from scum_villainy_agent import (
+from agents.scum_villainy_agent import (
     get_playbook_info,
     assign_action_dots,
     roll_heritage,
@@ -274,21 +274,21 @@ class TestDetectPhase:
 
 class TestGearWiring:
     def test_gear_phase_message_present(self):
-        import scum_villainy_agent
+        import agents.scum_villainy_agent as scum_villainy_agent
         assert "gear" in scum_villainy_agent.PHASE_MESSAGES
 
     def test_gear_phase_message_is_string(self):
-        import scum_villainy_agent
+        import agents.scum_villainy_agent as scum_villainy_agent
         assert isinstance(scum_villainy_agent.PHASE_MESSAGES["gear"], str)
         assert len(scum_villainy_agent.PHASE_MESSAGES["gear"]) > 0
 
     def test_scum_gear_schema_in_tools(self):
-        import scum_villainy_agent
+        import agents.scum_villainy_agent as scum_villainy_agent
         tool_names = [t["name"] for t in scum_villainy_agent.TOOLS]
         assert "roll_scum_gear" in tool_names
 
     def test_run_tool_returns_gear_json(self):
-        import scum_villainy_agent
+        import agents.scum_villainy_agent as scum_villainy_agent
         result = scum_villainy_agent.run_tool("roll_scum_gear", {"playbook": "Muscle"})
         data = json.loads(result)
         assert "gear" in data
@@ -296,13 +296,13 @@ class TestGearWiring:
         assert len(data["gear"]) == 4
 
     def test_run_tool_gear_works_for_mystic(self):
-        import scum_villainy_agent
+        import agents.scum_villainy_agent as scum_villainy_agent
         result = scum_villainy_agent.run_tool("roll_scum_gear", {"playbook": "Mystic"})
         data = json.loads(result)
         assert "gear" in data
 
     def test_system_prompt_mentions_roll_scum_gear(self):
-        import scum_villainy_agent
+        import agents.scum_villainy_agent as scum_villainy_agent
         assert "roll_scum_gear" in scum_villainy_agent.SYSTEM_PROMPT
 
 
@@ -357,34 +357,34 @@ class TestRollScoreHook:
 
 class TestSaveResult:
     def test_finds_heading_for_filename(self, tmp_path, monkeypatch):
-        import scum_villainy_agent
-        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
+        import agents.scum_villainy_agent as scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "agents" / "scum_villainy_agent.py"))
         content = "## **Reva Marsh**\n*Scoundrel — three fake IDs and a real grudge*\n..."
         path = save_result(content, "full")
         assert "reva-marsh" in path.name
 
     def test_character_suffix(self, tmp_path, monkeypatch):
-        import scum_villainy_agent
-        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
+        import agents.scum_villainy_agent as scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "agents" / "scum_villainy_agent.py"))
         content = "## **Test**\n*Muscle*"
         assert save_result(content, "full").name.endswith("-full.md")
 
     def test_npc_suffix(self, tmp_path, monkeypatch):
-        import scum_villainy_agent
-        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
+        import agents.scum_villainy_agent as scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "agents" / "scum_villainy_agent.py"))
         content = "## **Tess Varo**\n*Fixer*"
         assert save_result(content, "npc").name.endswith("-npc.md")
 
     def test_file_content_written(self, tmp_path, monkeypatch):
-        import scum_villainy_agent
-        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
+        import agents.scum_villainy_agent as scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "agents" / "scum_villainy_agent.py"))
         content = "## **Test Character**\n*Muscle — hits things professionally*"
         path = save_result(content, "full")
         assert path.read_text() == content
 
     def test_saves_to_scum_villainy_characters_dir(self, tmp_path, monkeypatch):
-        import scum_villainy_agent
-        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
+        import agents.scum_villainy_agent as scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "agents" / "scum_villainy_agent.py"))
         content = "## **Test**\n*Role*"
         path = save_result(content, "full")
         assert "characters" in str(path)
@@ -392,8 +392,8 @@ class TestSaveResult:
 
     def test_collision_appends_counter(self, tmp_path, monkeypatch):
         """Second character with the same name gets -2 suffix, not a silent overwrite."""
-        import scum_villainy_agent
-        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
+        import agents.scum_villainy_agent as scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "agents" / "scum_villainy_agent.py"))
         content = "## **Reva Marsh**\n*Scoundrel — three fake IDs and a real grudge*"
         path1 = save_result(content, "full")
         path2 = save_result(content, "full")
@@ -403,8 +403,8 @@ class TestSaveResult:
         assert path2.name == "reva-marsh-full-2.md"
 
     def test_collision_increments_beyond_two(self, tmp_path, monkeypatch):
-        import scum_villainy_agent
-        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
+        import agents.scum_villainy_agent as scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "agents" / "scum_villainy_agent.py"))
         content = "## **Reva Marsh**\n*Scoundrel*"
         save_result(content, "full")
         save_result(content, "full")
@@ -412,8 +412,8 @@ class TestSaveResult:
         assert path3.name == "reva-marsh-full-3.md"
 
     def test_strips_markdown_from_filename(self, tmp_path, monkeypatch):
-        import scum_villainy_agent
-        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "scum_villainy_agent.py"))
+        import agents.scum_villainy_agent as scum_villainy_agent
+        monkeypatch.setattr(scum_villainy_agent, "__file__", str(tmp_path / "agents" / "scum_villainy_agent.py"))
         content = "## **Reva Marsh**\n*Scoundrel*"
         path = save_result(content, "full")
         assert "**" not in path.name
