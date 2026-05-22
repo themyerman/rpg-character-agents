@@ -39,7 +39,28 @@
 - **Enemy — First Mate Caedran Vell:** The man whose decision sank the *Marrow-Gull* in a squall he was warned about; he survived, made it home, and has been telling a very different version of events in the dockside taverns of Port Aushen.
 
 ### Equipment
-A leather-wrapped wooden scimitar with barnacle scars along the grip, a sling and a pouch of smooth river stones, a hide cuirass darkened by sea salt, a wooden shield carved with a spiral of waves, a druidic focus made from a length of *Marrow-Gull* rail twisted with living ivy, the oilcloth-bound journal, a belaying pin she still carries out of habit, her herbalism kit (mostly coastal plants), 10 gp in mixed coastal coin, and a brass whistle that only summons gulls now.
+- A leather-wrapped wooden scimitar with barnacle scars along the grip
+- A sling and a pouch of smooth river stones
+- A hide cuirass darkened by sea salt
+- A wooden shield carved with a spiral of waves
+- A druidic focus: a length of *Marrow-Gull* rail twisted with living ivy
+- Her herbalism kit, mostly coastal plants, packed to survive salt air
+- A belaying pin she still carries out of habit — old muscle memory from the ship
+- 10 gp in mixed coastal coin
+- A brass whistle that only summons gulls now. She found it on the spar with her after the wreck; she doesn't know what it was before, and suspects it belonged to someone who didn't survive.
+
+### Spells
+*Level 1 Druid — 2 cantrips known, 2 first-level slots, prepares 5 spells (WIS 18 + Level 1)*
+
+**Cantrips**
+- **Guidance** — She offers it like an extra hand on the rigging. The sea taught her to trust feedback over instinct; this is the same thing, translated inland.
+- **Shillelagh** — Wood that remembers being alive. She uses it on the scimitar when she has to, and it feels more honest than the blade.
+
+**1st Level** *(Prepares: Entangle, Healing Word, Speak with Animals, Fog Cloud — 2 slots per rest)*
+- **Entangle** — The ocean had no roots. She finds this spell disconcerting and useful in exactly equal measure.
+- **Healing Word** — Urgent and economical, the way you'd shout a warning across a pitching deck. No ceremony; just the word and a hand on the shoulder.
+- **Speak with Animals** — She trusts birds more than harbor masters and deep fish more than either. This spell confirms what she already suspected.
+- **Fog Cloud** — Not sea-fog exactly. But close enough that casting it she sometimes forgets to be afraid.
 
 ### Backstory
 Iyari spent forty years as ship's lookout and net-mender aboard the *Marrow-Gull*, a coastal trader that ran the long green coast from Port Aushen to the Cinder Isles — she loved her crew the slow, undramatic way elves love anything. The squall off the Tern Reefs killed eleven of them and changed her: alone on the water for three nights, something old in the deep spoke to her, and when a riverboat finally found her she was speaking Druidic she'd never learned. Now she walks inland for the first time in a century, following a thread of green dreams toward a forest she's never seen — and toward Henda, if Henda is breathing somewhere out there still.

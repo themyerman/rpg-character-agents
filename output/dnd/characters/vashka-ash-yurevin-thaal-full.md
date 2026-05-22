@@ -39,7 +39,19 @@
 - **Enemy — The Cantor, Iselda Vrasc:** A choir-mistress of a coastal cathedral who knows exactly what Vashka uncovered in her isolation, wants it for her own order, and has begun sending polite, well-dressed people with knives.
 
 ### Equipment
-A longsword with a copper-wire grip she rewound herself, a battered kite shield bearing no heraldry (she scraped the previous owner's sigil off with a stone), chainmail that smells faintly of cave-damp no matter how often she airs it, a holy symbol carved from a single piece of antler, a herbalist's kit in an oiled leather roll, a stoppered jar of dirt from the threshold of her hermitage, and a folded child's mitten she has carried for eleven years.
+- A longsword with a copper-wire grip she rewound herself
+- A battered kite shield bearing no heraldry — she scraped the previous owner's sigil off with a stone
+- Chainmail that smells faintly of cave-damp no matter how often she airs it
+- A holy symbol carved from a single piece of antler
+- A herbalist's kit in an oiled leather roll
+- A stoppered jar of dirt from the threshold of her hermitage
+- A folded child's mitten she has carried for eleven years. The left hand, worn soft at the fingers. She found it on the road below the shrine and cannot say with certainty which of them was meant to find it.
+
+### Spells
+*Level 1 Paladin — no cantrips; 2 first-level slots; prepares 2 spells (CHA +2 + half level 0)*
+
+- **Bless** — She places her hand on a shoulder and says nothing. This is what she is doing. The god's weight, loaned. She does not announce it.
+- **Thunderous Smite** — The oath made audible. In eleven years of solitude she never used it. She has used it twice since coming down the mountain, and both times she was more afraid of herself afterward than whatever she hit.
 
 ### Backstory
 Vashka was a caravan outrider and an unwed mother who, in a season of plague and bad roads, left her infant at a wayside shrine and walked north into the mountains intending to die. She did not die — her body would not let her — and in a flooded cavern shrine she found something old and patient that taught her, over years of silence, what an oath actually weighs. Now Brother Olufemi's news has dragged her back down the mountain: someone is hunting for what she found, and for the first time in over a decade she has a direction to walk that is not inward.

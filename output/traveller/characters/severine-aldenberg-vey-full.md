@@ -58,6 +58,12 @@
 - **SOC +1, +1** *(absorbed — the directorate-track promotion and the diplomatic letters of reference that came with her resignation moved her from "ambassador's daughter" to "person who is received at court in her own right")*
 - **Pension — Cr 10,000/year**, paid quarterly into a Scout Service-administered annuity, which is to say a pension fund the Service can find her through whenever it needs to.
 
+### Equipment
+- An autopistol in a shoulder rig under the jacket — worn everyday for nineteen years, cleaned without thinking about it
+- A burner comm unit, already activated; she replaces them every two months and this one is six weeks old
+- A field kit with lock bypass tools and a signal scrambler, fitted into a leather case that looks like a cosmetics bag and passes most searches
+- A holographic chip of someone she hasn't seen since her last jump. She doesn't know whose it is. She found it in the lining of a coat she took from a dead drop that wasn't meant for her, and she's been carrying it for four months without viewing it because she isn't sure she wants to know.
+
 ### Backstory
 
 She was raised in the sealed embassy quarter of Khaurys, where her parents — career diplomats, both of them — taught her four languages, three forks, and the survival lesson that on a world whose air will eat you, every door is a checkpoint and every smile is a negotiation. The wound is Cortez, and what she did to keep the asset he sacrificed from being saved — not what he did, what *she* did, the calculation she made in the seventeen seconds she had to make it, and the fact that she would make the same call again. She is thirty-eight, beautiful in a way that makes rooms recalibrate, officially retired, drifting between worlds on her own dwindling High Passage, and looking — without ever quite saying so — for a piece of work small enough to be honest and large enough to be worth the knife.

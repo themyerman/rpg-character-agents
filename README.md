@@ -68,7 +68,7 @@ Every generator accepts a plain English prompt — use it to add a concept, a co
 
 Output saves to `output/dnd/characters/`.
 
-**Examples:** Pip "Tallowfingers" Underbough (Halfling Rogue), Iyari Sael Tovenn-Saltbough (full character), Halben Orriss (quest giver with a missing apprentice and a guild problem)
+**Examples:** Pip "Tallowfingers" Underbough (Halfling Rogue), Iyari Sael Tovenn-Saltbough (full character), Jelani Orriss (quest giver with a missing apprentice and a guild problem)
 
 ---
 

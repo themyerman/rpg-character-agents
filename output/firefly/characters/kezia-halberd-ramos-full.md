@@ -37,5 +37,12 @@
 ### Complications
 **Phantom Pain in a Hand That Isn't There** d6 — The prosthetic is good Alliance tech, but the nerves haven't forgiven her; cold weather, stress, and certain frequencies set off a fire in fingers she doesn't have.
 
+### Equipment
+- A sidearm worn at the left hip — she shoots left, always has, and the prosthetic arm isn't for guns anyway
+- A boot knife, secondary and final
+- A long coat, battered enough to be a biography — she's had it patched three times and the left sleeve has been let out twice as the prosthetic arm changed models
+- A flask kept in the right interior pocket, for decisions that need to feel inevitable
+- Her fellow sergeant's dog tags from Du-Khang, the one who pulled her clear of the strafing run and bled out before the medic arrived. She's been carrying them since the field hospital. She has never put them on. They live in the same pocket as the flask, because she always knew they belonged near something that hurt.
+
 ### Backstory
 Kezia Ramos enlisted out of a Beaumonde factory district at nineteen because the Alliance recruiter promised her family a stipend and her a way off-world, and she was good enough at soldiering that they pinned medals on her before she understood what she'd been pinning down. She lost the arm at Du-Khang in the last month of the war — not to a Browncoat, but to a panicked Alliance gunship that strafed her own position, and the official commendation she received afterward sits in a drawer she doesn't open. She bought a tired Firefly with her separation pay, hired a crew of people the Alliance had also chewed up in different ways, and now flies the Border looking for jobs honest enough to sleep on and dishonest enough to fuel the ship — the saber is for when those two categories disagree.

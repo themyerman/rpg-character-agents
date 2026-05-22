@@ -39,5 +39,11 @@
 ### Complications
 **Hunted Quietly** d6 — Her family hasn't reported her missing — they've hired private contractors to bring her back or make sure she stays gone, and one of them is good.
 
+### Equipment
+- A blade in a wrist sheath under her right sleeve — harder to find, just as final; she's had it since Serenity Valley
+- A forgery kit in a dedicated case with its own power cell, kept in a false bottom she had built into her travel bag
+- A pocket cortex unit loaded with Core society directories, financial registry lookups, and two active alias identities
+- A warranty card for something that no longer exists. It's for a piece of Core medical equipment she had implanted at sixteen that was removed under less controlled circumstances at nineteen. She kept the card because she likes the idea that something in the universe still considers her a registered owner.
+
 ### Backstory
 Liora Aldermere-Sato was the second daughter of an Osiris shipping dynasty, raised on Latin verbs and the assumption that her body belonged to whoever her father decided it should; when she was sixteen and started asking the wrong questions at the wrong dinners, her father arranged a discreet "finishing year" that turned out to be a private clientele in a walled house on Bernadette. She got out at nineteen by killing a guard with a fireplace poker and walking three days to a Browncoat recruiting station, where she lied about her name and didn't lie about wanting to shoot Alliance soldiers — she came out of Serenity Valley with a limp that's mostly healed and a list of seven names she intends to cross off before she dies. She's on a Firefly now because Firefly crews go everywhere and ask the wrong questions for money, and sooner or later one of those questions is going to take her back to Osiris with a gun in her hand.

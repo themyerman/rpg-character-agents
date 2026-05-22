@@ -39,7 +39,13 @@
 - **Enemy — Vance Coppersmile:** The smiling, well-dressed human who runs the Tallowfingers crew and took Pip's brother three years ago; he doesn't remember her name, which makes her angrier than anything else he's done.
 
 ### Equipment
-A rapier she's named "Last Word" (she won it in a dice game and the previous owner is *probably* fine). A shortbow with a quiver of twenty arrows kept in better condition than her boots. Leather armor that fits a halfling because she stole it off a halfling. Thieves' tools wrapped in oilcloth — her real treasure. A disguise kit that's mostly soot, a wig, and three hats. A small knife in each boot, one up her sleeve, and one she's forgotten about. Four copper pieces and a bone die that always rolls high (she swears it's not weighted).
+- A rapier she's named "Last Word" — won in a dice game; the previous owner is *probably* fine
+- A shortbow with a quiver of twenty arrows, kept in better condition than her boots
+- Leather armor that fits a halfling because she stole it off a halfling
+- Thieves' tools wrapped in oilcloth — her real treasure, kept dry at all costs
+- A disguise kit: mostly soot, a wig, and three hats of decreasing quality
+- A small knife in each boot, one up her sleeve, and one she's forgotten about
+- A bone die that always rolls high. She swears it isn't weighted, and she's technically right — she just isn't saying what it is weighted by. It belonged to someone she beat at cards the night her brother was taken, and she's carried it since. The coincidence of timing bothers her less than it should.
 
 ### Backstory
 Pip grew up running messages and lifting purses for a Tallow Quarter crew until Vance Coppersmile took her brother as payment for a job she'd botched — she was eleven, he was eight, and she hasn't seen him since. For three years she's been working her way up by working her way *out*, scraping together skills and contacts and reputation in towns far enough from home that her name doesn't get her killed on sight. Now she's circling back, broke and loud and dangerous in ways she wasn't before, hunting a rumor that her brother is still alive in a Coppersmile warehouse two cities away — and she's looking for a crew stupid enough to help her burn the place down.

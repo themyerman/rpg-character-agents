@@ -34,5 +34,11 @@
 - **+1 SOC** — Scout Service commendation
 - **Scout/Courier ship** (standard Scout retirement perk — hers to keep, though it must be made available to the Service on request)
 
+### Equipment
+- A scout carbine with a worn stock and a reliable action — she's stripped and rebuilt it twice and it has never misfired
+- A battered survey scanner with a cracked casing but accurate readings; the crack is from day 23 of the 31-day drift, and she has not repaired it
+- A comm unit modified for IISS frequencies — technically she's not supposed to have this anymore
+- A data chip that won't open without a key she hasn't shared with anyone. She found it in the scout's emergency locker during the drift. It wasn't there when she launched. She has not opened it.
+
 ### Backstory
 Nasrin grew up in the wind-scoured market towns of Kharaz IV, where her mother ran a water-broker's stall and her father taught her to read three scripts before she could ride a sand-skiff — because on a desert world, the trader who speaks every caravan's tongue eats every night. The Scouts found her at sixteen winning aerobatic prizes in salvaged grav-flyers, and within two years she was running diplomatic packets between worlds whose languages she learned in transit, treating each unfamiliar dialect like another constellation to chart. The misjump that ended her career also defined her: thirty-one days alone with a cooling reactor taught her that the void doesn't care how fast your hands are — but she came home anyway, and now she flies her own ship, looking for a crew who needs a pilot who can talk her way through any starport in known space.
