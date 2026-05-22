@@ -441,6 +441,102 @@ BACKGROUNDS = {
 }
 
 
+# ── Alignments ─────────────────────────────────────────────────────────────────
+
+ALIGNMENTS: list[dict] = [
+    {
+        "name": "Lawful Good",
+        "expressions": [
+            "They keep promises they didn't have to make and decline rewards they didn't earn.",
+            "They follow the chain of command even when they disagree — but they log the disagreement.",
+            "They hold themselves to a higher standard than they hold others, and find it quietly exhausting.",
+        ],
+        "tension": "When the law is wrong, they have to choose between obedience and conscience — and they know it.",
+        "shadow": "Rigidity. They can become the institution they once served, punishing deviation they have no authority over.",
+    },
+    {
+        "name": "Neutral Good",
+        "expressions": [
+            "They help people. They don't need a system for it and they don't need credit.",
+            "They'll work with whoever gets the job done — guild, outlaw, lord, peasant — and feel no particular loyalty to any of them.",
+            "They have opinions about right and wrong that they'll act on, but they hold them loosely enough to update.",
+        ],
+        "tension": "They're everyone's ally and no one's member. That independence is a strength and a source of loneliness.",
+        "shadow": "Diffusion. Without the spine of law or the edge of chaos, their goodness can become passive or opportunistically convenient.",
+    },
+    {
+        "name": "Chaotic Good",
+        "expressions": [
+            "They break rules for people, not for themselves — there's a difference and they know exactly what it is.",
+            "They trust their read on a situation over any authority's, and they're right often enough to keep doing it.",
+            "They inspire people who've given up on institutions to try one more time.",
+        ],
+        "tension": "Their instinct to act — now, personally, without waiting for permission — sometimes costs allies they need.",
+        "shadow": "Arrogance. The line between 'I know better' and 'I get to decide for everyone' is one they don't always see coming.",
+    },
+    {
+        "name": "Lawful Neutral",
+        "expressions": [
+            "They do the job. Precisely. Without editorializing.",
+            "They believe structure is what prevents chaos — and chaos, in their experience, is where people get hurt.",
+            "They honor contracts, hierarchies, and traditions not because they think they're always right, but because consistency is.",
+        ],
+        "tension": "They sometimes work for the wrong side with perfect competence, because the contract was signed and the order came through proper channels.",
+        "shadow": "Detachment. Their commitment to process over outcome means they can do real harm while technically following the rules.",
+    },
+    {
+        "name": "True Neutral",
+        "expressions": [
+            "They take the long view — usually longer than anyone around them finds comfortable.",
+            "They don't pick sides, but they watch carefully, and what they've observed has made them cautious about everyone.",
+            "They help when it doesn't cost much and step back when it does, which people call pragmatism or cowardice depending on how it affects them.",
+        ],
+        "tension": "In a crisis, 'True Neutral' starts to feel like a reason not to act, and they know it.",
+        "shadow": "Moral passivity. The world doesn't balance itself; someone has to push, and they usually watch that person do it alone.",
+    },
+    {
+        "name": "Chaotic Neutral",
+        "expressions": [
+            "They do what the moment asks, and they're surprisingly good at reading what the moment asks.",
+            "They're loyal to people, not causes — which makes them unpredictable to institutions and reliable to individuals.",
+            "They've survived by staying light, and they've made a philosophy out of what started as necessity.",
+        ],
+        "tension": "Their freedom is real, but it keeps them from committing to things that would make them harder to replace.",
+        "shadow": "Volatility. When things get bad enough, 'I follow my own code' and 'I do whatever I want' start to sound the same.",
+    },
+    {
+        "name": "Lawful Evil",
+        "expressions": [
+            "They believe hierarchy exists so the strong can extract value from the weak without constant renegotiation.",
+            "They keep their word — it's a competitive advantage, and it lets them sleep.",
+            "They're polite, organized, and genuinely frightening, because their cruelty is deliberate and planned.",
+        ],
+        "tension": "They serve a system that may one day turn on them, and they know it — they're already planning for it.",
+        "shadow": "They've mistaken order for virtue so many times they've forgotten there's a difference. Everything is a transaction, including mercy.",
+    },
+    {
+        "name": "Neutral Evil",
+        "expressions": [
+            "They help themselves. If others benefit, fine. If not, also fine.",
+            "They don't hate anyone — hate is expensive. They simply aren't accounting for you unless you're in their ledger.",
+            "They'll work for anyone who pays well enough, and betray anyone who stops.",
+        ],
+        "tension": "No loyalty, no code, no ideology — which means no allies in a crisis, and they're often in crises.",
+        "shadow": "Isolation. Their self-interest is so clean it eventually strips away everything that would make someone help them when it matters.",
+    },
+    {
+        "name": "Chaotic Evil",
+        "expressions": [
+            "They want what they want and they take it, and they experience other people's distress as confirmation they were strong enough.",
+            "They've decided the rules are a fiction the weak use to protect themselves from the strong — and they've made themselves strong.",
+            "They move fast, burn bright, and leave things worse than they found them. This is not an accident.",
+        ],
+        "tension": "Their power requires constant violence or the threat of it, which is exhausting and increasingly unsustainable.",
+        "shadow": "They're not free. They're as enslaved to their appetites as any Lawful character is to their codes — they've just convinced themselves the chain is a choice.",
+    },
+]
+
+
 # ── Quest hooks ────────────────────────────────────────────────────────────────
 
 QUEST_HOOKS: list[dict] = [
@@ -573,6 +669,18 @@ QUEST_HOOKS: list[dict] = [
 ]
 
 
+def roll_alignment() -> str:
+    """Roll a random alignment with a concrete behavioral expression, internal tension, and shadow tendency."""
+    entry      = random.choice(ALIGNMENTS)
+    expression = random.choice(entry["expressions"])
+    return json.dumps({
+        "alignment":  entry["name"],
+        "expression": expression,
+        "tension":    entry["tension"],
+        "shadow":     entry["shadow"],
+    })
+
+
 def roll_quest_hook() -> str:
     """Randomly select a quest type and complication seed for a D&D encounter."""
     hook         = random.choice(QUEST_HOOKS)
@@ -695,6 +803,16 @@ TOOLS = [
     DND_SPELL_TOOL_SCHEMA,
     DND_GEAR_TOOL_SCHEMA,
     {
+        "name": "roll_alignment",
+        "description": (
+            "Roll a random alignment — returns the alignment name, a concrete behavioral expression "
+            "(how this alignment shows up in action, not as abstract philosophy), an internal tension "
+            "(what makes it interesting to play), and a shadow tendency (how it can go wrong). "
+            "Call this after background is established so alignment grows from who the character already is."
+        ),
+        "input_schema": {"type": "object", "properties": {}, "required": []},
+    },
+    {
         "name": "roll_quest_hook",
         "description": (
             "Randomly select a quest type and complication seed for a D&D encounter. "
@@ -741,7 +859,12 @@ Work through these steps in order, using your tools at each stage:
      - A rival, enemy, or antagonist → ENEMY or RIVAL (name, one sentence, relationship)
    Make these specific people, not abstractions.
 
-5. CHARACTER SHEET — Always use exactly this format:
+5. ALIGNMENT — Call roll_alignment() now, after background is established.
+   Use the returned expression to show — not tell — how this character's alignment works in practice.
+   Let the tension complicate the backstory. Let the shadow hint at where they might go wrong.
+   Do not write "this character is [alignment]" in the backstory — let it live in what they do.
+
+6. CHARACTER SHEET — Always use exactly this format:
 
 ## **[Full Name, with nickname in quotes if it fits]**
 
@@ -750,7 +873,7 @@ Work through these steps in order, using your tools at each stage:
 | **Race** | [Race] |
 | **Class** | [Class] (Level 1) |
 | **Background** | [Background] |
-| **Alignment** | [Alignment — pick one that fits naturally] |
+| **Alignment** | [Alignment from roll_alignment — the name only, e.g. "Chaotic Good"] |
 | **HP** | [hp] |
 | **Proficiency Bonus** | +2 |
 
@@ -802,6 +925,7 @@ Roll a few key stats with roll_stat (only the ones that matter for this NPC's ro
 Look up race or class info if it would help ground them.
 If the NPC is a spellcaster, call get_spell_suggestions(class_name=...) and pick 2 signature spells —
 write one sentence each about how this specific person uses them.
+Call roll_alignment() — let the expression and tension color the Demeanor and Secret without naming them.
 Then produce the sketch — fast and sharp.
 
 Always use exactly this format:
@@ -811,7 +935,7 @@ Always use exactly this format:
 
 | | |
 |---|---|
-| **Alignment** | [Alignment — pick one that fits this NPC naturally] |
+| **Alignment** | [Alignment from roll_alignment — name only] |
 | **[Most relevant stat]** | [score] ([modifier]) |
 | **[Second stat]** | [score] ([modifier]) |
 | **[Third stat]** | [score] ([modifier]) |
@@ -833,6 +957,7 @@ STEP 0 (before writing anything):
 2. Decide the quest giver's race, then call roll_dnd_name_suggestion(race="[race]") for a race-appropriate name.
 3. Look up a background with get_background_info to establish who this person is and what world they come from.
 4. Roll 1d6 once to add a random element to their situation — let it color something about them.
+5. Call roll_alignment() — let the alignment's expression shape how they present and The Ask; let its tension decide which of the four Truths cuts deepest for them.
 
 The encounter has four possible truths — the DM rolls 1d4 in secret. Make all four truths plausible from the party's perspective. The quest giver doesn't know which truth the DM rolled — they behave the same way regardless.
 
@@ -845,7 +970,7 @@ Always use exactly this format:
 |---|---|
 | **Appears to be** | [what the party sees — occupation, station, mood] |
 | **Actually is** | [the real story — revealed only in Truth 2, 3, or 4] |
-| **Alignment** | [Alignment — pick one that fits naturally; let it inform the four Truths] |
+| **Alignment** | [Alignment from roll_alignment — name only] |
 
 **Appearance:** [2 sentences — what the party notices when this person approaches. Specific: clothing, manner, what they're carrying, what they're not saying.]
 
@@ -877,6 +1002,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_dnd_name_suggestion": return roll_dnd_name_suggestion(race=inputs.get("race"))
     if name == "get_spell_suggestions":    return get_spell_suggestions(**inputs)
     if name == "roll_dnd_gear":            return roll_dnd_gear(**inputs)
+    if name == "roll_alignment":           return roll_alignment()
     if name == "roll_quest_hook":          return roll_quest_hook()
     return f"Unknown tool: {name}"
 
@@ -891,6 +1017,7 @@ PHASE_MESSAGES = {
     "background": "Building background & connections...",
     "spells":     "Selecting spells...",
     "gear":       "Rolling starting gear...",
+    "alignment":  "Rolling alignment...",
     "quest":      "Rolling quest hook...",
 }
 
@@ -898,6 +1025,7 @@ def detect_phase(tool_name: str, seen: set) -> str | None:
     if tool_name == "roll_dnd_name_suggestion": return "name"
     if tool_name == "get_spell_suggestions":    return "spells"
     if tool_name == "roll_dnd_gear":            return "gear"
+    if tool_name == "roll_alignment":           return "alignment"
     if tool_name == "roll_quest_hook":          return "quest"
     if tool_name == "roll_stat":            return "stats"
     if tool_name == "get_race_info":        return "race"

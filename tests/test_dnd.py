@@ -16,6 +16,7 @@ from dnd_agent import (
     get_race_info,
     get_class_info,
     get_background_info,
+    roll_alignment,
     roll_quest_hook,
     detect_phase,
     save_result,
@@ -25,6 +26,7 @@ from dnd_agent import (
     RACES,
     CLASSES,
     BACKGROUNDS,
+    ALIGNMENTS,
     QUEST_HOOKS,
 )
 
@@ -315,6 +317,115 @@ class TestDetectPhase:
 
     def test_roll_dnd_gear_returns_gear(self):
         assert detect_phase("roll_dnd_gear", set()) == "gear"
+
+    def test_roll_alignment_returns_alignment(self):
+        assert detect_phase("roll_alignment", set()) == "alignment"
+
+
+# ── Alignment data pool ───────────────────────────────────────────────────────────
+
+class TestAlignmentPool:
+    def test_nine_alignments(self):
+        assert len(ALIGNMENTS) == 9
+
+    def test_all_nine_names_present(self):
+        names = {a["name"] for a in ALIGNMENTS}
+        expected = {
+            "Lawful Good", "Neutral Good", "Chaotic Good",
+            "Lawful Neutral", "True Neutral", "Chaotic Neutral",
+            "Lawful Evil", "Neutral Evil", "Chaotic Evil",
+        }
+        assert names == expected
+
+    def test_each_alignment_has_required_keys(self):
+        for a in ALIGNMENTS:
+            assert "name"        in a, f"{a.get('name', '?')} missing 'name'"
+            assert "expressions" in a, f"{a.get('name', '?')} missing 'expressions'"
+            assert "tension"     in a, f"{a.get('name', '?')} missing 'tension'"
+            assert "shadow"      in a, f"{a.get('name', '?')} missing 'shadow'"
+
+    def test_each_alignment_has_at_least_two_expressions(self):
+        for a in ALIGNMENTS:
+            assert len(a["expressions"]) >= 2, \
+                f"{a['name']} has fewer than 2 expressions"
+
+    def test_all_expressions_non_empty(self):
+        for a in ALIGNMENTS:
+            for expr in a["expressions"]:
+                assert isinstance(expr, str) and expr.strip(), \
+                    f"{a['name']} has empty expression"
+
+    def test_tension_and_shadow_are_non_empty_strings(self):
+        for a in ALIGNMENTS:
+            assert isinstance(a["tension"], str) and a["tension"].strip()
+            assert isinstance(a["shadow"],  str) and a["shadow"].strip()
+
+
+# ── roll_alignment ────────────────────────────────────────────────────────────────
+
+class TestRollAlignment:
+    def test_returns_valid_json(self):
+        data = json.loads(roll_alignment())
+        assert isinstance(data, dict)
+
+    def test_has_required_keys(self):
+        data = json.loads(roll_alignment())
+        assert "alignment"  in data
+        assert "expression" in data
+        assert "tension"    in data
+        assert "shadow"     in data
+
+    def test_alignment_is_one_of_nine(self):
+        valid = {a["name"] for a in ALIGNMENTS}
+        for _ in range(20):
+            data = json.loads(roll_alignment())
+            assert data["alignment"] in valid
+
+    def test_expression_comes_from_pool(self):
+        for _ in range(20):
+            data   = json.loads(roll_alignment())
+            entry  = next(a for a in ALIGNMENTS if a["name"] == data["alignment"])
+            assert data["expression"] in entry["expressions"]
+
+    def test_returns_variety_across_rolls(self):
+        results = {json.loads(roll_alignment())["alignment"] for _ in range(50)}
+        assert len(results) >= 4, "Should hit at least 4 distinct alignments in 50 rolls"
+
+    def test_all_fields_are_non_empty_strings(self):
+        data = json.loads(roll_alignment())
+        for key in ("alignment", "expression", "tension", "shadow"):
+            assert isinstance(data[key], str) and data[key].strip(), \
+                f"Field '{key}' is empty or not a string"
+
+
+# ── Alignment wiring ──────────────────────────────────────────────────────────────
+
+class TestAlignmentWiring:
+    def test_alignment_phase_message_present(self):
+        assert "alignment" in dnd_agent.PHASE_MESSAGES
+
+    def test_alignment_phase_message_is_string(self):
+        assert isinstance(dnd_agent.PHASE_MESSAGES["alignment"], str)
+        assert len(dnd_agent.PHASE_MESSAGES["alignment"]) > 0
+
+    def test_roll_alignment_schema_in_tools(self):
+        tool_names = [t["name"] for t in dnd_agent.TOOLS]
+        assert "roll_alignment" in tool_names
+
+    def test_run_tool_dispatches_roll_alignment(self):
+        result = dnd_agent.run_tool("roll_alignment", {})
+        data   = json.loads(result)
+        assert "alignment" in data
+        assert "expression" in data
+
+    def test_system_prompt_mentions_roll_alignment(self):
+        assert "roll_alignment" in dnd_agent.SYSTEM_PROMPT
+
+    def test_npc_prompt_mentions_roll_alignment(self):
+        assert "roll_alignment" in dnd_agent.NPC_SYSTEM_PROMPT
+
+    def test_quest_giver_prompt_mentions_roll_alignment(self):
+        assert "roll_alignment" in dnd_agent.QUEST_GIVER_SYSTEM_PROMPT
 
 
 # ── Gear wiring ──────────────────────────────────────────────────────────────────
