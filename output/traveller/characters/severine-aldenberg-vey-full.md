@@ -59,6 +59,7 @@
 - **Pension — Cr 10,000/year**, paid quarterly into a Scout Service-administered annuity, which is to say a pension fund the Service can find her through whenever it needs to.
 
 ### Equipment
+- *A **Melee (Blade)** that she earned in the specialist program after her fourth term — a Khauran tradition the embassy children all grew up with, refined by an Imperial close-protection instructor who told her, dryly, that she was the most natural knife student he'd ever taught and that she should find this troubling.*
 - An autopistol in a shoulder rig under the jacket — worn everyday for nineteen years, cleaned without thinking about it
 - A burner comm unit, already activated; she replaces them every two months and this one is six weeks old
 - A field kit with lock bypass tools and a signal scrambler, fitted into a leather case that looks like a cosmetics bag and passes most searches

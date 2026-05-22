@@ -313,6 +313,39 @@ class TestDetectPhase:
     def test_roll_dice_returns_none(self):
         assert detect_phase("roll_dice", set()) is None
 
+    def test_roll_dnd_gear_returns_gear(self):
+        assert detect_phase("roll_dnd_gear", set()) == "gear"
+
+
+# ── Gear wiring ──────────────────────────────────────────────────────────────────
+
+class TestGearWiring:
+    def test_gear_phase_message_present(self):
+        assert "gear" in dnd_agent.PHASE_MESSAGES
+
+    def test_gear_phase_message_is_string(self):
+        assert isinstance(dnd_agent.PHASE_MESSAGES["gear"], str)
+        assert len(dnd_agent.PHASE_MESSAGES["gear"]) > 0
+
+    def test_dnd_gear_schema_in_tools(self):
+        tool_names = [t["name"] for t in dnd_agent.TOOLS]
+        assert "roll_dnd_gear" in tool_names
+
+    def test_run_tool_returns_gear_json(self):
+        result = dnd_agent.run_tool("roll_dnd_gear", {"class_name": "Fighter"})
+        data = json.loads(result)
+        assert "gear" in data
+        assert "note" in data
+        assert len(data["gear"]) == 4
+
+    def test_run_tool_gear_works_for_wizard(self):
+        result = dnd_agent.run_tool("roll_dnd_gear", {"class_name": "Wizard"})
+        data = json.loads(result)
+        assert "gear" in data
+
+    def test_system_prompt_mentions_roll_dnd_gear(self):
+        assert "roll_dnd_gear" in dnd_agent.SYSTEM_PROMPT
+
 
 # ── Constants sanity checks ─────────────────────────────────────────────────────
 

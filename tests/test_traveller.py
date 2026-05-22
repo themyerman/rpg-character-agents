@@ -377,6 +377,39 @@ class TestDetectPhase:
         # suppressed — should not trigger a phase message
         assert detect_phase("compute_upp", set()) is None
 
+    def test_roll_traveller_gear_returns_gear(self):
+        assert detect_phase("roll_traveller_gear", set()) == "gear"
+
+
+# ── Gear wiring ──────────────────────────────────────────────────────────────────
+
+class TestGearWiring:
+    def test_gear_phase_message_present(self):
+        assert "gear" in traveller_agent.PHASE_MESSAGES
+
+    def test_gear_phase_message_is_string(self):
+        assert isinstance(traveller_agent.PHASE_MESSAGES["gear"], str)
+        assert len(traveller_agent.PHASE_MESSAGES["gear"]) > 0
+
+    def test_traveller_gear_schema_in_tools(self):
+        tool_names = [t["name"] for t in traveller_agent.TOOLS]
+        assert "roll_traveller_gear" in tool_names
+
+    def test_run_tool_returns_gear_json(self):
+        result = traveller_agent.run_tool("roll_traveller_gear", {"career": "Navy"})
+        data = json.loads(result)
+        assert "gear" in data
+        assert "note" in data
+        assert len(data["gear"]) == 4
+
+    def test_run_tool_gear_works_for_scout(self):
+        result = traveller_agent.run_tool("roll_traveller_gear", {"career": "Scout"})
+        data = json.loads(result)
+        assert "gear" in data
+
+    def test_system_prompt_mentions_roll_traveller_gear(self):
+        assert "roll_traveller_gear" in traveller_agent.SYSTEM_PROMPT
+
 
 # ── Constants sanity checks ─────────────────────────────────────────────────────
 

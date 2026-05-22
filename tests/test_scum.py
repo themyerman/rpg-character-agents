@@ -266,6 +266,45 @@ class TestDetectPhase:
         assert detect_phase("roll_heritage", set()) == "heritage"
         assert detect_phase("get_playbook_info", {"some_tool"}) == "playbook"
 
+    def test_roll_scum_gear_returns_gear(self):
+        assert detect_phase("roll_scum_gear") == "gear"
+
+
+# ── Gear wiring ──────────────────────────────────────────────────────────────────
+
+class TestGearWiring:
+    def test_gear_phase_message_present(self):
+        import scum_villainy_agent
+        assert "gear" in scum_villainy_agent.PHASE_MESSAGES
+
+    def test_gear_phase_message_is_string(self):
+        import scum_villainy_agent
+        assert isinstance(scum_villainy_agent.PHASE_MESSAGES["gear"], str)
+        assert len(scum_villainy_agent.PHASE_MESSAGES["gear"]) > 0
+
+    def test_scum_gear_schema_in_tools(self):
+        import scum_villainy_agent
+        tool_names = [t["name"] for t in scum_villainy_agent.TOOLS]
+        assert "roll_scum_gear" in tool_names
+
+    def test_run_tool_returns_gear_json(self):
+        import scum_villainy_agent
+        result = scum_villainy_agent.run_tool("roll_scum_gear", {"playbook": "Muscle"})
+        data = json.loads(result)
+        assert "gear" in data
+        assert "note" in data
+        assert len(data["gear"]) == 4
+
+    def test_run_tool_gear_works_for_mystic(self):
+        import scum_villainy_agent
+        result = scum_villainy_agent.run_tool("roll_scum_gear", {"playbook": "Mystic"})
+        data = json.loads(result)
+        assert "gear" in data
+
+    def test_system_prompt_mentions_roll_scum_gear(self):
+        import scum_villainy_agent
+        assert "roll_scum_gear" in scum_villainy_agent.SYSTEM_PROMPT
+
 
 # ── roll_score_hook ───────────────────────────────────────────────────────────────
 

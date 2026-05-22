@@ -214,6 +214,45 @@ class TestDetectPhase:
     def test_roll_ship_name_returns_ship(self):
         assert detect_phase("roll_ship_name", set()) == "ship"
 
+    def test_roll_firefly_gear_returns_gear(self):
+        assert detect_phase("roll_firefly_gear", set()) == "gear"
+
+
+# ── Gear wiring ──────────────────────────────────────────────────────────────────
+
+class TestGearWiring:
+    def test_gear_phase_message_present(self):
+        import firefly_agent
+        assert "gear" in firefly_agent.PHASE_MESSAGES
+
+    def test_gear_phase_message_is_string(self):
+        import firefly_agent
+        assert isinstance(firefly_agent.PHASE_MESSAGES["gear"], str)
+        assert len(firefly_agent.PHASE_MESSAGES["gear"]) > 0
+
+    def test_firefly_gear_schema_in_tools(self):
+        import firefly_agent
+        tool_names = [t["name"] for t in firefly_agent.TOOLS]
+        assert "roll_firefly_gear" in tool_names
+
+    def test_run_tool_returns_gear_json(self):
+        import firefly_agent
+        result = firefly_agent.run_tool("roll_firefly_gear", {"role": "Pilot"})
+        data = json.loads(result)
+        assert "gear" in data
+        assert "note" in data
+        assert len(data["gear"]) == 4
+
+    def test_run_tool_gear_works_for_mechanic(self):
+        import firefly_agent
+        result = firefly_agent.run_tool("roll_firefly_gear", {"role": "Mechanic"})
+        data = json.loads(result)
+        assert "gear" in data
+
+    def test_system_prompt_mentions_roll_firefly_gear(self):
+        import firefly_agent
+        assert "roll_firefly_gear" in firefly_agent.SYSTEM_PROMPT
+
 
 # ── save_result ──────────────────────────────────────────────────────────────────
 

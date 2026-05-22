@@ -62,7 +62,7 @@ Every generator accepts a plain English prompt — use it to add a concept, a co
 ### D&D 5e — `dnd_agent.py`
 
 **Modes:**
-- `full` — Full character sheet: ability scores (4d6 drop lowest), race, class, background, personality, named connections, equipment, and backstory
+- `full` — Full character sheet: ability scores (4d6 drop lowest), race, class, background, personality, named connections, equipment, spells (for spellcasting classes), and backstory
 - `npc` — Quick sketch: stat block, demeanor, want, secret, hook, and one named connection
 - `questgiver` — Hook encounter: who approaches the party, the pitch in direct speech, what they want, what they're offering, and four possible truths (the DM rolls 1d4 in secret — Truth 4 is always The Reversal)
 
@@ -75,7 +75,7 @@ Output saves to `output/dnd/characters/`.
 ### Mongoose Traveller 2e — `traveller_agent.py`
 
 **Modes:**
-- `full` — Full character with rolled UPP, homeworld (complete UWP with atmosphere, hydrographics, law level, tech level, background skills), career history (2–6 terms), survival rolls, d66 events, mishaps, named connections, muster out benefits, pension. Ship shares are treated as story hooks: a named vessel with a dangling thread, not a line item.
+- `full` — Full character with rolled UPP, homeworld (complete UWP with atmosphere, hydrographics, law level, tech level, background skills), career history (2–6 terms), survival rolls, d66 events, mishaps, named connections, muster out benefits, pension, and equipment. Ship shares are treated as story hooks: a named vessel with a dangling thread, not a line item.
 - `npc` — Quick sketch in Traveller format: UPP, career, demeanor, want, secret, hook
 - `patron` — Classic Traveller patron encounter: the job, the pitch in direct speech, the payment, and four possible truths (referee rolls 1d4 in secret — Truth 4 is The Reversal)
 
@@ -92,7 +92,7 @@ Output saves to `output/traveller/characters/`.
 Cortex System character generation for the 'Verse. Die sizes (d4–d12) replace numeric scores; Distinctions are story engines that help or hurt depending on the situation.
 
 **Modes:**
-- `full` — Full character: role, homeworld (Core/Border/Rim), Unification War history, six attributes with die ratings, 6–8 skills, three Distinctions with story notes, Signature Asset, Complications, ship name, and backstory
+- `full` — Full character: role, homeworld (Core/Border/Rim), Unification War history, six attributes with die ratings, 6–8 skills, three Distinctions with story notes, Signature Asset, Complications, ship name, equipment, and backstory
 - `npc` — Quick sketch: role, homeworld, key attributes, distinctions, wants, secret, hook
 - `jobcontact` — Hook encounter: who's hiring, the pitch in direct speech, what they want, what they're offering, and four possible truths (Truth 4 is always The Reversal)
 
@@ -109,7 +109,7 @@ Output saves to `output/firefly/characters/`.
 Forged in the Dark character generation for crews at the edge of the Hegemony. Action ratings (0–4 dots), playbook special abilities, stress/trauma tracks, and a vice with a named purveyor.
 
 **Modes:**
-- `full` — Full crew member: playbook, heritage, background, vice, action dots by attribute (Insight/Prowess/Resolve), one special ability, XP triggers, stress and trauma tracks, ship name, and backstory
+- `full` — Full crew member: playbook, heritage, background, vice, action dots by attribute (Insight/Prowess/Resolve), one special ability, XP triggers, stress and trauma tracks, load (starting gear), ship name, and backstory
 - `npc` — Quick sketch: playbook equivalent, heritage, background, key actions, wants, secret, hook
 - `scorecontact` — Hook encounter: who's offering the score, the pitch in direct speech, what they want, what they're paying, and four possible truths (Truth 4 is always The Reversal)
 
@@ -250,7 +250,7 @@ Two functions, each used by different generators to prevent cultural clustering.
 
 Traditions include: West African, Arabic/Middle Eastern, East Asian, South Asian, Slavic, Spanish/Latin American, Norse/Scandinavian, Icelandic (with generated patronymics — Jónsson, Sigríðardóttir, etc.), Māori, North American Indigenous, Nahuatl/Maya, Andean/Mapuche, East African/Horn of Africa, Celtic/Irish/Welsh, Southeast Asian.
 
-**`roll_dnd_name_suggestion(race=None)`** — used by D&D 5e. Draws from fantasy race-specific pools and requires a `race` parameter so the agent passes the character's chosen race before naming them. Races: Dwarf (compound epithets — Stronginthearm, Ironfoot), Halfling (warm compound family names — Warmhearth, Strongfeet), Elf (Elvish syllable-names with high-fantasy surnames), Tiefling (virtue names — Hope, Torment, Patience — with infernal surnames), Dragonborn (long Draconic clan names), Gnome (whimsical compound names), Half-Orc (earned epithets — Gorehand, Grimfang). Human redirects to the cultural tradition pools.
+**`roll_dnd_name_suggestion(race=None)`** — used by D&D 5e. Draws from fantasy race-specific pools and requires a `race` parameter so the agent passes the character's chosen race before naming them. Races: Dwarf (compound epithets — Stronginthearm, Ironfoot), Halfling (warm compound family names — Warmhearth, Strongfeet), Elf (Elvish syllable-names with high-fantasy surnames), Tiefling (virtue names — Hope, Torment, Patience — with infernal surnames), Dragonborn (long Draconic clan names), Gnome (whimsical compound names), Half-Orc (earned epithets — Gorehand, Grimfang). Human redirects to the cultural tradition pools — the same 15+ real-world traditions as `roll_name_suggestion()` — so Human PCs get multi-cultural real-world names (Jelani Orriss, Iyari Sael Tovenn-Saltbough) rather than Anglo-generic fantasy defaults.
 
 ---
 
