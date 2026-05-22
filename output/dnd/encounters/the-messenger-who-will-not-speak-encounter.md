@@ -1,0 +1,33 @@
+## The Messenger Who Will Not Speak
+
+*A child in a soaked velvet coat sits cross-legged on a dry brick ledge above the sewer water, holding a sealed letter she will not give you and humming a lullaby in a language none of you recognise.*
+
+### Setting
+The Tannery Outfall runs beneath the sixth ward, and the city guards stopped patrolling it three months ago — officially because of "structural concerns," actually because two watchmen vanished here and the third came back grey-haired and wordless. The air is sweet-rotten with lye and old blood from the workshops above, and the brickwork sweats a pale film that smells faintly of lavender, which is wrong. Every few minutes a deep slow knock travels through the stone from somewhere further in, like someone testing a door.
+
+### Scene
+The party was hired (or harried, or hooked) into the outfall and finds the girl — perhaps ten years old, brown-skinned, scabbed knees, expensive boots — sitting beside a lit oil lantern she could not have brought down here alone. She holds out a folded parchment sealed with green wax, then pulls it back when anyone reaches for it. "I was told to give this to a messenger," she says calmly. "You're not a messenger. You're the people the messenger is for."
+
+### Situation
+The girl is **Ayasha Meles**, third daughter of the exiled Meles line and, by a chain of three recent assassinations she knows nothing about, the rightful claimant to the Sapphire Seat of a kingdom two hundred miles south. Her guardian, **Biniam Asamoah**, has spent four years hiding her in the city as a laundress's apprentice, telling her only that her parents are dead and that "important people" might one day come looking — but never explaining which kind. Biniam learned three days ago that a Lantern-Order hunter has tracked them here, and rather than flee (which Ayasha would resist, because her whole life is here), he arranged for the party — whose recent exploits he has studied carefully — to be drawn into the sewers where he could meet them on his terms. The "message" Ayasha carries is a contract of guardianship Biniam wants the party to sign, sight-unseen, sealing them as her protectors should he fall. He is watching from a side tunnel right now, crossbow loaded, waiting to see whether the party is worth trusting before he reveals himself. The slow knocking is him, deliberately, so the party doesn't startle when he steps out.
+
+### Key NPCs
+
+- **Ayasha Meles** — The unknowing princess. She presents as a bright, slightly imperious child who thinks this is an errand and is annoyed at being kept in a smelly tunnel; she is hiding nothing because she knows nothing, which is precisely what makes her dangerous to be around.
+- **Biniam Asamoah** — Her guardian, a former royal huntsman now working as a candlemaker. He presents as a soft-spoken middle-aged man with burn scars on both forearms and a crossbow he holds like an apology; what he wants is to off-load a burden that is killing him slowly, to people competent enough to carry it, without Ayasha ever learning she was a burden.
+- **Reza Prasetyo** — The Lantern-Order hunter, three corridors away and closing. He presents (when met) as a courteous, exhausted man with a writ of lawful execution and genuine regret; he believes killing the Meles line will prevent a succession war that historical pattern suggests will kill thousands, and he is not wrong about the pattern.
+
+### Complication
+Biniam knows the party's names, their recent jobs, and at least one secret each of them would rather not have aired in front of a child. He is not threatening them with this knowledge — he is *showing* it to them, to prove he chose carefully. But the deal he's offering is monstrous in its quietness: take this girl, never tell her who she is, keep her alive until she's old enough to choose, and accept that Reza (or someone like him) will keep coming for the rest of her life. The party can refuse. They can hand her to Reza and accept his coin and his terrible arithmetic. They can tell Ayasha the truth right now and watch a ten-year-old's life break open in a sewer. There is no option in which someone does not pay something they cannot afford, and Biniam — who has paid for four years — is too tired to pretend otherwise.
+
+### Possible Outcomes
+
+1. **The Signed Parchment** — The party accepts the guardianship, Biniam fades back into the city to draw Reza off, and the party inherits a child, a hunter, and a kingdom-shaped problem. Ayasha thinks they're new family friends; she will ask why they keep moving.
+2. **The Honest Trade** — The party brokers a meeting between Biniam and Reza in the outfall. There is a chance — slim, real — that Reza can be convinced the succession war is avoidable if Ayasha is publicly renounced rather than killed, but it requires a document only the party can help forge.
+3. **The Broken Lullaby** — Something goes wrong: a fight in the tunnels, Biniam takes a bolt, Ayasha sees him die. She still doesn't know who she is, but now she knows she was lied to by the only person who loved her, and the party are the strangers who were there. Whatever they become to her starts from that.
+
+### Hooks
+Who arranged the three assassinations that moved Ayasha up the line of succession — because it wasn't Reza's order, and Biniam suspects it was someone who *wants* her on the throne. And what is the lavender smell in the brickwork: the outfall passes under a building that shouldn't exist on any ward map.
+
+### GM Notes
+*The truth Biniam will not say aloud, even if pressed: he is dying. The burns on his arms are from a contact poison Reza's order tagged him with eight months ago, slow-acting, untreatable by anything short of a wish. He has perhaps six weeks. This is not a negotiation about whether the party will help — it is the last thing he will arrange before he goes, and he has already decided that if they refuse, he will walk into Reza's blade tonight so that Ayasha at least has a clean head-start while the hunter is distracted by the corpse. If the party reads him carefully (Insight DC 18, or noticing the tremor in his bow-hand), they may realise the offer is not "help me protect her" but "replace me." Mechanical tripwire: Reza is a CR 6 assassin-variant with a writ that magically compels him to complete his contract; killing him spawns a replacement within a tenday, and the order keeps better records than the party does.*
