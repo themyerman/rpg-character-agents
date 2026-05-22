@@ -4,7 +4,7 @@ AI-powered GM tools for tabletop RPGs, built with the Anthropic Claude API. Each
 
 Supports **D&D 5e**, **Mongoose Traveller 2e**, **Firefly RPG (Cortex System)**, and **Scum and Villainy (Forged in the Dark)**.
 
-The `output/` folder contains examples generated during development — characters, parties, encounters, and ships ready to use or adapt.
+The `output/` folder contains examples generated during development — characters, NPCs, parties, encounters, ships, locations, rumors, and events ready to use or adapt.
 
 ---
 
