@@ -10,6 +10,7 @@ import random
 from pathlib import Path
 from names import roll_name_suggestion, NAME_TOOL_SCHEMA
 from ships import roll_ship_name, FIREFLY_SHIP_TOOL_SCHEMA
+from gear import roll_firefly_gear, FIREFLY_GEAR_TOOL_SCHEMA
 from utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -388,6 +389,7 @@ TOOLS = [
     },
     NAME_TOOL_SCHEMA,
     FIREFLY_SHIP_TOOL_SCHEMA,
+    FIREFLY_GEAR_TOOL_SCHEMA,
 ]
 
 
@@ -403,6 +405,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_job_hook":          return roll_job_hook()
     if name == "roll_name_suggestion":   return roll_name_suggestion()
     if name == "roll_ship_name":         return roll_ship_name("firefly")
+    if name == "roll_firefly_gear":      return roll_firefly_gear(**inputs)
     return f"Unknown tool: {name}"
 
 
@@ -418,7 +421,7 @@ Do not output any intermediate notes, reasoning, or working text. Output only th
 
 Work through these steps using your tools:
 
-1. ROLE — Choose a role that fits the story. Look it up with get_role_info.
+1. ROLE — Choose a role that fits the story. Look it up with get_role_info. Then call roll_firefly_gear(role='[chosen role]') — all returned items must appear in the Equipment section.
 
 2. HOMEWORLD — Choose a region (Core, Border, or Rim). Call get_location_info for regional flavor and background color, then call roll_homeworld(region) to get the specific assigned world. Use the world name returned by roll_homeworld exactly — do not substitute another. The region and world shape the character's worldview, accent, and expectations.
 
@@ -470,6 +473,11 @@ Example: `- Pilot d10` / `- Firearms d6`
 
 ### Complications
 **[Complication]** d6 — [one sentence: the situation they're already in]
+
+### Equipment
+[List every item returned by roll_firefly_gear — don't skip any. Each on its own line with a dash.
+Items should feel lived-in, not fresh off a shelf. The personal item (always last) gets one additional
+sentence: what it reveals about who this person is or was.]
 
 ### Backstory
 Three sentences. A past, a wound, and a direction. The 'Verse is big and mostly empty and people end up on ships for reasons. Make this one feel earned."""
@@ -557,6 +565,7 @@ PHASE_MESSAGES = {
     "attributes": "Distributing attributes...",
     "job":        "Rolling job hook...",
     "ship":       "Naming the ship...",
+    "gear":       "Rolling starting gear...",
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
@@ -568,6 +577,7 @@ def detect_phase(tool_name: str, seen: set) -> str | None:
     if tool_name == "roll_cortex_attributes": return "attributes"
     if tool_name == "roll_job_hook":          return "job"
     if tool_name == "roll_ship_name":         return "ship"
+    if tool_name == "roll_firefly_gear":      return "gear"
     return None
 
 

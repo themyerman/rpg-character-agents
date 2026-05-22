@@ -10,6 +10,7 @@ import random
 from pathlib import Path
 from names import roll_dnd_name_suggestion, DND_NAME_TOOL_SCHEMA
 from spells import get_spell_suggestions, DND_SPELL_TOOL_SCHEMA
+from gear import roll_dnd_gear, DND_GEAR_TOOL_SCHEMA
 from utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -692,6 +693,7 @@ TOOLS = [
     },
     DND_NAME_TOOL_SCHEMA,
     DND_SPELL_TOOL_SCHEMA,
+    DND_GEAR_TOOL_SCHEMA,
     {
         "name": "roll_quest_hook",
         "description": (
@@ -730,6 +732,7 @@ Work through these steps in order, using your tools at each stage:
    If this is a spellcasting class (Wizard, Sorcerer, Cleric, Druid, Bard, Warlock, Paladin, or Ranger),
    call get_spell_suggestions(class_name=...) and pick 3-4 spells that feel true to this specific
    character. Write one sentence per chosen spell about how this person uses it — not just what it does.
+   Call roll_dnd_gear(class_name="[chosen class]") — all returned items must appear in the Equipment section.
 
 4. BACKGROUND — Choose a background that fits the character's story so far.
    Look it up with get_background_info. Use the personality seeds as inspiration — not verbatim, but as starting points.
@@ -782,7 +785,9 @@ For the single highest ability score, add one *italic* sentence about how they g
 Categories: Ally, Contact, Enemy, Rival.
 
 ### Equipment
-Starting gear based on class and background — make it feel lived-in, not like a list from a table.
+[List every item returned by roll_dnd_gear — don't skip any. Each item is on its own line with a dash.
+The weapon should feel worn in, not new off a table. The personal item (always last) gets one additional
+sentence: what it suggests about who this person is or was.]
 
 ### Backstory
 Three sentences. A past, a wound, and a direction."""
@@ -869,6 +874,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "get_background_info": return get_background_info(**inputs)
     if name == "roll_dnd_name_suggestion": return roll_dnd_name_suggestion(race=inputs.get("race"))
     if name == "get_spell_suggestions":    return get_spell_suggestions(**inputs)
+    if name == "roll_dnd_gear":            return roll_dnd_gear(**inputs)
     if name == "roll_quest_hook":          return roll_quest_hook()
     return f"Unknown tool: {name}"
 
@@ -882,12 +888,14 @@ PHASE_MESSAGES = {
     "class":      "Choosing class...",
     "background": "Building background & connections...",
     "spells":     "Selecting spells...",
+    "gear":       "Rolling starting gear...",
     "quest":      "Rolling quest hook...",
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
     if tool_name == "roll_dnd_name_suggestion": return "name"
     if tool_name == "get_spell_suggestions":    return "spells"
+    if tool_name == "roll_dnd_gear":            return "gear"
     if tool_name == "roll_quest_hook":          return "quest"
     if tool_name == "roll_stat":            return "stats"
     if tool_name == "get_race_info":        return "race"

@@ -10,6 +10,7 @@ import random
 from pathlib import Path
 from names import roll_name_suggestion, NAME_TOOL_SCHEMA
 from ships import roll_ship_name, SCUM_SHIP_TOOL_SCHEMA
+from gear import roll_scum_gear, SCUM_GEAR_TOOL_SCHEMA
 from utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -428,6 +429,7 @@ TOOLS = [
     },
     NAME_TOOL_SCHEMA,
     SCUM_SHIP_TOOL_SCHEMA,
+    SCUM_GEAR_TOOL_SCHEMA,
 ]
 
 
@@ -443,6 +445,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_score_hook":      return roll_score_hook()
     if name == "roll_name_suggestion": return roll_name_suggestion()
     if name == "roll_ship_name":       return roll_ship_name("scum")
+    if name == "roll_scum_gear":       return roll_scum_gear(**inputs)
     return f"Unknown tool: {name}"
 
 
@@ -458,7 +461,7 @@ Do not output any intermediate notes, reasoning, or working text. Output only th
 
 Work through these steps using your tools:
 
-1. PLAYBOOK — Choose a playbook that fits the story. Look it up with get_playbook_info.
+1. PLAYBOOK — Choose a playbook that fits the story. Look it up with get_playbook_info. Then call roll_scum_gear(playbook='[chosen playbook]') — all returned items must appear in the Load section.
 
 2. HERITAGE — Call roll_heritage. Heritage shapes worldview and opens certain doors.
 
@@ -534,6 +537,10 @@ Always use exactly this format:
 
 ### Load
 **Standard Load:** [Light / Medium / Heavy based on playbook]
+
+[List every item returned by roll_scum_gear — don't skip any. Each on its own line with a dash.
+Items should feel worn-in and specific to this crew's margins lifestyle. The personal item (always last)
+gets one additional sentence: what it says about who this person is or what they've been through.]
 
 ### Backstory
 Three sentences. A past, a wound, and a direction. They ended up in a crew at the edge of the Hegemony — that wasn't the plan. Make it feel specific."""
@@ -627,6 +634,7 @@ PHASE_MESSAGES = {
     "actions":     "Assigning action dots...",
     "score":       "Rolling score hook...",
     "ship":        "Naming the ship...",
+    "gear":        "Rolling starting gear...",
 }
 
 def detect_phase(tool_name: str, seen: set = None) -> str | None:
@@ -638,6 +646,7 @@ def detect_phase(tool_name: str, seen: set = None) -> str | None:
     if tool_name == "assign_action_dots":   return "actions"
     if tool_name == "roll_score_hook":      return "score"
     if tool_name == "roll_ship_name":       return "ship"
+    if tool_name == "roll_scum_gear":       return "gear"
     return None
 
 

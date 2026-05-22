@@ -10,6 +10,7 @@ import random
 from pathlib import Path
 from names import roll_name_suggestion, NAME_TOOL_SCHEMA
 from ships import roll_ship_name, TRAVELLER_SHIP_TOOL_SCHEMA
+from gear import roll_traveller_gear, TRAVELLER_GEAR_TOOL_SCHEMA
 from utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -632,6 +633,7 @@ TOOLS = [
     },
     NAME_TOOL_SCHEMA,
     TRAVELLER_SHIP_TOOL_SCHEMA,
+    TRAVELLER_GEAR_TOOL_SCHEMA,
     {
         "name": "roll_patron_hook",
         "description": (
@@ -685,6 +687,7 @@ Work through these steps in order, using your tools at each stage:
    Cash table (1-indexed): [1000, 5000, 10000, 10000, 20000, 40000, 50000]
    Benefits: ["Low Passage", "INT +1", "EDU +1", "Weapon", "High Passage", "SOC +1", "Ship Share"]
    PENSION — 5+ terms: Cr10,000/yr | 6: Cr20,000/yr | 7: Cr30,000/yr | 8+: Cr40,000/yr
+   GEAR — Call roll_traveller_gear(career="[most recent career]") — all returned items must appear in the Equipment section.
 
 6. CHARACTER SHEET — Always use exactly this format:
 
@@ -730,6 +733,12 @@ If no connections were generated, omit this section entirely.
   the ship isn't where it should be, someone wants to buy them out, the other shareholders are
   interesting, or the ship is impounded/missing/involved in something. Make it feel like unfinished business.
 - Pension (if applicable)
+
+### Equipment
+[List every item from roll_traveller_gear — don't skip any. Each on its own line with a dash.
+Items should feel earned and worn in. The personal item (always last) gets one additional phrase
+about what it says about who this character is or was. Add any physical benefits from Muster Out
+(weapons, equipment) if not already covered.]
 
 ### Backstory
 Three sentences. A past, a wound, and a direction.
@@ -816,6 +825,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "compute_upp":                 return compute_upp(**inputs)
     if name == "roll_name_suggestion":        return roll_name_suggestion()
     if name == "roll_ship_name":              return roll_ship_name("traveller")
+    if name == "roll_traveller_gear":         return roll_traveller_gear(**inputs)
     if name == "roll_patron_hook":            return roll_patron_hook()
     return f"Unknown tool: {name}"
 
@@ -829,13 +839,15 @@ PHASE_MESSAGES = {
     "career":    "Building career path...",
     "terms":     "Career terms, events & mishaps...",
     "muster":    "Mustering out...",
+    "gear":      "Rolling starting gear...",
     "ship":      "Naming the ship...",
     "patron":    "Rolling patron hook...",
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
-    if tool_name == "roll_name_suggestion":   return "name"
-    if tool_name == "roll_ship_name":         return "ship"
+    if tool_name == "roll_name_suggestion":    return "name"
+    if tool_name == "roll_ship_name":          return "ship"
+    if tool_name == "roll_traveller_gear":     return "gear"
     if tool_name == "roll_patron_hook":        return "patron"
     if tool_name == "roll_homeworld_uwp":      return "homeworld"
     if tool_name == "get_career_info":         return "career"

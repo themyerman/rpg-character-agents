@@ -264,6 +264,22 @@ Called by `dnd_agent.py` during full character and NPC generation for spellcasti
 
 ---
 
+### `gear.py` — Starting Equipment
+
+**`roll_dnd_gear(class_name)`**, **`roll_traveller_gear(career)`**, **`roll_firefly_gear(role)`**, **`roll_scum_gear(playbook)`** — returns 4 items as JSON: a signature weapon or tool (always appropriate for the class/career/role), 2 supporting items drawn from a game-specific pool, and one personal item drawn from a shared pool that hints at history. Story-first — items have brief characterful descriptions, not stat blocks.
+
+The personal item is always last. The system prompt instructs the model to give it one additional sentence about what it reveals about who the character is or was.
+
+Traveller career lookup is case-insensitive with substring fallback — `"Navy (3rd Officer, 4 terms)"` resolves to the Navy kit correctly. Firefly role lookup is case-insensitive. Scum playbook lookup is exact, case-insensitive.
+
+Each game has its own weapon pools, kit pools, and personal item list:
+- **D&D** — 12 classes × 2–3 weapon options + 5 kit options; 15 shared personal items (letters, coins, portraits, keys)
+- **Traveller** — 12 careers × 2–3 weapon options + 5 kit options; 12 shared personal items (star charts, data chips, hull-plating notes)
+- **Firefly** — 9 roles × 1–3 weapon options + 5 kit options; 12 shared personal items ('Verse-specific: war medals, Cortex clippings, warranty cards)
+- **Scum and Villainy** — 6 playbooks × 2–3 weapon options + 5 kit options; 12 shared personal items (data chips, faction tokens, Ur material)
+
+---
+
 ### `ships.py` — Ship Names
 
 **`roll_ship_name(game)`** — returns a name, class, and a one-line naming register note. Called by `ship_agent.py` and also by the character agents: Traveller calls it when ship shares appear during muster-out; Firefly and Scum call it to name the vessel the character flies on (included in the character sheet). Each game has its own pool of 30 names and 8–12 classes with a distinct naming character:
@@ -330,6 +346,7 @@ rpg-character-agents/
 ├── event_agent.py            # Event generator — interruptions that demand response
 │
 ├── dice.py                   # Dice rolling and rules lookups
+├── gear.py                   # Starting equipment — 4 games, class/career/role-specific
 ├── names.py                  # Name pools — 15+ traditions + D&D race pools
 ├── ships.py                  # Ship name pools — 4 games, distinct registers
 ├── spells.py                 # D&D spell pools — 8 classes, story-first hooks
@@ -345,6 +362,7 @@ rpg-character-agents/
 │   ├── test_dice.py
 │   ├── test_names.py
 │   ├── test_ships.py
+│   ├── test_gear.py
 │   ├── test_spells.py
 │   ├── test_encounter_agent.py
 │   ├── test_ship_agent.py
