@@ -301,8 +301,8 @@ class TestDetectPhase:
     def test_get_background_info_returns_background(self):
         assert detect_phase("get_background_info", set()) == "background"
 
-    def test_roll_name_suggestion_returns_name(self):
-        assert detect_phase("roll_name_suggestion", set()) == "name"
+    def test_roll_dnd_name_suggestion_returns_name(self):
+        assert detect_phase("roll_dnd_name_suggestion", set()) == "name"
 
     def test_roll_quest_hook_returns_quest(self):
         assert detect_phase("roll_quest_hook", set()) == "quest"

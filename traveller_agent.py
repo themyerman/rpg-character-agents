@@ -9,6 +9,7 @@ import json
 import random
 from pathlib import Path
 from names import roll_name_suggestion, NAME_TOOL_SCHEMA
+from ships import roll_ship_name, TRAVELLER_SHIP_TOOL_SCHEMA
 from utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -630,6 +631,7 @@ TOOLS = [
         },
     },
     NAME_TOOL_SCHEMA,
+    TRAVELLER_SHIP_TOOL_SCHEMA,
     {
         "name": "roll_patron_hook",
         "description": (
@@ -723,10 +725,10 @@ If no connections were generated, omit this section entirely.
 - Cash total (give it a brief story — where is it, how is it held?)
 - Each benefit on its own line
 - SHIP SHARES: if the character has one or two Ship Shares, do NOT treat it as a simple asset.
-  Write 2-3 sentences as a dangling thread: what ship, what route, why it's complicated.
-  One of these must be true: the ship isn't where it should be, someone wants to buy them out,
-  the other shareholders are interesting, or the ship is impounded/missing/involved in something.
-  Make it feel like unfinished business.
+  Call roll_ship_name() to give the vessel a proper name and class, then write 2-3 sentences as
+  a dangling thread: what ship, what route, why it's complicated. One of these must be true:
+  the ship isn't where it should be, someone wants to buy them out, the other shareholders are
+  interesting, or the ship is impounded/missing/involved in something. Make it feel like unfinished business.
 - Pension (if applicable)
 
 ### Backstory
@@ -813,6 +815,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "get_characteristic_modifier": return get_characteristic_modifier(**inputs)
     if name == "compute_upp":                 return compute_upp(**inputs)
     if name == "roll_name_suggestion":        return roll_name_suggestion()
+    if name == "roll_ship_name":              return roll_ship_name("traveller")
     if name == "roll_patron_hook":            return roll_patron_hook()
     return f"Unknown tool: {name}"
 
@@ -826,11 +829,13 @@ PHASE_MESSAGES = {
     "career":    "Building career path...",
     "terms":     "Career terms, events & mishaps...",
     "muster":    "Mustering out...",
+    "ship":      "Naming the ship...",
     "patron":    "Rolling patron hook...",
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
     if tool_name == "roll_name_suggestion":   return "name"
+    if tool_name == "roll_ship_name":         return "ship"
     if tool_name == "roll_patron_hook":        return "patron"
     if tool_name == "roll_homeworld_uwp":      return "homeworld"
     if tool_name == "get_career_info":         return "career"

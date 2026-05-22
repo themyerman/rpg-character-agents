@@ -9,6 +9,7 @@ import json
 import random
 from pathlib import Path
 from names import roll_name_suggestion, NAME_TOOL_SCHEMA
+from ships import roll_ship_name, FIREFLY_SHIP_TOOL_SCHEMA
 from utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -386,6 +387,7 @@ TOOLS = [
         "input_schema": {"type": "object", "properties": {}, "required": []},
     },
     NAME_TOOL_SCHEMA,
+    FIREFLY_SHIP_TOOL_SCHEMA,
 ]
 
 
@@ -400,6 +402,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_homeworld":         return roll_homeworld(**inputs)
     if name == "roll_job_hook":          return roll_job_hook()
     if name == "roll_name_suggestion":   return roll_name_suggestion()
+    if name == "roll_ship_name":         return roll_ship_name("firefly")
     return f"Unknown tool: {name}"
 
 
@@ -431,6 +434,8 @@ Work through these steps using your tools:
 
 8. COMPLICATIONS — One starting complication (d6) they're already carrying. Not a flaw — a situation.
 
+9. SHIP — Call roll_ship_name() to get the name and class of the vessel this character currently serves on or calls home. Every character in the 'Verse is tied to a ship — this is what they'd die to protect or desperately want to escape.
+
 Always use exactly this format:
 
 ## **[Full Name]**
@@ -441,6 +446,7 @@ Always use exactly this format:
 | **Role** | [Role] |
 | **Homeworld** | [World] ([Region]) |
 | **War** | [their relationship to the Unification War — one phrase] |
+| **Ship** | [ship name] ([class]) |
 
 ### Attributes
 - **Agility** [dX] — [one phrase: what this looks like in practice]
@@ -550,6 +556,7 @@ PHASE_MESSAGES = {
     "war":        "Rolling war history...",
     "attributes": "Distributing attributes...",
     "job":        "Rolling job hook...",
+    "ship":       "Naming the ship...",
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
@@ -560,6 +567,7 @@ def detect_phase(tool_name: str, seen: set) -> str | None:
     if tool_name == "roll_war_history":       return "war"
     if tool_name == "roll_cortex_attributes": return "attributes"
     if tool_name == "roll_job_hook":          return "job"
+    if tool_name == "roll_ship_name":         return "ship"
     return None
 
 

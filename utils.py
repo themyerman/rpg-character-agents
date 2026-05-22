@@ -3,7 +3,7 @@ Shared utilities for all RPG character generators.
 
 Centralises the three patterns that were copy-pasted across every agent:
   - run_agent_loop  — the Anthropic tool-use while loop
-  - save_character  — slugify heading → write to characters/<subdir>/
+  - save_character  — slugify heading → write to {subdir}/characters/
   - strip_preamble  — remove any text before the first ## heading
 
 Also keeps the pick() UI helper that was already here.
@@ -129,7 +129,7 @@ def run_agent_loop(
 # ── Save helper ────────────────────────────────────────────────────────────────
 
 def save_character(content: str, mode: str, subdir: str, agent_file: str) -> Path:
-    """Save character output to characters/{subdir}/{name-slug}-{mode}.md
+    """Save character output to output/{subdir}/characters/{name-slug}-{mode}.md
 
     Handles ## heading extraction, slugification, and collision counters.
     agent_file should be __file__ from the calling agent module so the path

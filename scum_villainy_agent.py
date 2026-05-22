@@ -9,6 +9,7 @@ import json
 import random
 from pathlib import Path
 from names import roll_name_suggestion, NAME_TOOL_SCHEMA
+from ships import roll_ship_name, SCUM_SHIP_TOOL_SCHEMA
 from utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -426,6 +427,7 @@ TOOLS = [
         "input_schema": {"type": "object", "properties": {}, "required": []},
     },
     NAME_TOOL_SCHEMA,
+    SCUM_SHIP_TOOL_SCHEMA,
 ]
 
 
@@ -440,6 +442,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_dice":            return roll_dice(**inputs)
     if name == "roll_score_hook":      return roll_score_hook()
     if name == "roll_name_suggestion": return roll_name_suggestion()
+    if name == "roll_ship_name":       return roll_ship_name("scum")
     return f"Unknown tool: {name}"
 
 
@@ -469,6 +472,8 @@ Work through these steps using your tools:
 
 7. XP TRIGGERS — Include both XP triggers for the playbook. They drive play.
 
+8. SHIP — Call roll_ship_name() to get the name and class of the crew's ship. In Scum and Villainy, the ship is the crew's world — it's what they protect, hide inside, and occasionally owe money on. Add it to the character sheet.
+
 Notes on format:
 - Action dots use filled/empty circles: ● for each dot, ○ for empty (max 4 per action)
 - Show all actions grouped by attribute (Insight / Prowess / Resolve)
@@ -486,6 +491,7 @@ Always use exactly this format:
 | **Heritage** | [Heritage] |
 | **Background** | [Background] |
 | **Vice** | [Vice] / [Purveyor — specific name and place] |
+| **Ship** | [ship name] ([class]) |
 
 ### Actions
 
@@ -620,6 +626,7 @@ PHASE_MESSAGES = {
     "vice":        "Rolling vice...",
     "actions":     "Assigning action dots...",
     "score":       "Rolling score hook...",
+    "ship":        "Naming the ship...",
 }
 
 def detect_phase(tool_name: str, seen: set = None) -> str | None:
@@ -630,6 +637,7 @@ def detect_phase(tool_name: str, seen: set = None) -> str | None:
     if tool_name == "roll_vice":            return "vice"
     if tool_name == "assign_action_dots":   return "actions"
     if tool_name == "roll_score_hook":      return "score"
+    if tool_name == "roll_ship_name":       return "ship"
     return None
 
 

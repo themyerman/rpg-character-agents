@@ -10,7 +10,7 @@ there — we just prevent it from defaulting to generic encounters.
 Optionally incorporates a saved party brief to tailor the encounter
 to a specific crew's history, skills, and hooks.
 
-Saves to output/encounters/{game_subdir}/.
+Saves to output/{game_subdir}/encounters/.
 
 Run with: python encounter_agent.py
 """
@@ -639,7 +639,7 @@ def detect_phase(tool_name: str, seen: set) -> str | None:
 # ── Party brief integration ───────────────────────────────────────────────────
 
 def list_party_files(game: str) -> list[Path]:
-    """Return sorted .md files from output/parties/{subdir}/."""
+    """Return sorted .md files from output/{subdir}/parties/."""
     subdir = GAME_SUBDIRS.get(game, game)
     party_dir = _OUTPUT / subdir / "parties"
     if not party_dir.exists():
@@ -674,7 +674,7 @@ def pick_party_file(game: str) -> str | None:
 # ── Save helper ───────────────────────────────────────────────────────────────
 
 def save_encounter(content: str, game: str) -> Path:
-    """Save encounter to output/encounters/{subdir}/{title-slug}-encounter.md."""
+    """Save encounter to output/{subdir}/encounters/{title-slug}-encounter.md."""
     first_line = next(
         (l for l in content.strip().splitlines() if l.startswith("##")),
         content.strip().splitlines()[0],

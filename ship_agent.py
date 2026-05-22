@@ -9,7 +9,7 @@ to prevent the model from defaulting to generic vessels. Stats are generated
 per-game with appropriate mechanical weight (Traveller tonnage and jump
 ratings, D&D hull points and crew, Firefly Cortex dice, Scum FitD tiers).
 
-Saves to output/ships/{game_subdir}/.
+Saves to output/{game_subdir}/ships/.
 
 Run with: python ship_agent.py
 """
@@ -800,7 +800,7 @@ def detect_phase(tool_name: str, seen: set) -> str | None:
 # ── Save helper ───────────────────────────────────────────────────────────────
 
 def save_ship(content: str, game: str) -> Path:
-    """Save ship profile to output/ships/{subdir}/{name-slug}-ship.md."""
+    """Save ship profile to output/{subdir}/ships/{name-slug}-ship.md."""
     first_line = next(
         (l for l in content.strip().splitlines() if l.startswith("##")),
         content.strip().splitlines()[0],

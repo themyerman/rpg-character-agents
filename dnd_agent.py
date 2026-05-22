@@ -8,7 +8,7 @@ Run with: python dnd_dice_agent.py
 import json
 import random
 from pathlib import Path
-from names import roll_name_suggestion, NAME_TOOL_SCHEMA
+from names import roll_dnd_name_suggestion, DND_NAME_TOOL_SCHEMA
 from utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -689,7 +689,7 @@ TOOLS = [
             "required": ["background_name"],
         },
     },
-    NAME_TOOL_SCHEMA,
+    DND_NAME_TOOL_SCHEMA,
     {
         "name": "roll_quest_hook",
         "description": (
@@ -708,7 +708,7 @@ SYSTEM_PROMPT = """You are a D&D 5th Edition character generator creating vivid,
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-Names should draw from a wide range of cultural traditions — not just Anglo-Saxon or Tolkien-adjacent defaults. Call roll_name_suggestion() as your very first action and use the result as a starting point. Adapt it freely, but let it push you away from familiar defaults. Vary first letters, syllable counts, and linguistic origins across characters.
+Names must feel appropriate to the character's race. After choosing a race, call roll_dnd_name_suggestion(race=...) — pass the race you chose to get race-appropriate naming conventions. Dwarves get compound epithets, Halflings get cosy family names, Tieflings get names carrying infernal heritage with dark poetry, Elves get elvish syllable-names. Human characters draw from real-world cultural traditions. Adapt the result freely — it's a starting point, not a mandate.
 
 Work through these steps in order, using your tools at each stage:
 
@@ -719,6 +719,7 @@ Work through these steps in order, using your tools at each stage:
 2. RACE — Choose a race that fits the stats and any constraints given.
    Look it up with get_race_info. Apply the racial ability score bonuses to the rolled scores.
    Note any traits, languages, and special abilities.
+   Then call roll_dnd_name_suggestion(race="[chosen race]") to get a name in the right register.
 
 3. CLASS — Choose a class that suits the final stats and the emerging character concept.
    Look it up with get_class_info. Note the hit die, saving throws, proficiencies, and skill options.
@@ -785,7 +786,7 @@ NPC_SYSTEM_PROMPT = """You are a D&D 5e NPC generator. Create a vivid, instantly
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-Names should draw from a wide range of cultural traditions — not just Anglo-Saxon or Tolkien-adjacent defaults. Call roll_name_suggestion() before naming anyone. Use the result as a starting point — adapt it freely, but let it push you away from familiar defaults.
+Names must feel appropriate to the NPC's race. Decide the race first, then call roll_dnd_name_suggestion(race="[race]") for a race-appropriate name — Dwarves get compound epithets, Halflings get cosy family names, Tieflings carry infernal heritage with dark poetry. Human NPCs draw from real-world cultural traditions for maximum diversity. Adapt the result freely.
 
 Roll a few key stats with roll_stat (only the ones that matter for this NPC's role — not all six).
 Look up race or class info if it would help ground them. Then produce the sketch — fast and sharp.
@@ -811,11 +812,13 @@ QUEST_GIVER_SYSTEM_PROMPT = """You are a D&D 5e quest giver generator. Create a 
 
 Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, and wounds should be specific and individual — not cultural shorthand.
 
-Names should draw from a wide range of cultural traditions — not just Anglo-Saxon or Tolkien-adjacent defaults. Call roll_name_suggestion() before naming anyone. Use the result as a starting point — adapt it freely, but let it push you away from familiar defaults.
+Names must feel appropriate to the character's race. Decide the race first, then call roll_dnd_name_suggestion(race="[race]") — pass the race you chose. Human quest givers draw from real-world cultural traditions for maximum diversity. Adapt the result freely — it's a starting point, not a mandate.
 
-STEP 0 (before writing anything): Call roll_quest_hook() to get a quest type and complication seed. Build the entire encounter around what this tool returns. The quest type determines the Ask and what they're offering. The complication seed should surface in at least one of the four Truths. Do not default to the same quest type unless roll_quest_hook returns that category.
-
-Look up a background with get_background_info to establish who this person is and what world they come from. Roll 1d6 once to add a random element to their situation — let it color something about them.
+STEP 0 (before writing anything):
+1. Call roll_quest_hook() — build the entire encounter around what it returns. The quest type determines the Ask and what they're offering. The complication seed should surface in at least one of the four Truths. Do not default to the same quest type unless roll_quest_hook returns that category.
+2. Decide the quest giver's race, then call roll_dnd_name_suggestion(race="[race]") for a race-appropriate name.
+3. Look up a background with get_background_info to establish who this person is and what world they come from.
+4. Roll 1d6 once to add a random element to their situation — let it color something about them.
 
 The encounter has four possible truths — the DM rolls 1d4 in secret. Make all four truths plausible from the party's perspective. The quest giver doesn't know which truth the DM rolled — they behave the same way regardless.
 
@@ -856,8 +859,8 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "get_race_info":       return get_race_info(**inputs)
     if name == "get_class_info":      return get_class_info(**inputs)
     if name == "get_background_info": return get_background_info(**inputs)
-    if name == "roll_name_suggestion": return roll_name_suggestion()
-    if name == "roll_quest_hook":      return roll_quest_hook()
+    if name == "roll_dnd_name_suggestion": return roll_dnd_name_suggestion(race=inputs.get("race"))
+    if name == "roll_quest_hook":          return roll_quest_hook()
     return f"Unknown tool: {name}"
 
 
@@ -873,8 +876,8 @@ PHASE_MESSAGES = {
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
-    if tool_name == "roll_name_suggestion": return "name"
-    if tool_name == "roll_quest_hook":      return "quest"
+    if tool_name == "roll_dnd_name_suggestion": return "name"
+    if tool_name == "roll_quest_hook":          return "quest"
     if tool_name == "roll_stat":            return "stats"
     if tool_name == "get_race_info":        return "race"
     if tool_name == "get_class_info":       return "class"
