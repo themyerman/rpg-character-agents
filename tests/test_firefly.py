@@ -211,6 +211,9 @@ class TestDetectPhase:
     def test_roll_name_suggestion_returns_name(self):
         assert detect_phase("roll_name_suggestion", set()) == "name"
 
+    def test_roll_ship_name_returns_ship(self):
+        assert detect_phase("roll_ship_name", set()) == "ship"
+
 
 # ── save_result ──────────────────────────────────────────────────────────────────
 

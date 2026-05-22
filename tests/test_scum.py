@@ -258,6 +258,9 @@ class TestDetectPhase:
     def test_roll_name_suggestion_returns_name(self):
         assert detect_phase("roll_name_suggestion") == "name"
 
+    def test_roll_ship_name_returns_ship(self):
+        assert detect_phase("roll_ship_name") == "ship"
+
     def test_with_seen_arg_still_works(self):
         # detect_phase now accepts an optional seen= parameter
         assert detect_phase("roll_heritage", set()) == "heritage"

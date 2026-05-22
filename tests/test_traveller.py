@@ -367,6 +367,9 @@ class TestDetectPhase:
     def test_roll_patron_hook_returns_patron(self):
         assert detect_phase("roll_patron_hook", set()) == "patron"
 
+    def test_roll_ship_name_returns_ship(self):
+        assert detect_phase("roll_ship_name", set()) == "ship"
+
     def test_unknown_tool_returns_none(self):
         assert detect_phase("flip_coin", set()) is None
 
