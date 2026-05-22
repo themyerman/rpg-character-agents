@@ -32,13 +32,25 @@ pytest tests/
 python main.py
 ```
 
-A numbered menu walks you through the options:
+Two menus: pick your game, then pick what to build.
 
-1. **Build a character or NPC**
-2. **Build a party / crew**
-3. **Build an NPC cluster**
-4. **Generate an encounter**
-5. **Build a ship**
+**Game:**
+- D&D 5e
+- Mongoose Traveller 2e
+- Firefly RPG
+- Scum and Villainy
+
+**What to build:**
+- Full character sheet
+- NPC sketch
+- Hook encounter (quest giver / patron / job contact / score contact)
+- Party / crew
+- NPC cluster
+- Encounter
+- Ship
+- Location
+- Rumor
+- Event
 
 Each agent can also be run directly:
 
@@ -51,6 +63,9 @@ python agents/party_agent.py
 python agents/npc_cluster_agent.py
 python agents/encounter_agent.py
 python agents/ship_agent.py
+python agents/location_agent.py
+python agents/rumor_agent.py
+python agents/event_agent.py
 ```
 
 Every generator accepts a plain English prompt — use it to add a concept, a constraint, or a swerve. You can be vague (`"someone with a secret"`) or precise (`"ex-navy medic, cashiered for something she still thinks was right"`). The dice still roll. The description just tilts the output.
