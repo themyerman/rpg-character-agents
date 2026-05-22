@@ -641,7 +641,7 @@ def detect_phase(tool_name: str, seen: set) -> str | None:
 def list_party_files(game: str) -> list[Path]:
     """Return sorted .md files from output/parties/{subdir}/."""
     subdir = GAME_SUBDIRS.get(game, game)
-    party_dir = _OUTPUT / "parties" / subdir
+    party_dir = _OUTPUT / subdir / "parties"
     if not party_dir.exists():
         return []
     return sorted(party_dir.glob("*.md"))
@@ -684,7 +684,7 @@ def save_encounter(content: str, game: str) -> Path:
     filename   = f"{title_slug}-encounter.md"
 
     subdir     = GAME_SUBDIRS.get(game, game)
-    output_dir = _OUTPUT / "encounters" / subdir
+    output_dir = _OUTPUT / subdir / "encounters"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     filepath = output_dir / filename

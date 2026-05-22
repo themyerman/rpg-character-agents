@@ -155,7 +155,7 @@ class TestSaveCluster:
         monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "npc_cluster_agent.py"))
         npcs = [self._make_npc("Vance Rook"), self._make_npc("Mira Soto")]
         path = save_cluster(self._make_synthesis(), npcs, "firefly", "rivals")
-        assert "parties" in str(path)
+        assert "clusters" in str(path)
 
     def test_filename_contains_game_and_relationship(self, tmp_path, monkeypatch):
         monkeypatch.setattr(npc_cluster_agent, "__file__", str(tmp_path / "npc_cluster_agent.py"))

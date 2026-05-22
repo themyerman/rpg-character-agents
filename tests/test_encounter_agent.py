@@ -340,7 +340,7 @@ class TestListPartyFiles:
     def test_returns_only_md_files(self, tmp_path, monkeypatch):
         """Files in the party dir are .md only."""
         import encounter_agent as ea
-        subdir = tmp_path / "parties" / "dnd"
+        subdir = tmp_path / "dnd" / "parties"
         subdir.mkdir(parents=True)
         (subdir / "my-crew-party.md").write_text("# My Crew")
         (subdir / "notes.txt").write_text("not a party")
@@ -352,7 +352,7 @@ class TestListPartyFiles:
 
     def test_scum_uses_scum_villainy_subdir(self, tmp_path, monkeypatch):
         import encounter_agent as ea
-        subdir = tmp_path / "parties" / "scum_villainy"
+        subdir = tmp_path / "scum_villainy" / "parties"
         subdir.mkdir(parents=True)
         (subdir / "pale-dreamer-crew.md").write_text("# Pale Dreamer Crew")
 
@@ -370,7 +370,7 @@ class TestSaveEncounter:
         import encounter_agent as ea
         monkeypatch.setattr(ea, "_OUTPUT", tmp_path)
         path = save_encounter(self.SAMPLE_CONTENT, "dnd")
-        assert path.parent == tmp_path / "encounters" / "dnd"
+        assert path.parent == tmp_path / "dnd" / "encounters"
 
     def test_scum_saves_to_scum_villainy(self, tmp_path, monkeypatch):
         import encounter_agent as ea

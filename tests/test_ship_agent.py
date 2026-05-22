@@ -540,7 +540,7 @@ class TestSaveShip:
         import ship_agent as sa
         monkeypatch.setattr(sa, "_OUTPUT", tmp_path)
         path = save_ship(self.SAMPLE, "traveller")
-        assert path.parent == tmp_path / "ships" / "traveller"
+        assert path.parent == tmp_path / "traveller" / "ships"
 
     def test_scum_saves_to_scum_villainy(self, tmp_path, monkeypatch):
         import ship_agent as sa

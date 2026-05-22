@@ -283,24 +283,28 @@ rpg-character-agents/
 │   └── test_utils.py
 │
 └── output/
-    ├── characters/
-    │   ├── dnd/
-    │   ├── traveller/
-    │   ├── firefly/
-    │   └── scum_villainy/
-    ├── parties/
-    │   ├── dnd/
-    │   ├── traveller/
-    │   ├── firefly/
-    │   └── scum_villainy/
-    ├── encounters/
-    │   ├── dnd/
-    │   ├── traveller/
-    │   ├── firefly/
-    │   └── scum_villainy/
-    └── ships/
-        ├── dnd/
-        ├── traveller/
-        ├── firefly/
-        └── scum_villainy/
+    ├── dnd/
+    │   ├── characters/
+    │   ├── parties/
+    │   ├── clusters/
+    │   ├── encounters/
+    │   └── ships/
+    ├── traveller/
+    │   ├── characters/
+    │   ├── parties/
+    │   ├── clusters/
+    │   ├── encounters/
+    │   └── ships/
+    ├── firefly/
+    │   ├── characters/
+    │   ├── parties/
+    │   ├── clusters/
+    │   ├── encounters/
+    │   └── ships/
+    └── scum_villainy/
+        ├── characters/
+        ├── parties/
+        ├── clusters/
+        ├── encounters/
+        └── ships/
 ```

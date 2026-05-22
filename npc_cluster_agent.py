@@ -169,7 +169,7 @@ def save_cluster(synthesis: str, npcs: list[str], game: str, relationship: str) 
     filename   = f"{relationship}-{title_slug}-party.md"
 
     subdir     = GAME_AGENTS[game]["save_subdir"]
-    output_dir = Path(__file__).parent / "output" / "parties" / subdir
+    output_dir = Path(__file__).parent / "output" / subdir / "clusters"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     filepath = output_dir / filename

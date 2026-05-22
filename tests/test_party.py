@@ -8,12 +8,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import re
 import pytest
+import party_agent
 from party_agent import (
     list_characters,
     build_prompt,
     save_result,
     FOLDERS,
-    PARTIES_DIR,
 )
 
 
@@ -111,37 +111,37 @@ class TestBuildPrompt:
 
 class TestSaveResult:
     def test_finds_heading_for_filename(self, tmp_path, monkeypatch):
-        monkeypatch.setattr("party_agent.PARTIES_DIR", tmp_path)
+        monkeypatch.setattr(party_agent, "_OUTPUT", tmp_path)
         content = "Some preamble text\n\n## The Iron Crew — Crew Brief\n\n### Members\n..."
         path = save_result(content, "traveller")
         assert "the-iron-crew" in path.name
-        assert "traveller" in str(path)   # game is in the directory, not the filename
+        assert "traveller" in str(path)
+        assert "parties" in str(path)
         assert path.name.endswith("-party.md")
 
     def test_falls_back_to_first_line_if_no_heading(self, tmp_path, monkeypatch):
-        monkeypatch.setattr("party_agent.PARTIES_DIR", tmp_path)
+        monkeypatch.setattr(party_agent, "_OUTPUT", tmp_path)
         content = "No heading here\nJust some text"
         path = save_result(content, "dnd")
         assert path.exists()
 
     def test_file_is_written(self, tmp_path, monkeypatch):
-        monkeypatch.setattr("party_agent.PARTIES_DIR", tmp_path)
+        monkeypatch.setattr(party_agent, "_OUTPUT", tmp_path)
         content = "## The Last Ride\n\n### Members\n..."
         path = save_result(content, "dnd")
         assert path.read_text() == content
 
     def test_special_chars_stripped_from_slug(self, tmp_path, monkeypatch):
-        monkeypatch.setattr("party_agent.PARTIES_DIR", tmp_path)
+        monkeypatch.setattr(party_agent, "_OUTPUT", tmp_path)
         content = '## **"The Broken Stars"** — Crew Brief\n\nContent'
         path = save_result(content, "traveller")
         assert '"' not in path.name
         assert "**" not in path.name
 
-    def test_creates_parties_dir_if_missing(self, tmp_path, monkeypatch):
-        new_dir = tmp_path / "new_parties"
-        monkeypatch.setattr("party_agent.PARTIES_DIR", new_dir)
+    def test_creates_game_parties_dir_if_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(party_agent, "_OUTPUT", tmp_path)
         content = "## Test Party\n\nContent"
-        save_result(content, "dnd")
-        assert new_dir.exists()
+        path = save_result(content, "dnd")
+        assert (tmp_path / "dnd" / "parties").exists()
 
 

@@ -810,7 +810,7 @@ def save_ship(content: str, game: str) -> Path:
     filename   = f"{title_slug}-ship.md"
 
     subdir     = GAME_SUBDIRS.get(game, game)
-    output_dir = _OUTPUT / "ships" / subdir
+    output_dir = _OUTPUT / subdir / "ships"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     filepath = output_dir / filename

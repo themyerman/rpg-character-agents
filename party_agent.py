@@ -16,13 +16,11 @@ from dice import DND_TOOLS, TRAVELLER_TOOLS, run_tool_dnd, run_tool_traveller
 _OUTPUT = Path(__file__).parent / "output"
 
 FOLDERS = {
-    "dnd":       _OUTPUT / "characters" / "dnd",
-    "traveller": _OUTPUT / "characters" / "traveller",
-    "firefly":   _OUTPUT / "characters" / "firefly",
-    "scum":      _OUTPUT / "characters" / "scum_villainy",
+    "dnd":       _OUTPUT / "dnd"       / "characters",
+    "traveller": _OUTPUT / "traveller" / "characters",
+    "firefly":   _OUTPUT / "firefly"   / "characters",
+    "scum":      _OUTPUT / "scum_villainy" / "characters",
 }
-
-PARTIES_DIR = _OUTPUT / "parties"
 
 
 # ── Character file discovery ────────────────────────────────────────────────────
@@ -287,7 +285,7 @@ def save_result(result: str, game: str, suffix: str = "party") -> Path:
     filename   = f"{name_slug}-{suffix}.md"
     # Game subfolder: "scum" key → scum_villainy folder
     game_subdir = "scum_villainy" if game == "scum" else game
-    game_dir    = PARTIES_DIR / game_subdir
+    game_dir    = _OUTPUT / game_subdir / "parties"
     game_dir.mkdir(parents=True, exist_ok=True)
     filepath = game_dir / filename
     filepath.write_text(result)
