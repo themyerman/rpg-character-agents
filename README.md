@@ -151,6 +151,59 @@ Output saves to `output/characters/{game}/`.
 
 ---
 
+## Location Generator — `location_agent.py`
+
+Generates vivid, GM-ready location profiles: atmosphere, notable NPCs, a situation (the GM's-eye view of what's actually going on), three hooks, and GM notes. Four seed elements per game (type, condition, complication, hook) prevent the model from defaulting to generic taverns or plain starports.
+
+Saved location briefs can be loaded by the rumor and event generators to anchor output to a specific place.
+
+**Output sections:** Atmosphere → Notable NPCs (2-3 named, with wants/secrets) → The Situation → Hooks (3) → GM Notes
+
+Each game has 20 entries per seed category (80 seeds total per game):
+- **D&D** — inns, market towns, noble estates, dwarven trading posts, ruins, guild fronts
+- **Traveller** — Class C downports, megacorp extraction facilities, gas giant skimming stations, decommissioned Scout bases
+- **Firefly** — Rim settlements, border moon agricultural communities, derelict transports, Core transit hubs
+- **Scum and Villainy** — Hegemony transit hubs, fringe stations, Ur-ruin sites, Guild shipyard districts, Mystic enclaves
+
+Output saves to `output/{game}/locations/`.
+
+---
+
+## Rumor Generator — `rumor_agent.py`
+
+Generates GM-ready rumors with a spoken version (as someone would actually say it), the actual truth behind it, the danger of acting on it as stated, three hooks, and GM notes. Seeds use a game-specific subject pool combined with shared truth-angle and tone seeds.
+
+**Optionally loads a saved location brief** to anchor the rumor to a specific place.
+
+**Seed structure:**
+- **Subject** (game-specific, ~18 per game) — what the rumor is fundamentally about: thieves' guild succession disputes, megacorp acquisitions, Alliance troop movements, Hegemony faction moves
+- **Truth-angle** (shared, 6 options) — how the rumor relates to reality: mostly true / misunderstood / false but acted on / the wrong people know it / outdated / deliberate plant
+- **Tone** (shared, 6 options) — how it's being told: urgently over a drink / offhand as old news / third-hand / as a warning / as an opportunity / whispered
+
+**Output sections:** As Heard (in-character speech) → Source → What's Actually True → The Danger → Hooks (3) → GM Notes
+
+Output saves to `output/{game}/rumors/`.
+
+---
+
+## Event Generator — `event_agent.py`
+
+Generates GM-ready events that interrupt, escalate, or reframe what's already happening — not random encounter tables, but specific pressure that demands a response. Two seed elements per game (context — when it fires, and event — the specific thing that happens) produce combinations that feel purposeful rather than arbitrary. Fully game-specific: a Traveller event during jump transit is nothing like a D&D event during a long rest.
+
+**Optionally loads a saved party brief and/or location brief** to tailor the event to a specific crew and place.
+
+**Output sections:** When It Fires → What Happens → The Party's Position (what they know vs. don't) → Possible Responses (3) → Complications (2 escalating discoveries) → GM Notes
+
+Each game has 15 contexts and 15 events (225 possible combinations per game):
+- **D&D** — long rests, mid-negotiations, border crossings, funerals; backstory figures appearing, impossible bodies, legal requests with teeth, faction demands
+- **Traveller** — jump transit, port inspections, patron meetings, gas giant refuelling; sensor anomalies, personal messages, comms log irregularities, rival crews
+- **Firefly** — jobs in progress, ship laid up for repairs, Alliance patrols passing through; war veterans, Companion needs, cargo with extras, cortex records with convenient errors
+- **Scum and Villainy** — score approaches, faction meetings, Hegemony checkpoints, Mystic consultations; neutral factions making moves, Ur artifacts surfacing, vice complications, old debts calling in
+
+Output saves to `output/{game}/events/`.
+
+---
+
 ## Encounter Generator — `encounter_agent.py`
 
 Generates GM-ready encounter sketches seeded by randomised tables — four elements per game: context (setting), situation (what's happening), complication (what makes the obvious approach fail), and motivation (why the antagonist is doing this). The model does the creative work; the seeds prevent generic defaults.
@@ -198,6 +251,16 @@ Two functions, each used by different generators to prevent cultural clustering.
 Traditions include: West African, Arabic/Middle Eastern, East Asian, South Asian, Slavic, Spanish/Latin American, Norse/Scandinavian, Icelandic (with generated patronymics — Jónsson, Sigríðardóttir, etc.), Māori, North American Indigenous, Nahuatl/Maya, Andean/Mapuche, East African/Horn of Africa, Celtic/Irish/Welsh, Southeast Asian.
 
 **`roll_dnd_name_suggestion(race=None)`** — used by D&D 5e. Draws from fantasy race-specific pools and requires a `race` parameter so the agent passes the character's chosen race before naming them. Races: Dwarf (compound epithets — Stronginthearm, Ironfoot), Halfling (warm compound family names — Warmhearth, Strongfeet), Elf (Elvish syllable-names with high-fantasy surnames), Tiefling (virtue names — Hope, Torment, Patience — with infernal surnames), Dragonborn (long Draconic clan names), Gnome (whimsical compound names), Half-Orc (earned epithets — Gorehand, Grimfang). Human redirects to the cultural tradition pools.
+
+---
+
+### `spells.py` — D&D Spell Suggestions
+
+**`get_spell_suggestions(class_name, subclass=None)`** — story-first, not rules-complete. Returns 5–6 spells for a spellcasting class: one or two cantrips, two or three low-level spells (1–2), one higher-level signature. Each spell includes a one-line hook about what it says about the character who carries it — not a mechanical description.
+
+Supports all eight 5e spellcasting classes: Wizard, Cleric, Druid, Bard, Sorcerer, Warlock, Paladin, Ranger (~12–20 spells per class). Non-casters (Barbarian, Fighter, Monk, Rogue) return a clear skip message. Handles subclass flavour (School of Divination, The Fiend, etc.) as context without filtering the spell list.
+
+Called by `dnd_agent.py` during full character and NPC generation for spellcasting classes. The agent picks 3–4 from the returned suggestions and writes a sentence per chosen spell about how *this character specifically* uses it.
 
 ---
 
@@ -262,10 +325,14 @@ rpg-character-agents/
 ├── npc_cluster_agent.py      # Connected NPC group with internal relationships
 ├── encounter_agent.py        # Encounter generator with seed tables
 ├── ship_agent.py             # Ship builder with stats, history, quirks
+├── location_agent.py         # Location generator with atmosphere, NPCs, hooks
+├── rumor_agent.py            # Rumor generator with truth-angle and tone seeds
+├── event_agent.py            # Event generator — interruptions that demand response
 │
 ├── dice.py                   # Dice rolling and rules lookups
 ├── names.py                  # Name pools — 15+ traditions + D&D race pools
 ├── ships.py                  # Ship name pools — 4 games, distinct registers
+├── spells.py                 # D&D spell pools — 8 classes, story-first hooks
 ├── utils.py                  # Shared infrastructure
 │
 ├── tests/
@@ -278,8 +345,12 @@ rpg-character-agents/
 │   ├── test_dice.py
 │   ├── test_names.py
 │   ├── test_ships.py
+│   ├── test_spells.py
 │   ├── test_encounter_agent.py
 │   ├── test_ship_agent.py
+│   ├── test_location_agent.py
+│   ├── test_rumor_agent.py
+│   ├── test_event_agent.py
 │   └── test_utils.py
 │
 └── output/
@@ -288,23 +359,35 @@ rpg-character-agents/
     │   ├── parties/
     │   ├── clusters/
     │   ├── encounters/
-    │   └── ships/
+    │   ├── ships/
+    │   ├── locations/
+    │   ├── rumors/
+    │   └── events/
     ├── traveller/
     │   ├── characters/
     │   ├── parties/
     │   ├── clusters/
     │   ├── encounters/
-    │   └── ships/
+    │   ├── ships/
+    │   ├── locations/
+    │   ├── rumors/
+    │   └── events/
     ├── firefly/
     │   ├── characters/
     │   ├── parties/
     │   ├── clusters/
     │   ├── encounters/
-    │   └── ships/
+    │   ├── ships/
+    │   ├── locations/
+    │   ├── rumors/
+    │   └── events/
     └── scum_villainy/
         ├── characters/
         ├── parties/
         ├── clusters/
         ├── encounters/
-        └── ships/
+        ├── ships/
+        ├── locations/
+        ├── rumors/
+        └── events/
 ```

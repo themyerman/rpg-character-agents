@@ -13,6 +13,9 @@ import party_agent
 import npc_cluster_agent
 import encounter_agent
 import ship_agent
+import location_agent
+import rumor_agent
+import event_agent
 from utils import pick
 
 
@@ -30,6 +33,9 @@ GAME_ACTIONS: dict[str, list[tuple[str, str]]] = {
         ("cluster",     "NPC cluster"),
         ("encounter",   "Encounter"),
         ("ship",        "Ship"),
+        ("location",    "Location"),
+        ("rumor",       "Rumor"),
+        ("event",       "Event"),
     ],
     "traveller": [
         ("full",        "Full character sheet"),
@@ -39,6 +45,9 @@ GAME_ACTIONS: dict[str, list[tuple[str, str]]] = {
         ("cluster",     "NPC cluster"),
         ("encounter",   "Encounter"),
         ("ship",        "Ship"),
+        ("location",    "Location"),
+        ("rumor",       "Rumor"),
+        ("event",       "Event"),
     ],
     "firefly": [
         ("full",        "Full character sheet"),
@@ -48,6 +57,9 @@ GAME_ACTIONS: dict[str, list[tuple[str, str]]] = {
         ("cluster",     "NPC cluster"),
         ("encounter",   "Encounter"),
         ("ship",        "Ship"),
+        ("location",    "Location"),
+        ("rumor",       "Rumor"),
+        ("event",       "Event"),
     ],
     "scum": [
         ("full",        "Full character sheet"),
@@ -57,6 +69,9 @@ GAME_ACTIONS: dict[str, list[tuple[str, str]]] = {
         ("cluster",     "NPC cluster"),
         ("encounter",   "Encounter"),
         ("ship",        "Ship"),
+        ("location",    "Location"),
+        ("rumor",       "Rumor"),
+        ("event",       "Event"),
     ],
 }
 
@@ -112,6 +127,21 @@ def main() -> None:
     # ── Ship ──────────────────────────────────────────────────────────────────
     if action == "ship":
         ship_agent.run(game=game)
+        return
+
+    # ── Location ──────────────────────────────────────────────────────────────
+    if action == "location":
+        location_agent.run(game=game)
+        return
+
+    # ── Rumor ─────────────────────────────────────────────────────────────────
+    if action == "rumor":
+        rumor_agent.run(game=game)
+        return
+
+    # ── Event ─────────────────────────────────────────────────────────────────
+    if action == "event":
+        event_agent.run(game=game)
         return
 
     # ── Character / NPC / hook encounter ──────────────────────────────────────

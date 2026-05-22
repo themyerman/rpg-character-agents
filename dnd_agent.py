@@ -9,6 +9,7 @@ import json
 import random
 from pathlib import Path
 from names import roll_dnd_name_suggestion, DND_NAME_TOOL_SCHEMA
+from spells import get_spell_suggestions, DND_SPELL_TOOL_SCHEMA
 from utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -690,6 +691,7 @@ TOOLS = [
         },
     },
     DND_NAME_TOOL_SCHEMA,
+    DND_SPELL_TOOL_SCHEMA,
     {
         "name": "roll_quest_hook",
         "description": (
@@ -725,6 +727,9 @@ Work through these steps in order, using your tools at each stage:
    Look it up with get_class_info. Note the hit die, saving throws, proficiencies, and skill options.
    Calculate HP at level 1: max hit die value + CON modifier.
    Hint at a subclass direction that fits the character — don't commit, just suggest.
+   If this is a spellcasting class (Wizard, Sorcerer, Cleric, Druid, Bard, Warlock, Paladin, or Ranger),
+   call get_spell_suggestions(class_name=...) and pick 3-4 spells that feel true to this specific
+   character. Write one sentence per chosen spell about how this person uses it — not just what it does.
 
 4. BACKGROUND — Choose a background that fits the character's story so far.
    Look it up with get_background_info. Use the personality seeds as inspiration — not verbatim, but as starting points.
@@ -789,7 +794,10 @@ Avoid clichés tied to race, class, sex, or ethnicity. Character traits, flaws, 
 Names must feel appropriate to the NPC's race. Decide the race first, then call roll_dnd_name_suggestion(race="[race]") for a race-appropriate name — Dwarves get compound epithets, Halflings get cosy family names, Tieflings carry infernal heritage with dark poetry. Human NPCs draw from real-world cultural traditions for maximum diversity. Adapt the result freely.
 
 Roll a few key stats with roll_stat (only the ones that matter for this NPC's role — not all six).
-Look up race or class info if it would help ground them. Then produce the sketch — fast and sharp.
+Look up race or class info if it would help ground them.
+If the NPC is a spellcaster, call get_spell_suggestions(class_name=...) and pick 2 signature spells —
+write one sentence each about how this specific person uses them.
+Then produce the sketch — fast and sharp.
 
 Always use exactly this format:
 
@@ -860,6 +868,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "get_class_info":      return get_class_info(**inputs)
     if name == "get_background_info": return get_background_info(**inputs)
     if name == "roll_dnd_name_suggestion": return roll_dnd_name_suggestion(race=inputs.get("race"))
+    if name == "get_spell_suggestions":    return get_spell_suggestions(**inputs)
     if name == "roll_quest_hook":          return roll_quest_hook()
     return f"Unknown tool: {name}"
 
@@ -872,11 +881,13 @@ PHASE_MESSAGES = {
     "race":       "Choosing race...",
     "class":      "Choosing class...",
     "background": "Building background & connections...",
+    "spells":     "Selecting spells...",
     "quest":      "Rolling quest hook...",
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
     if tool_name == "roll_dnd_name_suggestion": return "name"
+    if tool_name == "get_spell_suggestions":    return "spells"
     if tool_name == "roll_quest_hook":          return "quest"
     if tool_name == "roll_stat":            return "stats"
     if tool_name == "get_race_info":        return "race"
