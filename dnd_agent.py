@@ -811,6 +811,7 @@ Always use exactly this format:
 
 | | |
 |---|---|
+| **Alignment** | [Alignment — pick one that fits this NPC naturally] |
 | **[Most relevant stat]** | [score] ([modifier]) |
 | **[Second stat]** | [score] ([modifier]) |
 | **[Third stat]** | [score] ([modifier]) |
@@ -844,6 +845,7 @@ Always use exactly this format:
 |---|---|
 | **Appears to be** | [what the party sees — occupation, station, mood] |
 | **Actually is** | [the real story — revealed only in Truth 2, 3, or 4] |
+| **Alignment** | [Alignment — pick one that fits naturally; let it inform the four Truths] |
 
 **Appearance:** [2 sentences — what the party notices when this person approaches. Specific: clothing, manner, what they're carrying, what they're not saying.]
 

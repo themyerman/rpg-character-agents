@@ -3,6 +3,7 @@
 
 | | |
 |---|---|
+| **Alignment** | Chaotic Neutral |
 | **STR** | 14 (+2) |
 | **CON** | 12 (+1) |
 | **WIS** | 11 (+0) |
