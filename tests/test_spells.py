@@ -60,6 +60,27 @@ class TestSpellPools:
             high = [s for s in spells if s["level"] >= 3]
             assert high, f"{cls} has no higher-level spells (3+)"
 
+    def test_each_class_has_level_5_plus_coverage(self):
+        # All classes now extend to at least level 5
+        for cls, spells in SPELL_POOLS.items():
+            high = [s for s in spells if s["level"] >= 5]
+            assert high, f"{cls} has no spells at level 5+"
+
+    def test_full_casters_reach_level_9(self):
+        full_casters = {"Wizard", "Cleric", "Druid", "Bard", "Sorcerer", "Warlock"}
+        for cls in full_casters:
+            spells = SPELL_POOLS[cls]
+            level9 = [s for s in spells if s["level"] == 9]
+            assert level9, f"{cls} has no level 9 spells"
+
+    def test_paladin_reaches_level_5(self):
+        spells = SPELL_POOLS["Paladin"]
+        assert any(s["level"] == 5 for s in spells), "Paladin has no level 5 spells"
+
+    def test_ranger_reaches_level_5(self):
+        spells = SPELL_POOLS["Ranger"]
+        assert any(s["level"] == 5 for s in spells), "Ranger has no level 5 spells"
+
     def test_hooks_are_non_empty_strings(self):
         for cls, spells in SPELL_POOLS.items():
             for spell in spells:
@@ -207,6 +228,18 @@ class TestGetSpellSuggestions:
         assert len(cantrips) == 0, "Ranger pool should have no cantrips"
         data = json.loads(get_spell_suggestions("Ranger"))
         assert "spells" in data
+
+    def test_high_level_selection_can_return_level_5_plus(self):
+        # Run many times — the high tier is level 3+, so level 5+ should appear
+        seen_high = set()
+        for _ in range(50):
+            data = json.loads(get_spell_suggestions("Wizard"))
+            for s in data["spells"]:
+                if s["level"].startswith("Level"):
+                    lvl = int(s["level"].split()[-1])
+                    if lvl >= 5:
+                        seen_high.add(s["name"])
+        assert seen_high, "No level 5+ spells ever appeared in 50 Wizard selections"
 
 
 # ── DND_SPELL_TOOL_SCHEMA ─────────────────────────────────────────────────────

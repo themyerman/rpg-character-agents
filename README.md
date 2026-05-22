@@ -62,9 +62,11 @@ Every generator accepts a plain English prompt — use it to add a concept, a co
 ### D&D 5e — `dnd_agent.py`
 
 **Modes:**
-- `full` — Full character sheet: ability scores (4d6 drop lowest), race, class, background, personality, named connections, equipment, spells (for spellcasting classes), and backstory
-- `npc` — Quick sketch: stat block, demeanor, want, secret, hook, and one named connection
+- `full` — Full character sheet: ability scores (4d6 drop lowest), race, class, background, personality, named connections, equipment, spells (for spellcasting classes), alignment, and backstory
+- `npc` — Quick sketch: stat block, alignment, demeanor, want, secret, hook, and one named connection
 - `questgiver` — Hook encounter: who approaches the party, the pitch in direct speech, what they want, what they're offering, and four possible truths (the DM rolls 1d4 in secret — Truth 4 is always The Reversal)
+
+The `roll_alignment` tool rolls one of the nine D&D alignments with a concrete behavioral expression (how it shows in action), an internal tension (what makes it interesting to play), and a shadow tendency (how it can go wrong). The system prompt instructs the model to show alignment through behavior — never to write "this character is [alignment]" in the backstory.
 
 Output saves to `output/dnd/characters/`.
 
@@ -83,7 +85,7 @@ Noble titles are awarded by Social Standing: SOC 11 = Knight (Sir/Dame), 12 = Ba
 
 Output saves to `output/traveller/characters/`.
 
-**Examples:** Séverine "Sev" Aldenberg-Vey (Navy, 4 terms, ship shares and unfinished business), Korven "Half-Lung" Drask (Drifter, 6 terms, Cr105k he shouldn't have), Nasrin "Nas" al-Qadeer (Scout, 2 terms, her own ship and four languages)
+**Examples:** Baroness Séverine "Sev" Aldenberg-Vey (Agent, 5 terms, SOC 12, vacc suit with family crest), Korven "Half-Lung" Drask (Drifter, 6 terms, Cr105k he shouldn't have), Nasrin "Nas" al-Qadeer (Scout, 2 terms, her own ship and four languages)
 
 ---
 
@@ -258,7 +260,7 @@ Traditions include: West African, Arabic/Middle Eastern, East Asian, South Asian
 
 **`get_spell_suggestions(class_name, subclass=None)`** — story-first, not rules-complete. Returns 5–6 spells for a spellcasting class: one or two cantrips, two or three low-level spells (1–2), one higher-level signature. Each spell includes a one-line hook about what it says about the character who carries it — not a mechanical description.
 
-Supports all eight 5e spellcasting classes: Wizard, Cleric, Druid, Bard, Sorcerer, Warlock, Paladin, Ranger (~12–20 spells per class). Non-casters (Barbarian, Fighter, Monk, Rogue) return a clear skip message. Handles subclass flavour (School of Divination, The Fiend, etc.) as context without filtering the spell list.
+Supports all eight 5e spellcasting classes: Wizard, Cleric, Druid, Bard, Sorcerer, Warlock, Paladin, Ranger (~20–35 spells per class, covering cantrips through level 9). Full casters (Wizard, Cleric, Druid, Bard, Sorcerer, Warlock) extend to level 9; Paladin covers levels 1–5; Ranger covers levels 1–5. Non-casters (Barbarian, Fighter, Monk, Rogue) return a clear skip message. Handles subclass flavour (School of Divination, The Fiend, etc.) as context without filtering the spell list.
 
 Called by `dnd_agent.py` during full character and NPC generation for spellcasting classes. The agent picks 3–4 from the returned suggestions and writes a sentence per chosen spell about how *this character specifically* uses it.
 
