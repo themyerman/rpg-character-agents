@@ -1,4 +1,4 @@
-## ***Séverine "Sev" Aldenberg-Vey***
+## ***Baroness Séverine "Sev" Aldenberg-Vey***
 
 | | |
 |---|---|
@@ -63,7 +63,8 @@
 - An autopistol in a shoulder rig under the jacket — worn everyday for nineteen years, cleaned without thinking about it
 - A burner comm unit, already activated; she replaces them every two months and this one is six weeks old
 - A field kit with lock bypass tools and a signal scrambler, fitted into a leather case that looks like a cosmetics bag and passes most searches
-- A holographic chip of someone she hasn't seen since her last jump. She doesn't know whose it is. She found it in the lining of a coat she took from a dead drop that wasn't meant for her, and she's been carrying it for four months without viewing it because she isn't sure she wants to know.
+- A vacc suit, well-maintained, with her family crest on the shoulder — the one piece of equipment she's never tried to disguise or trade down
+- A holographic chip of the asset she lost in Term 3 — a still image, taken before the operation went wrong. She has never deleted it and will not explain why she still has it.
 
 ### Backstory
 
