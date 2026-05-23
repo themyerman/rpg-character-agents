@@ -110,18 +110,18 @@ def build_session(game: str) -> None:
     # 3 full characters
     for i in range(1, 4):
         _step(f"Character {i} of 3")
-        result = agent.run_agent(
+        result = strip_preamble(agent.run_agent(
             "Generate a fully random character.", agent.SYSTEM_PROMPT
-        )
+        ))
         path = agent.save_result(result, "full")
         paths.append(path)
         print(f"  → {path.name}")
 
     # 1 NPC
     _step("NPC")
-    result = agent.run_agent(
+    result = strip_preamble(agent.run_agent(
         "Generate a fully random NPC.", agent.NPC_SYSTEM_PROMPT
-    )
+    ))
     path = agent.save_result(result, "npc")
     paths.append(path)
     print(f"  → {path.name}")
@@ -135,9 +135,9 @@ def build_session(game: str) -> None:
     # 1 hook encounter
     hook_mode = HOOK_MODES[game]
     _step(f"Hook — {hook_mode}")
-    result = agent.run_agent(
+    result = strip_preamble(agent.run_agent(
         HOOK_PROMPTS[hook_mode], _hook_system_prompt(game)
-    )
+    ))
     path = agent.save_result(result, hook_mode)
     paths.append(path)
     print(f"  → {path.name}")
