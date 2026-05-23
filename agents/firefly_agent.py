@@ -14,7 +14,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from lib.names import roll_name_suggestion, NAME_TOOL_SCHEMA
 from lib.ships import roll_ship_name, FIREFLY_SHIP_TOOL_SCHEMA
 from lib.gear import roll_firefly_gear, FIREFLY_GEAR_TOOL_SCHEMA
-from lib.psi import get_reader_profile, FIREFLY_READER_TOOL_SCHEMA
+from lib.psi import (
+    get_reader_profile, FIREFLY_READER_TOOL_SCHEMA,
+    roll_firefly_psi_chance, FIREFLY_PSI_CHANCE_TOOL_SCHEMA,
+)
 from lib.utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -395,6 +398,7 @@ TOOLS = [
     FIREFLY_SHIP_TOOL_SCHEMA,
     FIREFLY_GEAR_TOOL_SCHEMA,
     FIREFLY_READER_TOOL_SCHEMA,
+    FIREFLY_PSI_CHANCE_TOOL_SCHEMA,
 ]
 
 
@@ -411,7 +415,8 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_name_suggestion":   return roll_name_suggestion()
     if name == "roll_ship_name":         return roll_ship_name("firefly")
     if name == "roll_firefly_gear":      return roll_firefly_gear(**inputs)
-    if name == "get_reader_profile":     return get_reader_profile()
+    if name == "get_reader_profile":       return get_reader_profile()
+    if name == "roll_firefly_psi_chance":  return roll_firefly_psi_chance(**inputs)
     return f"Unknown tool: {name}"
 
 
@@ -438,11 +443,16 @@ Work through these steps using your tools:
 5. SKILLS — Assign die sizes to 6–8 relevant skills. Use the Cortex ladder: d4 (poor), d6 (fair), d8 (good), d10 (great), d12 (exceptional). Key role skills should be d8 or higher.
 
 6. DISTINCTIONS — Write exactly three. Each is a short phrase (3–6 words) that captures something essential. They should create story, not just describe. A Distinction should be able to help you (d8) or hurt you (d4 for a Plot Point) depending on the situation.
-   READER ONLY: If this character is a Reader (psychic), call get_reader_profile() before writing Distinctions.
-   Replace one of the three Distinctions with the Reader Distinction from the result.
-   Add the two returned Complications alongside any starting Complication.
-   Add the two Signature Assets from the result (each at d6) alongside or instead of the standard Signature Asset.
-   Note the Alliance threat level in the character's Backstory — it's their off-screen pressure.
+   READER CHECK: For every randomly generated character, call
+   roll_firefly_psi_chance(context='character') after step 5.
+   If has_ability is false, proceed normally — no Reader elements.
+   If has_ability is true (rare — ~2%), call get_reader_profile() and:
+     - Replace one Distinction with the returned Reader Distinction.
+     - Add both returned Complications alongside the starting Complication.
+     - Add both returned Signature Assets (d6 each).
+     - Note the Alliance threat level in Backstory.
+   If a Reader was explicitly requested, skip the chance roll and go straight
+   to get_reader_profile().
 
 7. SIGNATURE ASSET — One thing, relationship, or reputation worth d6. The one thing they'd grab in a fire.
 
@@ -518,7 +528,12 @@ Always use exactly this format:
 **Wants:** [what they need right now — specific]
 **Secret:** [one thing they're hiding — specific, not vague]
 **Hook:** [one concrete way they pull the crew into their business]
-**Connection:** [one named person they love, fear, or owe — and why it matters]"""
+**Connection:** [one named person they love, fear, or owe — and why it matters]
+
+For every randomly generated NPC: call roll_firefly_psi_chance(context='character').
+If has_ability is true (extremely rare — ~2%), call get_reader_profile() and
+fold one sentence into their Secret about what they are and why they're hiding it.
+If explicitly requested as a Reader, skip the chance roll."""
 
 
 JOB_CONTACT_SYSTEM_PROMPT = """You are a Firefly RPG job contact generator. Create a complete encounter — someone who approaches the crew with work. Jobs in the 'Verse always have a story underneath them, and someone is always not telling the whole truth.

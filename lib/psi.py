@@ -627,3 +627,294 @@ FIREFLY_READER_TOOL_SCHEMA: dict = {
     ),
     "input_schema": {"type": "object", "properties": {}, "required": []},
 }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# RARITY ROLLS — canonical population probabilities per system
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Sources:
+#   Traveller: Mongoose 2e Core Rulebook + Alien Modules (Zhodani, Droyne)
+#   Scum & Villainy: Playbook distribution (1 of 7) for PCs; setting tone for NPCs
+#   Firefly: Setting canon (Academy program scale); RPG corebook (Distinction rarity)
+
+# ── Traveller thresholds (d100 roll-under) ────────────────────────────────────
+#
+# imperial        — Standard Imperial human space. Psionics are stigmatized and
+#                   suppressed; Institutes operate underground. Wild talents exist
+#                   but rarely surface. ~3% of the population.
+#
+# frontier        — Low-law, low-Imperial-oversight worlds beyond the coreward
+#                   trade lanes. Less suppression, more wild talents going untested.
+#                   ~7% of the population.
+#
+# zhodani_prole   — Zhodani working class. Latent ability is present but the Consulate
+#                   doesn't train proles; most never know what they have. ~15%.
+#
+# zhodani_noble   — Zhodani noble or intendant. Psionic ability is required for caste
+#                   status; all are tested and trained. Effectively 95% (the rare
+#                   5% who test negative are quietly reassigned). ~95%.
+#
+# droyne          — All Droyne have psionic ability; it is biologically fundamental
+#                   to caste determination. 100%.
+
+TRAVELLER_PSI_THRESHOLDS: dict[str, int] = {
+    "imperial":       3,
+    "frontier":       7,
+    "zhodani_prole":  15,
+    "zhodani_noble":  95,
+    "droyne":         100,
+}
+
+# ── Scum & Villainy thresholds ────────────────────────────────────────────────
+#
+# npc             — General NPC in Hegemony space. Ur-touched individuals exist
+#                   but are uncommon outside specific roles. ~5%.
+#
+# notable_npc     — Named, story-relevant NPC. Selection bias: interesting people
+#                   in the Hegemony's margins are more likely to have unusual
+#                   abilities. ~10%.
+#
+# Note: For *player characters*, the Mystic is 1 of 7 playbooks (~14%). This is
+# handled by playbook selection, not by a chance roll — use get_mystic_profile()
+# directly when the Mystic playbook is chosen.
+
+SCUM_PSI_THRESHOLDS: dict[str, int] = {
+    "npc":          5,
+    "notable_npc":  10,
+}
+
+# ── Firefly thresholds ────────────────────────────────────────────────────────
+#
+# character           — Any character in the 'Verse. The Academy program was
+#                       secret, small-scale, and mostly failed. Readers are
+#                       nearly unique. ~2%.
+#
+# academy_connection  — Character has known Alliance Academy ties (student,
+#                       staff, family of a subject). Meaningfully higher but
+#                       still rare. ~20%.
+
+FIREFLY_PSI_THRESHOLDS: dict[str, int] = {
+    "character":           2,
+    "academy_connection":  20,
+}
+
+
+# ── Roll functions ────────────────────────────────────────────────────────────
+
+def roll_traveller_psi_chance(context: str = "imperial") -> str:
+    """
+    Roll to determine if a Traveller character has psionic ability.
+    Uses canonical Mongoose 2e population rates. Returns has_ability and
+    next_step instruction so the agent knows whether to call
+    get_traveller_psi_profile().
+    """
+    if context not in TRAVELLER_PSI_THRESHOLDS:
+        return json.dumps({
+            "error": f"Unknown context '{context}'.",
+            "valid_contexts": list(TRAVELLER_PSI_THRESHOLDS.keys()),
+        })
+    threshold = TRAVELLER_PSI_THRESHOLDS[context]
+    roll = random.randint(1, 100)
+    has_ability = roll <= threshold
+
+    result: dict = {
+        "has_ability": has_ability,
+        "rolled": roll,
+        "threshold": f"{threshold}%",
+        "context": context,
+    }
+    if context == "zhodani_noble":
+        result["context_note"] = (
+            "Zhodani nobles and intendants are tested and trained by the Consulate. "
+            "Psionic ability is required for caste status."
+        )
+    elif context == "droyne":
+        result["context_note"] = (
+            "All Droyne have psionic ability — it is biologically fundamental "
+            "to caste determination."
+        )
+    elif context == "frontier":
+        result["context_note"] = (
+            "Frontier worlds have less Imperial suppression; wild talents go "
+            "untested more often, but also surface more freely."
+        )
+
+    if has_ability:
+        result["note"] = (
+            f"Rolled {roll} against {threshold}% threshold — "
+            "this character has psionic potential."
+        )
+        result["next_step"] = (
+            "Call get_traveller_psi_profile() to generate their talent, "
+            "powers, discovery method, and social situation."
+        )
+    else:
+        result["note"] = (
+            f"Rolled {roll} against {threshold}% threshold — "
+            "this character has no psionic ability. Do not add a PSI section."
+        )
+    return json.dumps(result, indent=2)
+
+
+def roll_scum_psi_chance(context: str = "npc") -> str:
+    """
+    Roll to determine if a Scum & Villainy NPC is Ur-touched / Mystic-adjacent.
+    Use only for NPCs — player character Mystics are determined by playbook choice,
+    not by this roll. Returns has_ability and next_step.
+    """
+    if context not in SCUM_PSI_THRESHOLDS:
+        return json.dumps({
+            "error": f"Unknown context '{context}'.",
+            "valid_contexts": list(SCUM_PSI_THRESHOLDS.keys()),
+        })
+    threshold = SCUM_PSI_THRESHOLDS[context]
+    roll = random.randint(1, 100)
+    has_ability = roll <= threshold
+
+    result: dict = {
+        "has_ability": has_ability,
+        "rolled": roll,
+        "threshold": f"{threshold}%",
+        "context": context,
+    }
+    if has_ability:
+        result["note"] = (
+            f"Rolled {roll} against {threshold}% threshold — "
+            "this NPC has Ur-web sensitivity or Mystic-adjacent ability."
+        )
+        result["next_step"] = (
+            "Call get_mystic_profile() to get Ur-web connection flavor and "
+            "weave it into the NPC's Demeanor or Secret."
+        )
+    else:
+        result["note"] = (
+            f"Rolled {roll} against {threshold}% threshold — "
+            "this NPC has no Ur-web connection. Do not add Mystic elements."
+        )
+    return json.dumps(result, indent=2)
+
+
+def roll_firefly_psi_chance(context: str = "character") -> str:
+    """
+    Roll to determine if a Firefly character or NPC is a Reader.
+    Readers are vanishingly rare in the 'Verse — products of a secret,
+    small-scale Alliance Academy program. Returns has_ability and next_step.
+    """
+    if context not in FIREFLY_PSI_THRESHOLDS:
+        return json.dumps({
+            "error": f"Unknown context '{context}'.",
+            "valid_contexts": list(FIREFLY_PSI_THRESHOLDS.keys()),
+        })
+    threshold = FIREFLY_PSI_THRESHOLDS[context]
+    roll = random.randint(1, 100)
+    has_ability = roll <= threshold
+
+    result: dict = {
+        "has_ability": has_ability,
+        "rolled": roll,
+        "threshold": f"{threshold}%",
+        "context": context,
+    }
+    if context == "academy_connection":
+        result["context_note"] = (
+            "Alliance Academy ties meaningfully raise the odds, but the program "
+            "was small and mostly failed. Most Academy-connected characters are "
+            "not Readers."
+        )
+
+    if has_ability:
+        result["note"] = (
+            f"Rolled {roll} against {threshold}% threshold — "
+            "this character is a Reader. This is genuinely exceptional."
+        )
+        result["next_step"] = (
+            "Call get_reader_profile() to generate their Distinction, "
+            "Complications, Alliance threat level, and Signature Assets."
+        )
+    else:
+        result["note"] = (
+            f"Rolled {roll} against {threshold}% threshold — "
+            "this character is not a Reader. Do not add Reader elements."
+        )
+    return json.dumps(result, indent=2)
+
+
+# ── Rarity tool schemas ───────────────────────────────────────────────────────
+
+TRAVELLER_PSI_CHANCE_TOOL_SCHEMA: dict = {
+    "name": "roll_traveller_psi_chance",
+    "description": (
+        "Roll to determine if a randomly generated Traveller character or NPC "
+        "has psionic ability, using canonical Mongoose 2e population rates. "
+        "Call this for every randomly generated character/NPC unless psionics "
+        "were explicitly requested. If has_ability is true, call "
+        "get_traveller_psi_profile() next. "
+        "Context guide: 'imperial' = standard Imperial human (3%); "
+        "'frontier' = low-law non-Imperial world (7%); "
+        "'zhodani_prole' = Zhodani working class (15%); "
+        "'zhodani_noble' = Zhodani noble/intendant (95%); "
+        "'droyne' = any Droyne (100%)."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "context": {
+                "type": "string",
+                "enum": list(TRAVELLER_PSI_THRESHOLDS.keys()),
+                "description": "The character's cultural/racial context — determines probability.",
+            },
+        },
+        "required": ["context"],
+    },
+}
+
+SCUM_PSI_CHANCE_TOOL_SCHEMA: dict = {
+    "name": "roll_scum_psi_chance",
+    "description": (
+        "Roll to determine if a randomly generated Scum & Villainy NPC is "
+        "Ur-touched or Mystic-adjacent, using setting-appropriate rates. "
+        "Call this for randomly generated NPCs only — player character Mystics "
+        "are determined by playbook choice, not this roll. "
+        "If has_ability is true, call get_mystic_profile() next and weave "
+        "the Ur-web flavor into the NPC's Demeanor or Secret. "
+        "Context guide: 'npc' = general NPC (5%); "
+        "'notable_npc' = named story-relevant NPC (10%)."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "context": {
+                "type": "string",
+                "enum": list(SCUM_PSI_THRESHOLDS.keys()),
+                "description": "NPC prominence — determines probability.",
+            },
+        },
+        "required": ["context"],
+    },
+}
+
+FIREFLY_PSI_CHANCE_TOOL_SCHEMA: dict = {
+    "name": "roll_firefly_psi_chance",
+    "description": (
+        "Roll to determine if a randomly generated Firefly character or NPC "
+        "is a Reader, using setting-canonical rates. Readers are vanishingly "
+        "rare — products of a secret Alliance Academy program. "
+        "Call this for every randomly generated character/NPC unless a Reader "
+        "was explicitly requested. If has_ability is true, call "
+        "get_reader_profile() next. "
+        "Context guide: 'character' = any character in the 'Verse (2%); "
+        "'academy_connection' = known Alliance Academy ties (20%)."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "context": {
+                "type": "string",
+                "enum": list(FIREFLY_PSI_THRESHOLDS.keys()),
+                "description": "Character's relationship to the Alliance Academy.",
+            },
+        },
+        "required": ["context"],
+    },
+}

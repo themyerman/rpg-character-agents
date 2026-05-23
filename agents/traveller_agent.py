@@ -14,7 +14,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from lib.names import roll_name_suggestion, NAME_TOOL_SCHEMA
 from lib.ships import roll_ship_name, TRAVELLER_SHIP_TOOL_SCHEMA
 from lib.gear import roll_traveller_gear, TRAVELLER_GEAR_TOOL_SCHEMA
-from lib.psi import get_traveller_psi_profile, TRAVELLER_PSI_TOOL_SCHEMA
+from lib.psi import (
+    get_traveller_psi_profile, TRAVELLER_PSI_TOOL_SCHEMA,
+    roll_traveller_psi_chance, TRAVELLER_PSI_CHANCE_TOOL_SCHEMA,
+)
 from lib.utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -639,6 +642,7 @@ TOOLS = [
     TRAVELLER_SHIP_TOOL_SCHEMA,
     TRAVELLER_GEAR_TOOL_SCHEMA,
     TRAVELLER_PSI_TOOL_SCHEMA,
+    TRAVELLER_PSI_CHANCE_TOOL_SCHEMA,
     {
         "name": "roll_patron_hook",
         "description": (
@@ -746,18 +750,26 @@ about what it says about who this character is or was. Add any physical benefits
 (weapons, equipment) if not already covered.]
 
 ### PSI (psionic characters only)
-If this is a psionic character, call get_traveller_psi_profile() after Equipment.
-Add this section using what it returns:
+PSIONICS DECISION — for every randomly generated character:
+  - Determine context from homeworld and background:
+      'imperial'      = standard Imperial human (default)
+      'frontier'      = low-law, low-TL, non-Imperial world
+      'zhodani_prole' = Zhodani working class
+      'zhodani_noble' = Zhodani noble or intendant
+      'droyne'        = any Droyne character
+  - Call roll_traveller_psi_chance(context=...) AFTER Muster Out.
+  - If has_ability is false: skip this section entirely.
+  - If has_ability is true: call get_traveller_psi_profile() and add:
 
 - **PSI [value]** — [one phrase: what this gift feels like from the inside]
+  Roll PSI as 2d6 minus number of terms served (minimum 0).
 - **Talent: [Talent Name]** — [talent description, one sentence]
-- [Each power on its own line: name, PSI cost in parentheses, hook as italic sentence]
-- *Discovery:* [how they found out or were trained — use the discovery hook verbatim or adapted]
-- *Social situation:* [how they manage it inside the Imperium — use the stigma hook]
+- [Each power on its own line: name, PSI cost in parentheses, then italic hook sentence]
+- *Discovery:* [use the discovery hook from get_traveller_psi_profile()]
+- *Social situation:* [use the stigma hook from get_traveller_psi_profile()]
 
-PSI is rare. A character is psionic only if explicitly requested or if career events
-strongly suggest it (e.g., "exposed to something that changed you" in a Scouts mishap,
-or a research incident in a Scholar term). Never add PSI to a character uninvited.
+If psionics were explicitly requested, skip roll_traveller_psi_chance and go
+straight to get_traveller_psi_profile().
 
 ### Backstory
 Three sentences. A past, a wound, and a direction.
@@ -790,9 +802,11 @@ Always use exactly this format:
 **Hook:** [one concrete way they pull the characters into their orbit]
 **Connection:** [one named person they love, fear, or owe — and why it matters]
 
-If this NPC is psionic (explicitly requested or strongly implied by their role),
-call get_traveller_psi_profile() and add one line to Secret or Hook about how
-they manage it. Keep it brief — one sentence, not a full PSI section."""
+For every randomly generated NPC: call roll_traveller_psi_chance(context=...)
+using the appropriate context for who they are. If has_ability is true, call
+get_traveller_psi_profile() and fold one sentence into their Secret about what
+they have and how they manage it. If explicitly requested as psionic, skip the
+chance roll and go straight to get_traveller_psi_profile()."""
 
 PATRON_SYSTEM_PROMPT = """You are a Mongoose Traveller 2e patron generator. Create a complete patron encounter — someone who walks up to the crew in a starport bar, a hotel lobby, or a dockside office and offers them a job.
 
@@ -850,6 +864,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_ship_name":              return roll_ship_name("traveller")
     if name == "roll_traveller_gear":         return roll_traveller_gear(**inputs)
     if name == "get_traveller_psi_profile":   return get_traveller_psi_profile()
+    if name == "roll_traveller_psi_chance":   return roll_traveller_psi_chance(**inputs)
     if name == "roll_patron_hook":            return roll_patron_hook()
     return f"Unknown tool: {name}"
 

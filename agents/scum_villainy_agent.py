@@ -14,7 +14,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from lib.names import roll_name_suggestion, NAME_TOOL_SCHEMA
 from lib.ships import roll_ship_name, SCUM_SHIP_TOOL_SCHEMA
 from lib.gear import roll_scum_gear, SCUM_GEAR_TOOL_SCHEMA
-from lib.psi import get_mystic_profile, SCUM_MYSTIC_TOOL_SCHEMA
+from lib.psi import (
+    get_mystic_profile, SCUM_MYSTIC_TOOL_SCHEMA,
+    roll_scum_psi_chance, SCUM_PSI_CHANCE_TOOL_SCHEMA,
+)
 from lib.utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -435,6 +438,7 @@ TOOLS = [
     SCUM_SHIP_TOOL_SCHEMA,
     SCUM_GEAR_TOOL_SCHEMA,
     SCUM_MYSTIC_TOOL_SCHEMA,
+    SCUM_PSI_CHANCE_TOOL_SCHEMA,
 ]
 
 
@@ -451,7 +455,8 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_name_suggestion": return roll_name_suggestion()
     if name == "roll_ship_name":       return roll_ship_name("scum")
     if name == "roll_scum_gear":       return roll_scum_gear(**inputs)
-    if name == "get_mystic_profile":   return get_mystic_profile()
+    if name == "get_mystic_profile":    return get_mystic_profile()
+    if name == "roll_scum_psi_chance":  return roll_scum_psi_chance(**inputs)
     return f"Unknown tool: {name}"
 
 
@@ -587,9 +592,10 @@ Always use exactly this format:
 **Hook:** [one concrete way they pull the crew into their business]
 **Connection:** [one named person they love, fear, or owe — and why it matters]
 
-If this NPC is a Mystic or Ur-touched (explicitly requested or implied by role),
-call get_mystic_profile() and weave the Ur-web connection into Demeanor or Secret.
-One sentence is enough — don't add a full Ur-web section to an NPC sketch."""
+For every randomly generated NPC: call roll_scum_psi_chance(context='notable_npc').
+If has_ability is true, call get_mystic_profile() and weave the Ur-web connection
+flavor into Demeanor or Secret — one sentence, not a full Ur-web section.
+If explicitly requested as Mystic/Ur-touched, skip the chance roll."""
 
 
 SCORE_CONTACT_SYSTEM_PROMPT = """You are a Scum and Villainy score contact generator (Forged in the Dark). Create a complete encounter — someone who approaches the crew with a score. Every score in the Hegemony's shadow has something underneath it, and no one who needs criminals for a job is telling the whole story.
