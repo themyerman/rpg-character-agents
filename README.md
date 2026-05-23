@@ -100,7 +100,7 @@ Noble titles are awarded by Social Standing: SOC 11 = Knight (Sir/Dame), 12 = Ba
 
 Output saves to `output/traveller/characters/`.
 
-**Examples:** Baroness Séverine "Sev" Aldenberg-Vey (Agent, 5 terms, SOC 12, vacc suit with family crest), Korven "Half-Lung" Drask (Drifter, 6 terms, Cr105k he shouldn't have), Nasrin "Nas" al-Qadeer (Scout, 2 terms, her own ship and four languages)
+**Examples:** Baroness Séverine "Sev" Aldenberg-Vey (Agent, 5 terms, SOC 12, vacc suit with family crest), Korven "Half-Lung" Drask (Drifter, 6 terms, Cr105k he shouldn't have), Nasrin "Nas" al-Qadeer (Scout, 2 terms, her own ship and four languages), Áine Kelly-Vorrhan "the Quiet Secretary" (Noble, 6 terms, Telekinesis talent, trained in secret and licensed on two subsectors)
 
 ---
 
@@ -297,6 +297,41 @@ Each game has its own weapon pools, kit pools, and personal item list:
 
 ---
 
+### `psi.py` — Psionics, Mystics, and Readers
+
+Story-first psionic ability profiles for the three sci-fi systems. Each game handles the gifted mind differently; this module provides the data pools, generation functions, rarity rolls, and tool schemas that let agents build psionic characters with mechanical grounding and narrative weight.
+
+**Traveller — `get_traveller_psi_profile()`**
+Returns a primary talent, 2–3 powers with PSI costs and story hooks, a discovery method, and the character's current social situation inside the Third Imperium. Six talents: Telepathy, Clairvoyance, Telekinesis, Teleportation, Awareness, Special. Weighted by setting rarity — Telepathy and Awareness are most common, Teleportation rare. Always includes the cheapest power from the chosen talent; samples 2 more from the rest.
+
+**Scum & Villainy — `get_mystic_profile()`**
+Returns how the character experiences the Ur-web (6 connection flavors: Resonance, Presence, Vision, Instinct, Echo, Wound), 3 ability suggestions from the Mystic playbook with story hooks, and one Ur artifact with its property and complication.
+
+**Firefly — `get_reader_profile()`**
+Returns a Reader Distinction (d8) with hinder hook, 2 mental Complications with triggers and expressions, an Alliance threat level, and 2 Signature Asset suggestions. Distinctions and assets are sampled without replacement so a single result is always internally consistent.
+
+**Rarity rolls — canonical population probabilities**
+
+Each game has a `roll_*_psi_chance(context)` function that rolls d100 against a threshold sourced from the rulebooks:
+
+| System | Context | Chance |
+|--------|---------|--------|
+| Traveller | Imperial human | 3% |
+| Traveller | Frontier world | 7% |
+| Traveller | Zhodani prole | 15% |
+| Traveller | Zhodani noble/intendant | 95% |
+| Traveller | Droyne | 100% |
+| S&V | General NPC | 5% |
+| S&V | Notable NPC | 10% |
+| Firefly | Any character | 2% |
+| Firefly | Alliance Academy connection | 20% |
+
+The result includes `has_ability` (bool), the raw roll, and — when true — a `next_step` string naming the profile function to call next. Agents call the chance roll first for every randomly generated character/NPC; they call the profile function only if `has_ability` is true. Explicitly requested psionic characters skip the chance roll.
+
+For S&V player characters, playbook selection handles the choice — `roll_scum_psi_chance()` is for NPCs only. The Mystic playbook is 1 of 7, giving a ~14% base rate for random player characters.
+
+---
+
 ### `ships.py` — Ship Names
 
 **`roll_ship_name(game)`** — returns a name, class, and a one-line naming register note. Called by `ship_agent.py` and also by the character agents: Traveller calls it when ship shares appear during muster-out; Firefly and Scum call it to name the vessel the character flies on (included in the character sheet). Each game has its own pool of 30 names and 8–12 classes with a distinct naming character:
@@ -366,6 +401,7 @@ rpg-character-agents/
 │   ├── dice.py               # Dice rolling and rules lookups
 │   ├── gear.py               # Starting equipment — 4 games, class/career/role-specific
 │   ├── names.py              # Name pools — 15+ traditions + D&D race pools
+│   ├── psi.py                # Psionics/Mystic/Reader — 3 games, rarity rolls
 │   ├── ships.py              # Ship name pools — 4 games, distinct registers
 │   ├── spells.py             # D&D spell pools — 8 classes, story-first hooks
 │   └── utils.py              # Shared infrastructure
@@ -382,6 +418,7 @@ rpg-character-agents/
 │   ├── test_ships.py
 │   ├── test_gear.py
 │   ├── test_spells.py
+│   ├── test_psi.py
 │   ├── test_encounter_agent.py
 │   ├── test_ship_agent.py
 │   ├── test_location_agent.py
