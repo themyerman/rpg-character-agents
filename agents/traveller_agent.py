@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from lib.names import roll_name_suggestion, NAME_TOOL_SCHEMA
 from lib.ships import roll_ship_name, TRAVELLER_SHIP_TOOL_SCHEMA
 from lib.gear import roll_traveller_gear, TRAVELLER_GEAR_TOOL_SCHEMA
+from lib.psi import get_traveller_psi_profile, TRAVELLER_PSI_TOOL_SCHEMA
 from lib.utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -637,6 +638,7 @@ TOOLS = [
     NAME_TOOL_SCHEMA,
     TRAVELLER_SHIP_TOOL_SCHEMA,
     TRAVELLER_GEAR_TOOL_SCHEMA,
+    TRAVELLER_PSI_TOOL_SCHEMA,
     {
         "name": "roll_patron_hook",
         "description": (
@@ -743,6 +745,20 @@ Items should feel earned and worn in. The personal item (always last) gets one a
 about what it says about who this character is or was. Add any physical benefits from Muster Out
 (weapons, equipment) if not already covered.]
 
+### PSI (psionic characters only)
+If this is a psionic character, call get_traveller_psi_profile() after Equipment.
+Add this section using what it returns:
+
+- **PSI [value]** — [one phrase: what this gift feels like from the inside]
+- **Talent: [Talent Name]** — [talent description, one sentence]
+- [Each power on its own line: name, PSI cost in parentheses, hook as italic sentence]
+- *Discovery:* [how they found out or were trained — use the discovery hook verbatim or adapted]
+- *Social situation:* [how they manage it inside the Imperium — use the stigma hook]
+
+PSI is rare. A character is psionic only if explicitly requested or if career events
+strongly suggest it (e.g., "exposed to something that changed you" in a Scouts mishap,
+or a research incident in a Scholar term). Never add PSI to a character uninvited.
+
 ### Backstory
 Three sentences. A past, a wound, and a direction.
 
@@ -772,7 +788,11 @@ Always use exactly this format:
 **Wants:** [what they need right now — specific]
 **Secret:** [one thing they're hiding — specific, not vague]
 **Hook:** [one concrete way they pull the characters into their orbit]
-**Connection:** [one named person they love, fear, or owe — and why it matters]"""
+**Connection:** [one named person they love, fear, or owe — and why it matters]
+
+If this NPC is psionic (explicitly requested or strongly implied by their role),
+call get_traveller_psi_profile() and add one line to Secret or Hook about how
+they manage it. Keep it brief — one sentence, not a full PSI section."""
 
 PATRON_SYSTEM_PROMPT = """You are a Mongoose Traveller 2e patron generator. Create a complete patron encounter — someone who walks up to the crew in a starport bar, a hotel lobby, or a dockside office and offers them a job.
 
@@ -829,6 +849,7 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_name_suggestion":        return roll_name_suggestion()
     if name == "roll_ship_name":              return roll_ship_name("traveller")
     if name == "roll_traveller_gear":         return roll_traveller_gear(**inputs)
+    if name == "get_traveller_psi_profile":   return get_traveller_psi_profile()
     if name == "roll_patron_hook":            return roll_patron_hook()
     return f"Unknown tool: {name}"
 
