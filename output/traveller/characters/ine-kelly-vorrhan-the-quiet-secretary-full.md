@@ -67,10 +67,10 @@
 
 - **PSI 3** — what's left of something that started at twelve; the Institute's testing carved it down six times over two years, and what remains is controlled, quiet, and occasionally frightening
 - **Talent: Telekinesis** — Moving matter without physical contact, from delicate manipulation to crushing force, at distances proportional to PSI spent.
-- **Telekinesis (PSI 2)** — *Moves objects through concentration. From the outside it looks like nothing, which is half the value.*
+- **Telekinesis (PSI 2)** — *Moves objects through concentration — a glass across a table, a latch held shut at exactly the right moment, a handgun lifted from a holster she can't reach. She is not a weapon; she's a diplomat who can do one impossible thing, unreliably, once every few hours. Telekinesis 0 means raw instinct only: roughly half her contested attempts fail, which is why she doesn't telegraph when she's about to try.*
 - **Pyrokinesis (PSI 3)** — *Generates or suppresses heat at range. Controlled. Useful. Not something discussed at refuelling stops.*
-- **Enhanced Telekinesis (PSI 3)** — *Heavier loads, higher speed — once used it to stop a hatch closing on someone's hand and it became a reflex.*
-- *Discovery:* Tested and trained by a licensed Psionic Institute operating in the legal gray zone inside the Imperium. Her raw score before testing was the highest Adept Kor Yulen had seen in a decade — he has never told her this, because he does not think it would help her. The testing process cost her nine points of that potential; what she has now is what the Institute left behind.
+- **Enhanced Telekinesis (PSI 3)** — *Heavier loads, higher speed — once used it to stop a hatch closing on someone's hand and it became a reflex. Costs all three remaining points; afterward she is dry for two or three hours. She uses it when she has no other choice and works hard to have other choices.*
+- *Discovery:* Tested and trained by a licensed Psionic Institute operating in the legal gray zone inside the Imperium. Her raw score before testing was the highest Adept Kor Yulen had seen in a decade — he has never told her this, because he does not think it would help her. The testing process cost her nine points of that potential; what she has now is what the Institute left behind. PSI 12 undiminished would have been someone genuinely dangerous in a negotiating room — undetectable, effective, catastrophic in the right situation. She doesn't know she was that close to it.
 - *Social situation:* She holds documentation as a "licensed psionic technician" — legally recognized in two subsectors and a serious complication everywhere else. The paper is real. Whether the Imperium honours it depends entirely on who's holding the paper at the time.
 
 ### Backstory

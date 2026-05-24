@@ -44,6 +44,10 @@ Two menus: pick your game, then pick what to build.
 - Full character sheet
 - NPC sketch
 - Hook encounter (quest giver / patron / job contact / score contact)
+- Alien character *(Traveller only)*
+- Droid or AI NPC *(Traveller only)*
+- First contact encounter *(Traveller only — fully procedural)*
+- Stardancer character *(Scum and Villainy only)*
 - Party / crew
 - NPC cluster
 - Encounter
@@ -95,10 +99,13 @@ Output saves to `output/dnd/characters/`.
 - `full` — Full character with rolled UPP, homeworld (complete UWP with atmosphere, hydrographics, law level, tech level, background skills), career history (2–6 terms), survival rolls, d66 events, mishaps, named connections, muster out benefits, pension, and equipment. Ship shares are treated as story hooks: a named vessel with a dangling thread, not a line item.
 - `npc` — Quick sketch in Traveller format: UPP, career, demeanor, want, secret, hook
 - `patron` — Classic Traveller patron encounter: the job, the pitch in direct speech, the payment, and four possible truths (referee rolls 1d4 in secret — Truth 4 is The Reversal)
+- `alien` — Alien character using one of the major or minor races. Calls `get_major_race_profile()` or `get_minor_race_profile()` before UPP generation to apply characteristic mods, cultural grounding, and appropriate NPC hooks. Droyne generate a caste first.
+- `synthetic` — Droid or AI NPC. Context determines what's generated: droid NPCs roll purpose, legal status, personality emergence, condition, and restrictions; ship/facility AI rolls capability tier weighted by installation type; auxiliary AI (shuttles, smart homes) rolls lighter-touch profiles. Autonomous flag always matches capability.
+- `first_contact` — Fully procedural first contact encounter. No description prompt. Species profile → contact situation pipeline: diet drives posture, communication method sets the contact barrier, TL determines power dynamic and whether Imperial non-interference protocol applies.
 
 Noble titles are awarded by Social Standing: SOC 11 = Knight (Sir/Dame), 12 = Baron/Baroness, 13 = Marquis/Marchioness, 14 = Count/Countess, 15 = Duke/Duchess.
 
-Output saves to `output/traveller/characters/`.
+Character output saves to `output/traveller/characters/`. Alien characters save to `output/traveller/aliens/`. Synthetics save to `output/traveller/synthetics/`. First contact encounters save to `output/traveller/first-contact/`.
 
 **Examples:** Baroness Séverine "Sev" Aldenberg-Vey (Agent, 5 terms, SOC 12, vacc suit with family crest), Korven "Half-Lung" Drask (Drifter, 6 terms, Cr105k he shouldn't have), Nasrin "Nas" al-Qadeer (Scout, 2 terms, her own ship and four languages), Áine Kelly-Vorrhan "the Quiet Secretary" (Noble, 6 terms, Telekinesis talent, trained in secret and licensed on two subsectors)
 
@@ -129,10 +136,11 @@ Forged in the Dark character generation for crews at the edge of the Hegemony. A
 - `full` — Full crew member: playbook, heritage, background, vice, action dots by attribute (Insight/Prowess/Resolve), one special ability, XP triggers, stress and trauma tracks, load (starting gear), ship name, and backstory
 - `npc` — Quick sketch: playbook equivalent, heritage, background, key actions, wants, secret, hook
 - `scorecontact` — Hook encounter: who's offering the score, the pitch in direct speech, what they want, what they're paying, and four possible truths (Truth 4 is always The Reversal)
+- `stardancer` — Stardancer character using the Stardancer playbook. Rolls body type, consciousness origin, memory hooks, Hegemony status, a ruling need, and a complication. Treated as a full playbook character with backstory, stress, trauma, and load.
 
-Playbooks: Muscle, Pilot, Scoundrel, Mystic, Speaker, Stitch. Action dots use filled/empty circles (●○○○).
+Playbooks: Muscle, Pilot, Scoundrel, Mystic, Speaker, Stitch, Stardancer. Action dots use filled/empty circles (●○○○).
 
-Output saves to `output/scum_villainy/characters/`.
+Character output saves to `output/scum_villainy/characters/`. Stardancer output saves to `output/scum_villainy/synthetics/`.
 
 **Examples:** Adaeze "Reins" Vukoja (Pilot, Iruvia, steady hands and a dangerous calm), Adesina Voss-Karim (full crew member), Wren Adeyemi-Vasque (NPC)
 
@@ -332,6 +340,64 @@ For S&V player characters, playbook selection handles the choice — `roll_scum_
 
 ---
 
+### `synthetics.py` — Droids, AI, and Stardancers
+
+**Traveller and Scum & Villainy.** Four synthetic contexts covering the range from player-character AIs to background hardware.
+
+**S&V — Stardancer playbook support**
+`get_stardancer_profile()` — returns body type (8 options: chassis, biological sleeve, holographic, distributed, etc.), consciousness origin (8: copied, emergent, designed, fragmented, etc.), memory hooks (8 loaded experiences), Hegemony status (6: licensed, rogue, registered, prototype, etc.), a ruling need (7), and a complication hook (10). `roll_scum_synthetic_chance(context)` rolls d100 against context-specific thresholds: 5% for general NPCs, 14% for playbook-random.
+
+**Traveller — Droid NPCs**
+`get_traveller_droid_profile(purpose=None)` — rolls purpose (9 classes: medical, military, labour, diplomatic, etc.), legal status (7), personality emergence level (5 stages from blank tool to emergent consciousness), physical condition (6), and a restriction hook (3). `roll_traveller_droid_chance(context)` rolls against TL-gated thresholds: 2% at TL 7–9, 15% at TL 10–12, 35% at TL 13–14, 60% at TL 15+.
+
+**Traveller — AI Systems**
+`get_traveller_ai_profile(installation_type=None)` — rolls capability tier weighted by installation type (10 types: starship, megacorp, military base, research station, megaport, colony, residence, orbital, archive, hospital). Capability ranges from "basic automation" to "autonomous intelligence." Autonomous flag is enforced to match the capability tier — the model cannot contradict itself. Aliases accepted: "ship" → starship, "home"/"smart home" → residence, etc.
+
+**Traveller — Auxiliary AI**
+`get_traveller_auxiliary_profile(purpose=None)` — lighter-touch profiles for subsystems: shuttles, cargo handlers, comms arrays, navigation buoys, smart-home assistants. Rolls purpose (8), personality level (5), and a hook (10). Aliases: "shuttle" → shuttle, "cargo"/"loader" → cargo_handler, etc.
+
+---
+
+### `aliens.py` — Alien Races and First Contact
+
+**Traveller-focused.** Firefly has no aliens. S&V's Ur are handled in `psi.py`.
+
+Three layers:
+
+**Major races** — full cultural profiles for the six non-human major races of the Third Imperium:
+
+| Race | Characteristic Mods | Campaign Role |
+|------|---------------------|---------------|
+| Aslan | STR +2, DEX -2 | Honor culture, Ihatei second sons seeking territory everywhere |
+| Vargr | STR -1, DEX +1, END -1 | CHA replaces SOC. Pack loyalty, corsairs, charisma-driven |
+| Droyne | Caste-dependent | Near-universal psionics. Six castes. Rare off their own worlds |
+| K'kree | STR +4, DEX -4, END +2 | Cannot tolerate solitude. Militant herbivores. Rarely leave K'kree space |
+| Hivers | DEX +4, STR -4 | No aggression reflex. Master manipulators. Never fight directly |
+| Zhodani | — (human) | Psionics legal and celebrated. Five wars with Imperium |
+
+**`get_major_race_profile(race)`** — returns characteristic mods, social structure, key drives, psionic notes, campaign presence, and NPC hooks. Called before UPP generation for alien characters.
+
+**Minor races** — lighter treatment for NPC and flavor use: Bwaps, Darrians, Llellewyoly, Virushi, Hhkar, Jonkeereen, Uplifted Dolphins.
+
+**`get_minor_race_profile(race)`** — returns characteristic mods, behavioral notes, typical roles, and a specific NPC hook. Accepts aliases (Newts → Bwaps, Dandelions → Llellewyoly).
+
+**First contact** — procedural generator for unknown species, using a two-pass pipeline:
+
+1. `generate_species_profile()` produces the species facts: body symmetry, locomotion, primary sense, size, diet, social structure, communication method, cognitive style, lifespan, tech level.
+2. `generate_contact_situation(species)` reads those facts and produces a coherent situation — diet drives initial posture (weighted, not random), communication method determines the contact barrier, tech level defines the power dynamic and whether Imperial non-interference protocol applies.
+3. `generate_first_contact()` runs both and returns a single JSON object. One tool call, full encounter seed.
+
+| Diet type | Posture skew |
+|-----------|-------------|
+| Apex carnivore | ~50% hostile or territorial |
+| Grazer | ~60% fearful or watchful |
+| Photosynthetic | ~75% indifferent or curious |
+| Omnivore | Broad distribution — most unpredictable |
+
+Communication barriers range from `low` (electromagnetic — ship sensors can parse it) to `critical` (psionic — without a PSI character, intentionality can't even be confirmed). Tech level 0–5 triggers Imperial non-interference protocol; TL 6+ does not.
+
+---
+
 ### `ships.py` — Ship Names
 
 **`roll_ship_name(game)`** — returns a name, class, and a one-line naming register note. Called by `ship_agent.py` and also by the character agents: Traveller calls it when ship shares appear during muster-out; Firefly and Scum call it to name the vessel the character flies on (included in the character sheet). Each game has its own pool of 30 names and 8–12 classes with a distinct naming character:
@@ -358,7 +424,7 @@ Centralised dice rolling used by character and party generators.
 
 - `get_client()` — singleton Anthropic client
 - `run_agent_loop()` — generic tool-use while loop with optional phase progress display
-- `save_character()` — slugify heading → write to `output/{subdir}/characters/` with collision counter
+- `save_character()` — slugify heading → write to `output/{subdir}/{output_type}/` with collision counter. `output_type` defaults to `"characters"` and is overridden per-mode (`"aliens"`, `"synthetics"`, `"first-contact"`).
 - `strip_preamble()` — remove any text before the first `##` heading
 - `slug()` — lowercase, collapse non-alphanumeric runs to dashes
 - `pick()` — numbered terminal menu, returns selected key
@@ -401,6 +467,8 @@ rpg-character-agents/
 │   ├── dice.py               # Dice rolling and rules lookups
 │   ├── gear.py               # Starting equipment — 4 games, class/career/role-specific
 │   ├── names.py              # Name pools — 15+ traditions + D&D race pools
+│   ├── aliens.py             # Alien races + first contact — Traveller major/minor races, procedural species
+│   ├── synthetics.py         # Droids, AI systems, aux AI — Traveller + S&V Stardancer playbook
 │   ├── psi.py                # Psionics/Mystic/Reader — 3 games, rarity rolls
 │   ├── ships.py              # Ship name pools — 4 games, distinct registers
 │   ├── spells.py             # D&D spell pools — 8 classes, story-first hooks
@@ -418,6 +486,8 @@ rpg-character-agents/
 │   ├── test_ships.py
 │   ├── test_gear.py
 │   ├── test_spells.py
+│   ├── test_aliens.py
+│   ├── test_synthetics.py
 │   ├── test_psi.py
 │   ├── test_encounter_agent.py
 │   ├── test_ship_agent.py
@@ -438,6 +508,9 @@ rpg-character-agents/
     │   └── events/
     ├── traveller/
     │   ├── characters/
+    │   ├── aliens/
+    │   ├── synthetics/
+    │   ├── first-contact/
     │   ├── parties/
     │   ├── clusters/
     │   ├── encounters/
@@ -456,6 +529,7 @@ rpg-character-agents/
     │   └── events/
     └── scum_villainy/
         ├── characters/
+        ├── synthetics/
         ├── parties/
         ├── clusters/
         ├── encounters/

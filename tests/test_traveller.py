@@ -20,6 +20,7 @@ from agents.traveller_agent import (
     roll_patron_hook,
     detect_phase,
     save_result,
+    _OUTPUT_TYPES,
     VALID_DICE,
     MIN_ROLLS,
     MAX_ROLLS,
@@ -425,3 +426,192 @@ class TestConstants:
 
     def test_twelve_careers_defined(self):
         assert len(CAREERS) == 12
+
+
+# ── _OUTPUT_TYPES mapping ────────────────────────────────────────────────────────
+
+class TestOutputTypeMappings:
+    def test_full_maps_to_characters(self):
+        assert _OUTPUT_TYPES["full"] == "characters"
+
+    def test_npc_maps_to_characters(self):
+        assert _OUTPUT_TYPES["npc"] == "characters"
+
+    def test_patron_maps_to_characters(self):
+        assert _OUTPUT_TYPES["patron"] == "characters"
+
+    def test_alien_maps_to_aliens(self):
+        assert _OUTPUT_TYPES["alien"] == "aliens"
+
+    def test_synthetic_maps_to_synthetics(self):
+        assert _OUTPUT_TYPES["synthetic"] == "synthetics"
+
+    def test_first_contact_maps_to_first_contact_dir(self):
+        assert _OUTPUT_TYPES["first_contact"] == "first-contact"
+
+    def test_all_six_modes_present(self):
+        for mode in ("full", "npc", "patron", "alien", "synthetic", "first_contact"):
+            assert mode in _OUTPUT_TYPES, f"Mode '{mode}' missing from _OUTPUT_TYPES"
+
+
+# ── save_result output-type routing ─────────────────────────────────────────────
+
+class TestSaveResultOutputTypes:
+    CONTENT = "## **Test Entity**\nSome content"
+
+    def test_full_saves_to_characters(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "agents" / "traveller_agent.py"))
+        path = save_result(self.CONTENT, "full")
+        assert "characters" in str(path)
+
+    def test_alien_saves_to_aliens(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "agents" / "traveller_agent.py"))
+        path = save_result(self.CONTENT, "alien")
+        assert "aliens" in str(path)
+        assert "characters" not in str(path)
+
+    def test_synthetic_saves_to_synthetics(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "agents" / "traveller_agent.py"))
+        path = save_result(self.CONTENT, "synthetic")
+        assert "synthetics" in str(path)
+        assert "characters" not in str(path)
+
+    def test_first_contact_saves_to_first_contact(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "agents" / "traveller_agent.py"))
+        path = save_result(self.CONTENT, "first_contact")
+        assert "first-contact" in str(path)
+
+    def test_alien_dir_is_created(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "agents" / "traveller_agent.py"))
+        path = save_result(self.CONTENT, "alien")
+        assert path.exists()
+
+    def test_first_contact_dir_is_created(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(traveller_agent, "__file__", str(tmp_path / "agents" / "traveller_agent.py"))
+        path = save_result(self.CONTENT, "first_contact")
+        assert path.exists()
+
+
+# ── Alien tool wiring ────────────────────────────────────────────────────────────
+
+class TestAlienWiring:
+    def _tool_names(self):
+        return [t["name"] for t in traveller_agent.TOOLS]
+
+    def test_major_race_tool_in_tools(self):
+        assert "get_major_race_profile" in self._tool_names()
+
+    def test_minor_race_tool_in_tools(self):
+        assert "get_minor_race_profile" in self._tool_names()
+
+    def test_first_contact_tool_in_tools(self):
+        assert "generate_first_contact" in self._tool_names()
+
+    def test_list_major_races_tool_in_tools(self):
+        assert "list_major_races" in self._tool_names()
+
+    def test_list_minor_races_tool_in_tools(self):
+        assert "list_minor_races" in self._tool_names()
+
+    def test_run_tool_major_race_aslan(self):
+        result = traveller_agent.run_tool("get_major_race_profile", {"race": "aslan"})
+        data = json.loads(result)
+        assert "aslan" in data or "characteristic_mods" in data
+
+    def test_run_tool_major_race_vargr(self):
+        result = traveller_agent.run_tool("get_major_race_profile", {"race": "vargr"})
+        data = json.loads(result)
+        assert "vargr" in data or "characteristic_mods" in data
+
+    def test_run_tool_minor_race_bwaps(self):
+        result = traveller_agent.run_tool("get_minor_race_profile", {"race": "bwaps"})
+        data = json.loads(result)
+        assert "bwaps" in data or "characteristic_mods" in data
+
+    def test_run_tool_first_contact_returns_contact_situation(self):
+        result = traveller_agent.run_tool("generate_first_contact", {})
+        data = json.loads(result)
+        assert "contact_situation" in data
+
+    def test_run_tool_list_major_races(self):
+        result = traveller_agent.run_tool("list_major_races", {})
+        data = json.loads(result)
+        # list_major_races returns {"major_races": {...}} — check aslan is present
+        assert "major_races" in data or "aslan" in str(data).lower()
+
+    def test_alien_system_prompt_exists(self):
+        assert hasattr(traveller_agent, "ALIEN_SYSTEM_PROMPT")
+        assert len(traveller_agent.ALIEN_SYSTEM_PROMPT) > 100
+
+    def test_first_contact_system_prompt_calls_generate_first_contact(self):
+        assert hasattr(traveller_agent, "FIRST_CONTACT_SYSTEM_PROMPT")
+        assert "generate_first_contact" in traveller_agent.FIRST_CONTACT_SYSTEM_PROMPT
+
+    def test_alien_tools_do_not_trigger_phases(self):
+        for tool in ("get_major_race_profile", "get_minor_race_profile",
+                     "generate_first_contact", "list_major_races", "list_minor_races"):
+            result = detect_phase(tool, set())
+            assert result is None, f"Expected None for {tool}, got {result!r}"
+
+
+# ── Synthetic tool wiring ────────────────────────────────────────────────────────
+
+class TestSyntheticWiring:
+    def _tool_names(self):
+        return [t["name"] for t in traveller_agent.TOOLS]
+
+    def test_droid_tool_in_tools(self):
+        assert "get_traveller_droid_profile" in self._tool_names()
+
+    def test_droid_chance_tool_in_tools(self):
+        assert "roll_traveller_droid_chance" in self._tool_names()
+
+    def test_ai_tool_in_tools(self):
+        assert "get_traveller_ai_profile" in self._tool_names()
+
+    def test_auxiliary_tool_in_tools(self):
+        assert "get_traveller_auxiliary_profile" in self._tool_names()
+
+    def test_run_tool_droid_profile_has_purpose(self):
+        result = traveller_agent.run_tool("get_traveller_droid_profile", {})
+        data = json.loads(result)
+        assert "purpose" in data
+
+    def test_run_tool_droid_profile_with_purpose(self):
+        result = traveller_agent.run_tool("get_traveller_droid_profile", {"purpose": "medical"})
+        data = json.loads(result)
+        assert "purpose" in data
+
+    def test_run_tool_ai_profile_has_capability(self):
+        result = traveller_agent.run_tool("get_traveller_ai_profile", {})
+        data = json.loads(result)
+        assert "capability_tier" in data
+
+    def test_run_tool_ai_profile_with_installation(self):
+        result = traveller_agent.run_tool("get_traveller_ai_profile", {"installation_type": "starship"})
+        data = json.loads(result)
+        assert "installation_type" in data
+
+    def test_run_tool_auxiliary_profile_has_purpose(self):
+        result = traveller_agent.run_tool("get_traveller_auxiliary_profile", {})
+        data = json.loads(result)
+        assert "purpose" in data
+
+    def test_run_tool_droid_chance(self):
+        result = traveller_agent.run_tool("roll_traveller_droid_chance", {"context": "tl_high"})
+        data = json.loads(result)
+        assert "is_droid" in data  # roll_traveller_droid_chance uses is_droid
+
+    def test_synthetic_system_prompt_exists(self):
+        assert hasattr(traveller_agent, "SYNTHETIC_SYSTEM_PROMPT")
+        assert len(traveller_agent.SYNTHETIC_SYSTEM_PROMPT) > 100
+
+    def test_synthetic_system_prompt_mentions_droid(self):
+        assert ("droid" in traveller_agent.SYNTHETIC_SYSTEM_PROMPT.lower()
+                or "synthetic" in traveller_agent.SYNTHETIC_SYSTEM_PROMPT.lower())
+
+    def test_synthetic_tools_do_not_trigger_phases(self):
+        for tool in ("get_traveller_droid_profile", "roll_traveller_droid_chance",
+                     "get_traveller_ai_profile", "get_traveller_auxiliary_profile"):
+            result = detect_phase(tool, set())
+            assert result is None, f"Expected None for {tool}, got {result!r}"

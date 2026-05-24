@@ -42,16 +42,19 @@ GAME_ACTIONS: dict[str, list[tuple[str, str]]] = {
         ("event",       "Event"),
     ],
     "traveller": [
-        ("full",        "Full character sheet"),
-        ("npc",         "NPC sketch"),
-        ("patron",      "Patron encounter"),
-        ("party",       "Crew"),
-        ("cluster",     "NPC cluster"),
-        ("encounter",   "Encounter"),
-        ("ship",        "Ship"),
-        ("location",    "Location"),
-        ("rumor",       "Rumor"),
-        ("event",       "Event"),
+        ("full",          "Full character sheet"),
+        ("npc",           "NPC sketch"),
+        ("patron",        "Patron encounter"),
+        ("alien",         "Alien character"),
+        ("synthetic",     "Droid or AI NPC"),
+        ("first_contact", "First contact encounter"),
+        ("party",         "Crew"),
+        ("cluster",       "NPC cluster"),
+        ("encounter",     "Encounter"),
+        ("ship",          "Ship"),
+        ("location",      "Location"),
+        ("rumor",         "Rumor"),
+        ("event",         "Event"),
     ],
     "firefly": [
         ("full",        "Full character sheet"),
@@ -66,16 +69,17 @@ GAME_ACTIONS: dict[str, list[tuple[str, str]]] = {
         ("event",       "Event"),
     ],
     "scum": [
-        ("full",        "Full character sheet"),
-        ("npc",         "NPC sketch"),
-        ("scorecontact","Score contact"),
-        ("party",       "Crew"),
-        ("cluster",     "NPC cluster"),
-        ("encounter",   "Encounter"),
-        ("ship",        "Ship"),
-        ("location",    "Location"),
-        ("rumor",       "Rumor"),
-        ("event",       "Event"),
+        ("full",          "Full character sheet"),
+        ("npc",           "NPC sketch"),
+        ("scorecontact",  "Score contact"),
+        ("stardancer",    "Stardancer character"),
+        ("party",         "Crew"),
+        ("cluster",       "NPC cluster"),
+        ("encounter",     "Encounter"),
+        ("ship",          "Ship"),
+        ("location",      "Location"),
+        ("rumor",         "Rumor"),
+        ("event",         "Event"),
     ],
 }
 
@@ -89,12 +93,16 @@ CHARACTER_RUNNERS: dict[str, callable] = {
 
 # Human-readable labels for the description prompt
 MODE_LABELS: dict[str, str] = {
-    "full":         "character",
-    "npc":          "NPC",
-    "questgiver":   "quest giver",
-    "patron":       "patron",
-    "jobcontact":   "job contact",
-    "scorecontact": "score contact",
+    "full":          "character",
+    "npc":           "NPC",
+    "questgiver":    "quest giver",
+    "patron":        "patron",
+    "jobcontact":    "job contact",
+    "scorecontact":  "score contact",
+    "alien":         "alien character",
+    "synthetic":     "droid or AI NPC",
+    "stardancer":    "Stardancer character",
+    # first_contact is fully procedural — no desc prompt needed
 }
 
 GAMES: list[tuple[str, str]] = [
@@ -146,6 +154,11 @@ def main() -> None:
     # ── Event ─────────────────────────────────────────────────────────────────
     if action == "event":
         event_agent.run(game=game)
+        return
+
+    # ── First contact (fully procedural — no description prompt) ─────────────
+    if action == "first_contact":
+        CHARACTER_RUNNERS[game](mode=action, desc="")
         return
 
     # ── Character / NPC / hook encounter ──────────────────────────────────────

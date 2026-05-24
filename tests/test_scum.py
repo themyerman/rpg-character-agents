@@ -8,6 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
+import agents.scum_villainy_agent as scum_villainy_agent
 from agents.scum_villainy_agent import (
     get_playbook_info,
     assign_action_dots,
@@ -18,6 +19,7 @@ from agents.scum_villainy_agent import (
     roll_score_hook,
     save_result,
     detect_phase,
+    _OUTPUT_TYPES,
     PLAYBOOKS,
     HERITAGE,
     BACKGROUND,
@@ -448,3 +450,91 @@ class TestConstants:
         all_actions = [a for actions in ACTIONS.values() for a in actions]
         for action in ("Hunt", "Skirmish", "Sway"):
             assert action in all_actions, f"Standard action '{action}' missing"
+
+
+# ── _OUTPUT_TYPES mapping ────────────────────────────────────────────────────────
+
+class TestOutputTypeMappings:
+    def test_full_maps_to_characters(self):
+        assert _OUTPUT_TYPES["full"] == "characters"
+
+    def test_npc_maps_to_characters(self):
+        assert _OUTPUT_TYPES["npc"] == "characters"
+
+    def test_scorecontact_maps_to_characters(self):
+        assert _OUTPUT_TYPES["scorecontact"] == "characters"
+
+    def test_stardancer_maps_to_synthetics(self):
+        assert _OUTPUT_TYPES["stardancer"] == "synthetics"
+
+    def test_all_four_modes_present(self):
+        for mode in ("full", "npc", "scorecontact", "stardancer"):
+            assert mode in _OUTPUT_TYPES, f"Mode '{mode}' missing from _OUTPUT_TYPES"
+
+
+# ── Stardancer save_result routing ───────────────────────────────────────────────
+
+class TestStardancerSaveResult:
+    CONTENT = "## **AXIOM-7**\n*Stardancer — a distributed mind in a borrowed chassis*"
+
+    def test_stardancer_saves_to_synthetics(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(scum_villainy_agent, "__file__",
+                            str(tmp_path / "agents" / "scum_villainy_agent.py"))
+        path = save_result(self.CONTENT, "stardancer")
+        assert "synthetics" in str(path)
+        assert "characters" not in str(path)
+
+    def test_stardancer_dir_created(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(scum_villainy_agent, "__file__",
+                            str(tmp_path / "agents" / "scum_villainy_agent.py"))
+        path = save_result(self.CONTENT, "stardancer")
+        assert path.exists()
+
+    def test_stardancer_suffix_in_filename(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(scum_villainy_agent, "__file__",
+                            str(tmp_path / "agents" / "scum_villainy_agent.py"))
+        path = save_result(self.CONTENT, "stardancer")
+        assert path.name.endswith("-stardancer.md")
+
+    def test_stardancer_saves_under_scum_villainy(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(scum_villainy_agent, "__file__",
+                            str(tmp_path / "agents" / "scum_villainy_agent.py"))
+        path = save_result(self.CONTENT, "stardancer")
+        assert "scum_villainy" in str(path)
+
+
+# ── Stardancer tool wiring ───────────────────────────────────────────────────────
+
+class TestStardancerWiring:
+    def _tool_names(self):
+        return [t["name"] for t in scum_villainy_agent.TOOLS]
+
+    def test_stardancer_tool_in_tools(self):
+        assert "get_stardancer_profile" in self._tool_names()
+
+    def test_scum_synthetic_chance_tool_in_tools(self):
+        assert "roll_scum_synthetic_chance" in self._tool_names()
+
+    def test_run_tool_stardancer_profile_returns_body_type(self):
+        result = scum_villainy_agent.run_tool("get_stardancer_profile", {})
+        data = json.loads(result)
+        assert "body_type" in data
+
+    def test_run_tool_stardancer_profile_returns_consciousness_origin(self):
+        result = scum_villainy_agent.run_tool("get_stardancer_profile", {})
+        data = json.loads(result)
+        assert "consciousness_origin" in data
+
+    def test_run_tool_scum_synthetic_chance(self):
+        result = scum_villainy_agent.run_tool("roll_scum_synthetic_chance", {"context": "npc"})
+        data = json.loads(result)
+        assert "has_ability" in data  # roll_scum_synthetic_chance uses has_ability
+
+    def test_stardancer_is_not_a_phase(self):
+        # get_stardancer_profile has no phase message — should return None
+        result = detect_phase("get_stardancer_profile")
+        assert result is None
+
+    def test_system_prompt_mentions_stardancer(self):
+        assert ("stardancer" in scum_villainy_agent.SYSTEM_PROMPT.lower()
+                or "Stardancer" in scum_villainy_agent.SYSTEM_PROMPT)

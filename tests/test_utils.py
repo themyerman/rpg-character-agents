@@ -152,3 +152,47 @@ class TestSaveCharacter:
         agent_py = str(tmp_path / "traveller_agent.py")
         path = save_character(self.CONTENT, "npc", "traveller", agent_py)
         assert "traveller" in str(path)
+
+
+# ── save_character — output_type parameter ────────────────────────────────────
+
+class TestSaveCharacterOutputType:
+    CONTENT = "## **Test Entity**\nSome content here."
+
+    def test_defaults_to_characters(self, tmp_path):
+        path = save_character(self.CONTENT, "npc", "traveller", tmp_path)
+        assert "characters" in str(path)
+
+    def test_aliens_output_type_uses_aliens_dir(self, tmp_path):
+        path = save_character(self.CONTENT, "alien", "traveller", tmp_path, output_type="aliens")
+        assert "aliens" in str(path)
+        assert "characters" not in str(path)
+
+    def test_synthetics_output_type(self, tmp_path):
+        path = save_character(self.CONTENT, "synthetic", "traveller", tmp_path, output_type="synthetics")
+        assert "synthetics" in str(path)
+        assert "characters" not in str(path)
+
+    def test_first_contact_output_type(self, tmp_path):
+        path = save_character(self.CONTENT, "first_contact", "traveller", tmp_path, output_type="first-contact")
+        assert "first-contact" in str(path)
+
+    def test_output_type_dir_created_automatically(self, tmp_path):
+        path = save_character(self.CONTENT, "alien", "traveller", tmp_path, output_type="aliens")
+        assert path.parent.exists()
+        assert path.exists()
+
+    def test_output_type_under_correct_subdir(self, tmp_path):
+        path = save_character(self.CONTENT, "alien", "traveller", tmp_path, output_type="aliens")
+        # path should be: <root>/output/traveller/aliens/<name>-alien.md
+        parts = path.parts
+        assert "traveller" in parts
+        assert "aliens" in parts
+        traveller_idx = list(parts).index("traveller")
+        aliens_idx    = list(parts).index("aliens")
+        assert aliens_idx == traveller_idx + 1
+
+    def test_custom_output_type_creates_dir(self, tmp_path):
+        path = save_character(self.CONTENT, "npc", "traveller", tmp_path, output_type="custom-type")
+        assert "custom-type" in str(path)
+        assert path.exists()

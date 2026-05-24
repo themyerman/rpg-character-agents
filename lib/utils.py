@@ -128,8 +128,17 @@ def run_agent_loop(
 
 # ── Save helper ────────────────────────────────────────────────────────────────
 
-def save_character(content: str, mode: str, subdir: str, root: str | Path) -> Path:
-    """Save character output to output/{subdir}/characters/{name-slug}-{mode}.md
+def save_character(
+    content: str,
+    mode: str,
+    subdir: str,
+    root: str | Path,
+    output_type: str = "characters",
+) -> Path:
+    """Save output to output/{subdir}/{output_type}/{name-slug}-{mode}.md
+
+    output_type controls the subfolder: "characters", "aliens", "synthetics",
+    "first-contact", etc. Defaults to "characters" for backward compatibility.
 
     Handles ## heading extraction, slugification, and collision counters.
     root should be the project root directory (pass Path(__file__).parent.parent
@@ -143,7 +152,7 @@ def save_character(content: str, mode: str, subdir: str, root: str | Path) -> Pa
     name_slug = slug(name_raw)
     filename  = f"{name_slug}-{mode}.md"
 
-    output_dir = Path(root) / "output" / subdir / "characters"
+    output_dir = Path(root) / "output" / subdir / output_type
     output_dir.mkdir(parents=True, exist_ok=True)
 
     filepath = output_dir / filename

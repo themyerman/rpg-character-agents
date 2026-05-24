@@ -18,6 +18,10 @@ from lib.psi import (
     get_mystic_profile, SCUM_MYSTIC_TOOL_SCHEMA,
     roll_scum_psi_chance, SCUM_PSI_CHANCE_TOOL_SCHEMA,
 )
+from lib.synthetics import (
+    get_stardancer_profile, STARDANCER_TOOL_SCHEMA,
+    roll_scum_synthetic_chance, SCUM_SYNTHETIC_CHANCE_TOOL_SCHEMA,
+)
 from lib.utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -439,6 +443,8 @@ TOOLS = [
     SCUM_GEAR_TOOL_SCHEMA,
     SCUM_MYSTIC_TOOL_SCHEMA,
     SCUM_PSI_CHANCE_TOOL_SCHEMA,
+    STARDANCER_TOOL_SCHEMA,
+    SCUM_SYNTHETIC_CHANCE_TOOL_SCHEMA,
 ]
 
 
@@ -455,8 +461,10 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_name_suggestion": return roll_name_suggestion()
     if name == "roll_ship_name":       return roll_ship_name("scum")
     if name == "roll_scum_gear":       return roll_scum_gear(**inputs)
-    if name == "get_mystic_profile":    return get_mystic_profile()
-    if name == "roll_scum_psi_chance":  return roll_scum_psi_chance(**inputs)
+    if name == "get_mystic_profile":         return get_mystic_profile()
+    if name == "roll_scum_psi_chance":       return roll_scum_psi_chance(**inputs)
+    if name == "get_stardancer_profile":     return get_stardancer_profile()
+    if name == "roll_scum_synthetic_chance": return roll_scum_synthetic_chance(**inputs)
     return f"Unknown tool: {name}"
 
 
@@ -486,6 +494,10 @@ Work through these steps using your tools:
    MYSTIC ONLY: If the playbook is Mystic, call get_mystic_profile() before choosing an ability.
    Use the returned Ur-web connection flavor to shape how this character experiences the web,
    and prefer abilities that appear in the suggested list. Add the Ur artifact to the Load section.
+   STARDANCER ONLY: If the playbook is Stardancer, call get_stardancer_profile() before writing
+   the character. Use body_type and consciousness_origin to establish who they are, memory_approach
+   and hegemony_status as complications woven into the backstory, and complication_hook as a
+   latent threat. The primary_need shapes their vice or their drive.
 
 7. XP TRIGGERS — Include both XP triggers for the playbook. They drive play.
 
@@ -595,7 +607,12 @@ Always use exactly this format:
 For every randomly generated NPC: call roll_scum_psi_chance(context='notable_npc').
 If has_ability is true, call get_mystic_profile() and weave the Ur-web connection
 flavor into Demeanor or Secret — one sentence, not a full Ur-web section.
-If explicitly requested as Mystic/Ur-touched, skip the chance roll."""
+If explicitly requested as Mystic/Ur-touched, skip the chance roll.
+
+Also call roll_scum_synthetic_chance(context='npc') for every randomly generated NPC.
+If has_ability is true, call get_stardancer_profile() and fold the synthetic nature
+into their Secret — body_type in the Demeanor, hegemony_status or complication_hook
+as the hidden complication. If explicitly requested as synthetic, skip the chance roll."""
 
 
 SCORE_CONTACT_SYSTEM_PROMPT = """You are a Scum and Villainy score contact generator (Forged in the Dark). Create a complete encounter — someone who approaches the crew with a score. Every score in the Hegemony's shadow has something underneath it, and no one who needs criminals for a job is telling the whole story.
@@ -683,17 +700,35 @@ def run_agent(prompt: str, system_prompt: str = SYSTEM_PROMPT) -> str:
 
 # ── Save ──────────────────────────────────────────────────────────────────────────
 
+_OUTPUT_TYPES: dict[str, str] = {
+    "full":         "characters",
+    "npc":          "characters",
+    "scorecontact": "characters",
+    "stardancer":   "synthetics",
+}
+
+_VALID_MODES = set(_OUTPUT_TYPES.keys())
+
+
 def save_result(result: str, mode: str) -> Path:
-    return save_character(result, mode, "scum_villainy", Path(__file__).parent.parent)
+    output_type = _OUTPUT_TYPES.get(mode, "characters")
+    return save_character(result, mode, "scum_villainy", Path(__file__).parent.parent, output_type)
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────────
 
 def run(mode: str | None = None, desc: str | None = None) -> None:
     if mode is None:
-        mode = input("Mode? (full / npc / scorecontact, default: full): ").strip().lower()
-        mode = mode if mode in ("full", "npc", "scorecontact") else "full"
-    label = {"full": "character", "npc": "NPC", "scorecontact": "score contact"}[mode]
+        mode = input("Mode? (full / npc / scorecontact / stardancer, default: full): ").strip().lower()
+        mode = mode if mode in _VALID_MODES else "full"
+
+    labels = {
+        "full":         "character",
+        "npc":          "NPC",
+        "scorecontact": "score contact",
+        "stardancer":   "Stardancer (synthetic) character",
+    }
+    label = labels.get(mode, "character")
     if desc is None:
         desc = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
 
@@ -710,6 +745,13 @@ def run(mode: str | None = None, desc: str | None = None) -> None:
             f"Generate a Scum and Villainy score contact encounter with these constraints: {desc}"
             if desc else
             "Generate a fully random Scum and Villainy score contact encounter."
+        )
+    elif mode == "stardancer":
+        sys_prompt = SYSTEM_PROMPT
+        prompt = (
+            f"Generate a Scum and Villainy Stardancer (synthetic) character with these constraints: {desc}"
+            if desc else
+            "Generate a fully random Scum and Villainy Stardancer character. The playbook is Stardancer — call get_stardancer_profile() immediately after get_playbook_info()."
         )
     else:
         sys_prompt = SYSTEM_PROMPT

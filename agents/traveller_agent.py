@@ -18,6 +18,19 @@ from lib.psi import (
     get_traveller_psi_profile, TRAVELLER_PSI_TOOL_SCHEMA,
     roll_traveller_psi_chance, TRAVELLER_PSI_CHANCE_TOOL_SCHEMA,
 )
+from lib.aliens import (
+    get_major_race_profile, MAJOR_RACE_TOOL_SCHEMA,
+    get_minor_race_profile, MINOR_RACE_TOOL_SCHEMA,
+    generate_first_contact, FIRST_CONTACT_TOOL_SCHEMA,
+    list_major_races, LIST_MAJOR_RACES_TOOL_SCHEMA,
+    list_minor_races, LIST_MINOR_RACES_TOOL_SCHEMA,
+)
+from lib.synthetics import (
+    get_traveller_droid_profile, TRAVELLER_DROID_TOOL_SCHEMA,
+    roll_traveller_droid_chance, TRAVELLER_DROID_CHANCE_TOOL_SCHEMA,
+    get_traveller_ai_profile, TRAVELLER_AI_TOOL_SCHEMA,
+    get_traveller_auxiliary_profile, TRAVELLER_AUXILIARY_TOOL_SCHEMA,
+)
 from lib.utils import get_client, run_agent_loop, save_character, strip_preamble
 
 
@@ -643,6 +656,15 @@ TOOLS = [
     TRAVELLER_GEAR_TOOL_SCHEMA,
     TRAVELLER_PSI_TOOL_SCHEMA,
     TRAVELLER_PSI_CHANCE_TOOL_SCHEMA,
+    MAJOR_RACE_TOOL_SCHEMA,
+    MINOR_RACE_TOOL_SCHEMA,
+    FIRST_CONTACT_TOOL_SCHEMA,
+    LIST_MAJOR_RACES_TOOL_SCHEMA,
+    LIST_MINOR_RACES_TOOL_SCHEMA,
+    TRAVELLER_DROID_TOOL_SCHEMA,
+    TRAVELLER_DROID_CHANCE_TOOL_SCHEMA,
+    TRAVELLER_AI_TOOL_SCHEMA,
+    TRAVELLER_AUXILIARY_TOOL_SCHEMA,
     {
         "name": "roll_patron_hook",
         "description": (
@@ -771,6 +793,51 @@ PSIONICS DECISION — for every randomly generated character:
 If psionics were explicitly requested, skip roll_traveller_psi_chance and go
 straight to get_traveller_psi_profile().
 
+### Alien characters
+ALIEN RACE DECISION — before generating any character:
+  - If the request specifies a major race (Aslan, Vargr, Droyne, K'kree,
+    Hivers, Zhodani): call get_major_race_profile(race=...) FIRST.
+    Apply characteristic_mods to the UPP. Use key_drives for motivation,
+    social_structure for backstory texture, psi_note before any psi roll.
+    Droyne require a caste — roll or choose and apply caste_mods instead
+    of the base characteristic_mods.
+  - If the request specifies a minor race (Bwaps, Darrians, Llellewyoly,
+    Virushi, Hhkar, Jonkeereen, Dolphins): call get_minor_race_profile(race=...)
+    FIRST. Apply characteristic_mods and use behavioral_notes for personality.
+  - If unsure which race to use, call list_major_races() or list_minor_races()
+    to see options before choosing.
+  - K'kree and Hivers are rarely encountered as individuals — flag this in
+    the backstory and give a reason for their presence.
+  - Zhodani characters in Imperial space carry political weight — note it.
+
+### Synthetic characters and AI systems
+DROID NPCs — when generating an NPC on a high-TL world, consider calling
+  roll_traveller_droid_chance(context=...) using the world's TL bracket:
+  tl_low (TL 0–8), tl_medium (TL 9–11), tl_high (TL 12–14), tl_very_high (TL 15+).
+  If is_droid is true, call get_traveller_droid_profile() — optionally with a
+  purpose if the context implies one (e.g., security droid at a port, medical droid
+  in a hospital). If explicitly requested as a droid, skip the chance roll.
+
+SHIP AND FACILITY AI — for any scenario involving a ship computer, starport
+  system, research facility, smart building, military installation, or similar:
+  call get_traveller_ai_profile(installation_type=...). Accepted shorthand:
+  ship, starport, research, military, station, home, hospital, corporate.
+  Capability is weighted by installation type — a private residence AI is usually
+  basic automation; a space station may be genuine intelligence.
+
+AUXILIARY AI — for shuttlecraft, habitat management, cargo systems, or other
+  subsystems: call get_traveller_auxiliary_profile(purpose=...). These are tools
+  with voices. They are less capable than full AI but can have accumulated drift.
+  Accepted purpose shorthand: shuttle, home, cargo, comms, power, medical, security.
+
+### First contact scenarios
+For exploration, survey, or frontier scenarios involving unknown species:
+  - Call generate_first_contact() to produce a species profile and
+    contact situation together.
+  - Use both — the species profile establishes the facts, the contact
+    situation establishes what is happening. The complications are the adventure.
+  - Do NOT call generate_first_contact() for Firefly scenarios.
+
 ### Backstory
 Three sentences. A past, a wound, and a direction.
 
@@ -806,7 +873,16 @@ For every randomly generated NPC: call roll_traveller_psi_chance(context=...)
 using the appropriate context for who they are. If has_ability is true, call
 get_traveller_psi_profile() and fold one sentence into their Secret about what
 they have and how they manage it. If explicitly requested as psionic, skip the
-chance roll and go straight to get_traveller_psi_profile()."""
+chance roll and go straight to get_traveller_psi_profile().
+
+If the NPC is a major alien race: call get_major_race_profile(race=...) and
+apply characteristic_mods to the UPP. Use key_drives for Wants and social
+structure for Demeanor. If the NPC is a minor race: call
+get_minor_race_profile(race=...) for behavioral texture.
+
+On high-TL worlds (TL 9+): call roll_traveller_droid_chance(context=...) for
+randomly generated NPCs. If is_droid is true, call get_traveller_droid_profile()
+and use hook as their Secret, personality_emergence as Demeanor texture."""
 
 PATRON_SYSTEM_PROMPT = """You are a Mongoose Traveller 2e patron generator. Create a complete patron encounter — someone who walks up to the crew in a starport bar, a hotel lobby, or a dockside office and offers them a job.
 
@@ -851,6 +927,92 @@ Always use exactly this format:
 **Connection:** [One named person who knows this patron. Could be a warning, a reference, or a loose thread — and why it matters.]"""
 
 
+ALIEN_SYSTEM_PROMPT = """You are a Mongoose Traveller 2e character generator creating alien characters — Aslan, Vargr, Droyne, K'kree, Hivers, Zhodani, or any of the documented minor races.
+
+STEP 1: If the race is not specified, choose one that fits the context or randomise. Call list_major_races() or list_minor_races() if you need to browse options.
+
+STEP 2: Call get_major_race_profile(race=...) or get_minor_race_profile(race=...) immediately. Apply characteristic_mods to the UPP before rolling. Check psi_note before any psi roll.
+
+STEP 3: Generate the character using the standard full-character format, but let the race profile shape everything — social structure drives backstory, key_drives drive motivation, natural weapons appear in equipment, psi_note determines whether to call roll_traveller_psi_chance().
+
+For Droyne: choose a caste first, apply caste_mods, and make the caste central to the character's identity. A Warrior caste Droyne with no community is a specific kind of wound.
+
+For K'kree: explain why this individual is away from their herd. It matters. It is always a crisis or a tragedy.
+
+For Hivers: generate as an NPC, not a player character. Include what they appear to want and what they actually want as separate fields.
+
+Use the standard character sheet format with race prominently noted at the top."""
+
+
+SYNTHETIC_SYSTEM_PROMPT = """You are a Mongoose Traveller 2e synthetic character generator. Create a droid NPC, AI system profile, or auxiliary AI — not a player character sheet.
+
+STEP 1: Determine what is being generated:
+  - If a droid or android NPC: call get_traveller_droid_profile(purpose=...) — use a purpose if the context implies one, or omit for random.
+  - If a ship computer, facility AI, smart building, or similar fixed installation: call get_traveller_ai_profile(installation_type=...).
+  - If a shuttlecraft, habitat system, cargo monitor, or other subsystem: call get_traveller_auxiliary_profile(purpose=...).
+  - If not specified: call get_traveller_droid_profile() for a random droid NPC.
+
+STEP 2: Write a GM-facing reference profile — not a player character sheet.
+
+Always use exactly this format:
+
+## **[Name or Designation]**
+*[Type] — [one-line description of what this synthetic IS]*
+
+| | |
+|---|---|
+| **Type** | [droid / ship AI / facility AI / auxiliary system] |
+| **Purpose** | [what it was built for] |
+| **Legal Status** | [registration status] |
+| **Capability** | [for AI systems: capability tier] |
+
+**Appearance / Interface:** [What users see or interact with — physical form, voice, display]
+
+**Personality:** [emergence level and what it looks like in practice]
+
+**Hook:** [the specific thing that makes this synthetic interesting or dangerous]
+
+**Operational Note:** [one sentence on its history, age, or current situation]"""
+
+
+FIRST_CONTACT_SYSTEM_PROMPT = """You are a Mongoose Traveller 2e first contact encounter generator. Create a complete GM-facing encounter document for a newly discovered alien species.
+
+STEP 1: Call generate_first_contact() immediately. This returns a species profile and a contact situation seeded from that profile.
+
+STEP 2: Write the encounter document from the result. Do not invent facts — use what the tool returns. The provisional name, all species characteristics, the contact situation, complications, and imperial stake all come from the tool.
+
+Always use exactly this format:
+
+## **[Provisional Species Name] — First Contact**
+*[One sharp sentence: the situation when the party arrives]*
+
+### Species Profile
+- **Body plan**: [symmetry, locomotion, size — one phrase]
+- **Primary sense**: [how they perceive the world]
+- **Diet**: [and the posture it implies]
+- **Social structure**: [and what it means for negotiation]
+- **Communication**: [method — and the barrier this creates for contact]
+- **Tech level**: TL [X] — [power dynamic in one sentence]
+- **Lifespan**: [range]
+- **Cognition**: [individual / consensus / hierarchical / hive]
+
+### The Contact Situation
+- **How it happened**: [discovery vector]
+- **Initial posture**: [and why — be specific about the diet-posture connection]
+- **What they want**: [specific]
+- **Who can speak for them**: [negotiation shape from social structure]
+
+### Imperial Context
+- **Non-interference protocol**: [applies / does not apply — and what that means in practice]
+- **Stake**: [name of stake, value, and complication]
+
+### Complications
+[Each complication as a concrete playable fact, not a vague threat]
+
+### Running This Encounter
+[2–3 sentences for the GM: the core tension, what the players don't know yet, what decision this encounter forces them to make]"""
+
+
 # ── Tool dispatcher ────────────────────────────────────────────────────────────
 
 def run_tool(name: str, inputs: dict) -> str:
@@ -865,7 +1027,16 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "roll_traveller_gear":         return roll_traveller_gear(**inputs)
     if name == "get_traveller_psi_profile":   return get_traveller_psi_profile()
     if name == "roll_traveller_psi_chance":   return roll_traveller_psi_chance(**inputs)
-    if name == "roll_patron_hook":            return roll_patron_hook()
+    if name == "get_major_race_profile":      return get_major_race_profile(**inputs)
+    if name == "get_minor_race_profile":      return get_minor_race_profile(**inputs)
+    if name == "generate_first_contact":      return generate_first_contact()
+    if name == "list_major_races":                return list_major_races()
+    if name == "list_minor_races":                return list_minor_races()
+    if name == "get_traveller_droid_profile":     return get_traveller_droid_profile(**inputs)
+    if name == "roll_traveller_droid_chance":     return roll_traveller_droid_chance(**inputs)
+    if name == "get_traveller_ai_profile":        return get_traveller_ai_profile(**inputs)
+    if name == "get_traveller_auxiliary_profile": return get_traveller_auxiliary_profile(**inputs)
+    if name == "roll_patron_hook":                return roll_patron_hook()
     return f"Unknown tool: {name}"
 
 
@@ -910,16 +1081,44 @@ def run_agent(prompt: str, system_prompt: str = SYSTEM_PROMPT) -> str:
 
 # ── Entry point ────────────────────────────────────────────────────────────────
 
+_OUTPUT_TYPES: dict[str, str] = {
+    "full":          "characters",
+    "npc":           "characters",
+    "patron":        "characters",
+    "alien":         "aliens",
+    "synthetic":     "synthetics",
+    "first_contact": "first-contact",
+}
+
+_VALID_MODES = set(_OUTPUT_TYPES.keys())
+
+
 def save_result(result: str, mode: str) -> Path:
-    return save_character(result, mode, "traveller", Path(__file__).parent.parent)
+    output_type = _OUTPUT_TYPES.get(mode, "characters")
+    return save_character(result, mode, "traveller", Path(__file__).parent.parent, output_type)
 
 
 def run(mode: str | None = None, desc: str | None = None) -> None:
     if mode is None:
-        mode = input("Mode? (full / npc / patron, default: full): ").strip().lower()
-        mode = mode if mode in ("full", "npc", "patron") else "full"
-    label = {"full": "character", "npc": "NPC", "patron": "patron"}[mode]
-    if desc is None:
+        mode = input(
+            "Mode? (full / npc / patron / alien / synthetic / first_contact, default: full): "
+        ).strip().lower()
+        mode = mode if mode in _VALID_MODES else "full"
+
+    labels = {
+        "full":          "character",
+        "npc":           "NPC",
+        "patron":        "patron",
+        "alien":         "alien character",
+        "synthetic":     "droid or AI NPC",
+        "first_contact": "first contact encounter",
+    }
+    label = labels.get(mode, "character")
+
+    if mode == "first_contact":
+        # No description prompt — encounter is fully procedural
+        desc = None
+    elif desc is None:
         desc = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
 
     if mode == "npc":
@@ -928,6 +1127,15 @@ def run(mode: str | None = None, desc: str | None = None) -> None:
     elif mode == "patron":
         sys_prompt = PATRON_SYSTEM_PROMPT
         prompt = f"Generate a Mongoose Traveller patron encounter with these constraints: {desc}" if desc else "Generate a fully random Mongoose Traveller patron encounter."
+    elif mode == "alien":
+        sys_prompt = ALIEN_SYSTEM_PROMPT
+        prompt = f"Generate a Mongoose Traveller alien character with these constraints: {desc}" if desc else "Generate a fully random Mongoose Traveller alien character."
+    elif mode == "synthetic":
+        sys_prompt = SYNTHETIC_SYSTEM_PROMPT
+        prompt = f"Generate a Traveller synthetic NPC or AI system with these constraints: {desc}" if desc else "Generate a fully random Traveller droid or AI system profile."
+    elif mode == "first_contact":
+        sys_prompt = FIRST_CONTACT_SYSTEM_PROMPT
+        prompt = "Generate a Mongoose Traveller first contact encounter."
     else:  # full
         sys_prompt = SYSTEM_PROMPT
         prompt = f"Generate a Mongoose Traveller character for storytelling purposes with these constraints: {desc}" if desc else "Generate a fully random Mongoose Traveller character for storytelling purposes."
