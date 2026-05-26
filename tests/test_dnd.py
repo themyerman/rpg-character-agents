@@ -18,6 +18,9 @@ from agents.dnd_agent import (
     get_background_info,
     roll_alignment,
     roll_quest_hook,
+    calculate_ac,
+    pick_skills,
+    roll_deity,
     detect_phase,
     save_result,
     VALID_DICE,
@@ -28,6 +31,10 @@ from agents.dnd_agent import (
     BACKGROUNDS,
     ALIGNMENTS,
     QUEST_HOOKS,
+    ARMOR_TABLE,
+    SKILL_POOLS,
+    DEITIES,
+    ALL_SKILLS,
 )
 
 
@@ -469,3 +476,311 @@ class TestConstants:
 
     def test_max_rolls_is_reasonable(self):
         assert MAX_ROLLS <= 100
+
+
+# ── New races — speed and languages ─────────────────────────────────────────────
+
+class TestNewRaces:
+    NEW_RACES = [
+        "Drow", "Stout Halfling", "Rock Gnome", "Aasimar", "Tabaxi",
+        "Fire Genasi", "Water Genasi", "Earth Genasi", "Air Genasi",
+        "Goliath", "Firbolg", "Kenku", "Lizardfolk",
+    ]
+
+    def test_all_new_races_present(self):
+        for race in self.NEW_RACES:
+            assert race in RACES, f"Missing race: {race}"
+
+    def test_all_races_have_speed(self):
+        for name, data in RACES.items():
+            assert "speed" in data, f"{name} missing 'speed'"
+            assert isinstance(data["speed"], str) and data["speed"], f"{name} has empty speed"
+
+    def test_all_races_have_languages(self):
+        for name, data in RACES.items():
+            assert "languages" in data, f"{name} missing 'languages'"
+            assert isinstance(data["languages"], list) and len(data["languages"]) >= 1, \
+                f"{name} has bad languages"
+
+    def test_elemental_genasi_present(self):
+        for genasi in ("Fire Genasi", "Water Genasi", "Earth Genasi", "Air Genasi"):
+            assert genasi in RACES
+
+    def test_genasi_speak_primordial(self):
+        for genasi in ("Fire Genasi", "Water Genasi", "Earth Genasi", "Air Genasi"):
+            assert "Primordial" in RACES[genasi]["languages"]
+
+    def test_drow_has_sunlight_sensitivity(self):
+        traits = " ".join(RACES["Drow"]["traits"])
+        assert "Sunlight Sensitivity" in traits
+
+    def test_drow_speaks_undercommon(self):
+        assert "Undercommon" in RACES["Drow"]["languages"]
+
+    def test_lizardfolk_has_natural_armor(self):
+        traits = " ".join(RACES["Lizardfolk"]["traits"])
+        assert "Natural Armor" in traits
+
+    def test_lizardfolk_has_swim_speed(self):
+        assert "swim" in RACES["Lizardfolk"]["speed"]
+
+    def test_air_genasi_is_faster(self):
+        assert "35" in RACES["Air Genasi"]["speed"]
+
+    def test_wood_elf_is_35ft(self):
+        assert "35" in RACES["Wood Elf"]["speed"]
+
+    def test_get_race_info_returns_speed_and_languages(self):
+        result = json.loads(get_race_info("Firbolg"))
+        assert "speed" in result
+        assert "languages" in result
+        assert "Giant" in result["languages"]
+
+    def test_all_races_in_get_race_info_enum(self):
+        import agents.dnd_agent as m
+        schema_races = None
+        for tool in m.TOOLS:
+            if tool["name"] == "get_race_info":
+                schema_races = tool["input_schema"]["properties"]["race_name"]["enum"]
+        assert schema_races is not None
+        for race in self.NEW_RACES:
+            assert race in schema_races, f"{race} missing from get_race_info enum"
+
+
+# ── calculate_ac ─────────────────────────────────────────────────────────────────
+
+class TestCalculateAc:
+    def test_unarmored_base_10_plus_dex(self):
+        result = json.loads(calculate_ac("Unarmored", dex_modifier=2))
+        assert result["ac"] == 12
+
+    def test_leather_11_plus_dex(self):
+        result = json.loads(calculate_ac("Leather", dex_modifier=3))
+        assert result["ac"] == 14
+
+    def test_chain_mail_ignores_dex(self):
+        result = json.loads(calculate_ac("Chain Mail", dex_modifier=5))
+        assert result["ac"] == 16
+
+    def test_scale_mail_caps_dex_at_2(self):
+        result = json.loads(calculate_ac("Scale Mail", dex_modifier=5))
+        assert result["ac"] == 16   # 14 + 2 (capped)
+
+    def test_scale_mail_uses_dex_when_low(self):
+        result = json.loads(calculate_ac("Scale Mail", dex_modifier=1))
+        assert result["ac"] == 15   # 14 + 1
+
+    def test_shield_adds_2(self):
+        result = json.loads(calculate_ac("Leather", dex_modifier=2, has_shield=True))
+        assert result["ac"] == 15   # 11 + 2 + 2
+
+    def test_barbarian_unarmored_adds_con(self):
+        result = json.loads(calculate_ac("Barbarian Unarmored", dex_modifier=2, con_modifier=3))
+        assert result["ac"] == 15   # 10 + 2 + 3
+
+    def test_monk_unarmored_adds_wis(self):
+        result = json.loads(calculate_ac("Monk Unarmored", dex_modifier=3, wis_modifier=2))
+        assert result["ac"] == 15   # 10 + 3 + 2
+
+    def test_natural_armor_13_plus_dex(self):
+        result = json.loads(calculate_ac("Natural Armor", dex_modifier=1))
+        assert result["ac"] == 14   # 13 + 1
+
+    def test_plate_is_18(self):
+        result = json.loads(calculate_ac("Plate", dex_modifier=5))
+        assert result["ac"] == 18   # heavy armor, DEX ignored
+
+    def test_unknown_armor_returns_error(self):
+        result = json.loads(calculate_ac("Mithral Bikini", dex_modifier=2))
+        assert "error" in result
+
+    def test_result_has_formula(self):
+        result = json.loads(calculate_ac("Leather", dex_modifier=2))
+        assert "formula" in result
+        assert result["formula"]
+
+    def test_negative_dex_reduces_ac(self):
+        result = json.loads(calculate_ac("Leather", dex_modifier=-1))
+        assert result["ac"] == 10   # 11 + (-1)
+
+    def test_all_armor_types_produce_valid_ac(self):
+        for armor_type in ARMOR_TABLE:
+            result = json.loads(calculate_ac(armor_type, dex_modifier=2,
+                                             con_modifier=2, wis_modifier=2))
+            assert "ac" in result, f"{armor_type} did not return ac"
+            assert isinstance(result["ac"], int)
+            assert 8 <= result["ac"] <= 24, f"{armor_type} returned suspicious AC {result['ac']}"
+
+
+# ── pick_skills ─────────────────────────────────────────────────────────────────
+
+class TestPickSkills:
+    def test_returns_valid_json(self):
+        result = json.loads(pick_skills("Fighter"))
+        assert isinstance(result, dict)
+
+    def test_has_required_keys(self):
+        result = json.loads(pick_skills("Fighter"))
+        assert "choose" in result
+        assert "available" in result
+        assert "already_have" in result
+
+    def test_fighter_chooses_2(self):
+        result = json.loads(pick_skills("Fighter"))
+        assert result["choose"] == 2
+
+    def test_rogue_chooses_4(self):
+        result = json.loads(pick_skills("Rogue"))
+        assert result["choose"] == 4
+
+    def test_ranger_chooses_3(self):
+        result = json.loads(pick_skills("Ranger"))
+        assert result["choose"] == 3
+
+    def test_bard_any_skill_available(self):
+        result = json.loads(pick_skills("Bard"))
+        # Bard can pick any skill — available list should be long
+        assert len(result["available"]) >= 15
+
+    def test_background_skills_excluded(self):
+        result = json.loads(pick_skills("Cleric", background_skills=["Insight", "Religion"]))
+        assert "Insight" not in result["available"]
+        assert "Religion" not in result["available"]
+
+    def test_background_skills_in_already_have(self):
+        result = json.loads(pick_skills("Cleric", background_skills=["Insight"]))
+        assert "Insight" in result["already_have"]
+
+    def test_fighter_only_gets_valid_class_skills(self):
+        fighter_skills = set(SKILL_POOLS["Fighter"]["options"])
+        result = json.loads(pick_skills("Fighter"))
+        for skill in result["available"]:
+            assert skill in fighter_skills, f"{skill} not in Fighter skill list"
+
+    def test_unknown_class_returns_error(self):
+        result = json.loads(pick_skills("Jedi"))
+        assert "error" in result
+
+    def test_all_classes_return_valid_result(self):
+        for cls in SKILL_POOLS:
+            result = json.loads(pick_skills(cls))
+            assert "choose" in result
+            assert result["choose"] >= 1
+
+    def test_empty_background_skills_is_safe(self):
+        result = json.loads(pick_skills("Wizard", background_skills=[]))
+        assert "available" in result
+
+    def test_all_skills_constant_is_complete(self):
+        assert len(ALL_SKILLS) == 18
+        assert "Perception" in ALL_SKILLS
+        assert "Sleight of Hand" in ALL_SKILLS
+
+
+# ── roll_deity ───────────────────────────────────────────────────────────────────
+
+class TestRollDeity:
+    def test_returns_valid_json(self):
+        result = json.loads(roll_deity())
+        assert isinstance(result, dict)
+
+    def test_has_required_keys(self):
+        result = json.loads(roll_deity())
+        for key in ("name", "domain", "alignment", "portfolio", "symbol", "flavor"):
+            assert key in result, f"Missing key: {key}"
+
+    def test_domain_hint_filters_results(self):
+        # Run 20 times — all should be War domain
+        for _ in range(20):
+            result = json.loads(roll_deity(domain_hint="War"))
+            assert "War" in result["domain"], f"Got non-War deity: {result['name']}"
+
+    def test_alignment_hint_filters_results(self):
+        for _ in range(20):
+            result = json.loads(roll_deity(alignment_hint="Good"))
+            assert "Good" in result["alignment"], f"Got non-Good deity: {result['name']}"
+
+    def test_unknown_hint_falls_back_to_any(self):
+        # If hint matches nothing, should still return a deity
+        result = json.loads(roll_deity(domain_hint="Cheese"))
+        assert "name" in result
+
+    def test_returns_variety_without_hints(self):
+        names = {json.loads(roll_deity())["name"] for _ in range(50)}
+        assert len(names) >= 5, "Should see at least 5 different deities in 50 rolls"
+
+    def test_at_least_twenty_deities(self):
+        assert len(DEITIES) >= 20
+
+    def test_all_deities_have_non_empty_flavor(self):
+        for d in DEITIES:
+            assert d.get("flavor"), f"{d.get('name', '?')} has empty flavor"
+
+    def test_tyr_is_in_pool(self):
+        names = {d["name"] for d in DEITIES}
+        assert "Tyr" in names
+
+    def test_deity_wiring_in_tools(self):
+        import agents.dnd_agent as m
+        tool_names = [t["name"] for t in m.TOOLS]
+        assert "roll_deity" in tool_names
+
+    def test_detect_phase_deity(self):
+        assert detect_phase("roll_deity", set()) == "deity"
+
+    def test_phase_message_deity(self):
+        import agents.dnd_agent as m
+        assert "deity" in m.PHASE_MESSAGES
+
+    def test_run_tool_dispatches_roll_deity(self):
+        import agents.dnd_agent as m
+        result = json.loads(m.run_tool("roll_deity", {}))
+        assert "name" in result
+
+    def test_system_prompt_mentions_roll_deity(self):
+        import agents.dnd_agent as m
+        assert "roll_deity" in m.SYSTEM_PROMPT
+
+    def test_system_prompt_mentions_pick_skills(self):
+        import agents.dnd_agent as m
+        assert "pick_skills" in m.SYSTEM_PROMPT
+
+    def test_system_prompt_mentions_calculate_ac(self):
+        import agents.dnd_agent as m
+        assert "calculate_ac" in m.SYSTEM_PROMPT
+
+
+# ── classes have typical_armor ────────────────────────────────────────────────────
+
+class TestClassTypicalArmor:
+    def test_all_classes_have_typical_armor(self):
+        for name, data in CLASSES.items():
+            assert "typical_armor" in data, f"{name} missing 'typical_armor'"
+
+    def test_typical_armor_values_are_in_armor_table(self):
+        for name, data in CLASSES.items():
+            armor = data["typical_armor"]
+            assert armor in ARMOR_TABLE, \
+                f"{name} typical_armor '{armor}' not in ARMOR_TABLE"
+
+    def test_barbarian_uses_barbarian_unarmored(self):
+        assert CLASSES["Barbarian"]["typical_armor"] == "Barbarian Unarmored"
+
+    def test_monk_uses_monk_unarmored(self):
+        assert CLASSES["Monk"]["typical_armor"] == "Monk Unarmored"
+
+    def test_fighter_uses_chain_mail(self):
+        assert CLASSES["Fighter"]["typical_armor"] == "Chain Mail"
+
+
+# ── detect_phase new tools ────────────────────────────────────────────────────────
+
+class TestDetectPhaseNewTools:
+    def test_calculate_ac_returns_ac(self):
+        assert detect_phase("calculate_ac", set()) == "ac"
+
+    def test_pick_skills_returns_skills(self):
+        assert detect_phase("pick_skills", set()) == "skills"
+
+    def test_roll_deity_returns_deity(self):
+        assert detect_phase("roll_deity", set()) == "deity"

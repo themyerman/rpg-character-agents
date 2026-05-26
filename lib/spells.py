@@ -318,21 +318,29 @@ def get_spell_suggestions(class_name: str, subclass: str = None) -> str:
 
     random.shuffle(selected)
 
+    cantrip_list = [s for s in selected if s["level"] == 0]
+    spell_list   = [s for s in selected if s["level"] >  0]
+
     result = {
         "class": class_name,
+        "cantrips": [
+            {"name": s["name"], "school": s["school"], "hook": s["hook"]}
+            for s in cantrip_list
+        ],
         "spells": [
             {
                 "name":   s["name"],
-                "level":  "Cantrip" if s["level"] == 0 else f"Level {s['level']}",
+                "level":  f"Level {s['level']}",
                 "school": s["school"],
                 "hook":   s["hook"],
             }
-            for s in selected
+            for s in spell_list
         ],
         "note": (
             "Pick 3-4 of these that feel true to this character. "
             "Write one sentence per chosen spell about how *this person specifically* uses it — "
             "the hook is a starting point, not a mandate. "
+            "List cantrips and leveled spells separately in the character sheet. "
             "A Cleric who uses Inflict Wounds reluctantly is different from one who doesn't."
         ),
     }
