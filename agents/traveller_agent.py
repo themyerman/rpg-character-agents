@@ -32,6 +32,7 @@ from lib.synthetics import (
     get_traveller_auxiliary_profile, TRAVELLER_AUXILIARY_TOOL_SCHEMA,
 )
 from lib.utils import get_client, run_agent_loop, save_character, strip_preamble
+from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
 
 
 # ── Constants ──────────────────────────────────────────────────────────────────
@@ -1119,28 +1120,38 @@ def run(mode: str | None = None, desc: str | None = None) -> None:
         # No description prompt — encounter is fully procedural
         desc = None
     elif desc is None:
-        desc = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
+        raw = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
+        desc = sanitize_desc(raw)
+        for w in screen_desc(desc):
+            print(f"  [safety] {w}")
 
     if mode == "npc":
         sys_prompt = NPC_SYSTEM_PROMPT
-        prompt = f"Generate a Mongoose Traveller NPC with these constraints: {desc}" if desc else "Generate a fully random Mongoose Traveller NPC."
+        prompt = "Generate a fully random Mongoose Traveller NPC."
     elif mode == "patron":
         sys_prompt = PATRON_SYSTEM_PROMPT
-        prompt = f"Generate a Mongoose Traveller patron encounter with these constraints: {desc}" if desc else "Generate a fully random Mongoose Traveller patron encounter."
+        prompt = "Generate a fully random Mongoose Traveller patron encounter."
     elif mode == "alien":
         sys_prompt = ALIEN_SYSTEM_PROMPT
-        prompt = f"Generate a Mongoose Traveller alien character with these constraints: {desc}" if desc else "Generate a fully random Mongoose Traveller alien character."
+        prompt = "Generate a fully random Mongoose Traveller alien character."
     elif mode == "synthetic":
         sys_prompt = SYNTHETIC_SYSTEM_PROMPT
-        prompt = f"Generate a Traveller synthetic NPC or AI system with these constraints: {desc}" if desc else "Generate a fully random Traveller droid or AI system profile."
+        prompt = "Generate a fully random Traveller droid or AI system profile."
     elif mode == "first_contact":
         sys_prompt = FIRST_CONTACT_SYSTEM_PROMPT
         prompt = "Generate a Mongoose Traveller first contact encounter."
     else:  # full
         sys_prompt = SYSTEM_PROMPT
-        prompt = f"Generate a Mongoose Traveller character for storytelling purposes with these constraints: {desc}" if desc else "Generate a fully random Mongoose Traveller character for storytelling purposes."
+        prompt = "Generate a fully random Mongoose Traveller character for storytelling purposes."
+
+    if desc:
+        prompt += f"\n\n{wrap_desc(desc)}"
 
     result = strip_preamble(run_agent(prompt, sys_prompt))
+
+    warn = screen_output(result)
+    if warn:
+        print(f"  [safety] {warn}")
 
     print("\n" + result)
 

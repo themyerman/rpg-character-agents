@@ -15,6 +15,7 @@ from lib.names import roll_dnd_name_suggestion, DND_NAME_TOOL_SCHEMA
 from lib.spells import get_spell_suggestions, DND_SPELL_TOOL_SCHEMA
 from lib.gear import roll_dnd_gear, DND_GEAR_TOOL_SCHEMA
 from lib.utils import get_client, run_agent_loop, save_character, strip_preamble
+from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
 
 
 # ── Constants ──────────────────────────────────────────────────────────────────
@@ -1057,19 +1058,29 @@ def run(mode: str | None = None, desc: str | None = None) -> None:
         mode = mode if mode in ("full", "npc", "questgiver") else "full"
     label = {"full": "character", "npc": "NPC", "questgiver": "quest giver"}[mode]
     if desc is None:
-        desc = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
+        raw  = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
+        desc = sanitize_desc(raw)
+        for w in screen_desc(desc):
+            print(f"  [safety] {w}")
 
     if mode == "npc":
         sys_prompt = NPC_SYSTEM_PROMPT
-        prompt = f"Generate a D&D 5e NPC with these constraints: {desc}" if desc else "Generate a fully random D&D 5e NPC."
+        prompt     = "Generate a fully random D&D 5e NPC."
     elif mode == "questgiver":
         sys_prompt = QUEST_GIVER_SYSTEM_PROMPT
-        prompt = f"Generate a D&D 5e quest giver encounter with these constraints: {desc}" if desc else "Generate a fully random D&D 5e quest giver encounter."
+        prompt     = "Generate a fully random D&D 5e quest giver encounter."
     else:  # full
         sys_prompt = SYSTEM_PROMPT
-        prompt = f"Generate a D&D 5e character for storytelling purposes with these constraints: {desc}" if desc else "Generate a fully random D&D 5e character for storytelling purposes."
+        prompt     = "Generate a fully random D&D 5e character for storytelling purposes."
+
+    if desc:
+        prompt += f"\n\n{wrap_desc(desc)}"
 
     result = strip_preamble(run_agent(prompt, sys_prompt))
+
+    warn = screen_output(result)
+    if warn:
+        print(f"  [safety] {warn}")
 
     print("\n" + result)
 

@@ -21,6 +21,7 @@ from agents import location_agent
 from agents import rumor_agent
 from agents import event_agent
 from lib.utils import pick
+from lib.safety import sanitize_desc, screen_desc
 
 
 # ── Per-game action menus ─────────────────────────────────────────────────────
@@ -162,8 +163,11 @@ def main() -> None:
         return
 
     # ── Character / NPC / hook encounter ──────────────────────────────────────
-    label = MODE_LABELS[action]
-    desc  = input(f"\nDescribe the {label} you want (or press Enter for fully random):\n> ").strip()
+    label    = MODE_LABELS[action]
+    raw_desc = input(f"\nDescribe the {label} you want (or press Enter for fully random):\n> ").strip()
+    desc     = sanitize_desc(raw_desc)
+    for warning in screen_desc(desc):
+        print(f"  [safety] {warning}")
 
     print()
     CHARACTER_RUNNERS[game](mode=action, desc=desc)

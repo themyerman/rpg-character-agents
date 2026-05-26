@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from lib.names import roll_name_suggestion, NAME_TOOL_SCHEMA
 from lib.ships import roll_ship_name, TRAVELLER_SHIP_TOOL_SCHEMA, FIREFLY_SHIP_TOOL_SCHEMA, SCUM_SHIP_TOOL_SCHEMA
 from lib.utils import get_client, run_agent_loop, slug, pick
+from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
 
 
 # ── Output path ───────────────────────────────────────────────────────────────
@@ -623,7 +624,10 @@ def run(game: str | None = None) -> None:
     if game is None:
         game = pick("Which game?", GAMES)
 
-    desc = input("\nDescribe the location you want (or press Enter for fully random):\n> ").strip()
+    raw  = input("\nDescribe the location you want (or press Enter for fully random):\n> ").strip()
+    desc = sanitize_desc(raw)
+    for w in screen_desc(desc):
+        print(f"  [safety] {w}")
 
     system_prompt = GAME_SYSTEM_PROMPTS[game]
     tools         = GAME_TOOLS[game]
@@ -631,12 +635,16 @@ def run(game: str | None = None) -> None:
 
     prompt = "Generate a location for the GM."
     if desc:
-        prompt += f"\n\nGM's concept or constraints: {desc}"
+        prompt += f"\n\n{wrap_desc(desc, 'GM concept or constraints')}"
 
     print()
     result = run_agent_loop(
         prompt, system_prompt, tools, run_tool, detect_phase, PHASE_MESSAGES
     )
+
+    warn = screen_output(result)
+    if warn:
+        print(f"  [safety] {warn}")
 
     path = save_location(result, game)
     print(f"\nSaved to {path}")

@@ -31,6 +31,7 @@ from lib.ships import (
     DND_SHIP_TOOL_SCHEMA,
 )
 from lib.utils import get_client, run_agent_loop, slug, pick, strip_preamble
+from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
 
 
 # ── Directory helpers ─────────────────────────────────────────────────────────
@@ -842,8 +843,8 @@ def run_ship(game: str, desc: str = "") -> str:
         "scum":      "Scum and Villainy",
     }[game]
 
-    base = f"Generate a {game_label} ship profile."
-    prompt = f"{base} Constraints or themes: {desc}" if desc else base
+    base   = f"Generate a {game_label} ship profile."
+    prompt = base + (f"\n\n{wrap_desc(desc, 'Constraints or themes')}" if desc else "")
 
     return run_agent_loop(
         prompt, system_prompt, tools, run_tool_fn, detect_phase, PHASE_MESSAGES,
@@ -866,11 +867,18 @@ def run(game: str | None = None) -> None:
             default_idx=1,
         )
 
-    desc = input(
+    raw  = input(
         "\nAny constraints or themes? (e.g. 'smuggler, beat up, dark past' or press Enter for fully random):\n> "
     ).strip()
+    desc = sanitize_desc(raw)
+    for w in screen_desc(desc):
+        print(f"  [safety] {w}")
 
     result = strip_preamble(run_ship(game, desc))
+
+    warn = screen_output(result)
+    if warn:
+        print(f"  [safety] {warn}")
 
     print("\n" + result)
 

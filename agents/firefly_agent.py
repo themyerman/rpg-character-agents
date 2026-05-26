@@ -19,6 +19,7 @@ from lib.psi import (
     roll_firefly_psi_chance, FIREFLY_PSI_CHANCE_TOOL_SCHEMA,
 )
 from lib.utils import get_client, run_agent_loop, save_character, strip_preamble
+from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
 
 
 # ── Constants ───────────────────────────────────────────────────────────────────
@@ -629,19 +630,29 @@ def run(mode: str | None = None, desc: str | None = None) -> None:
         mode = mode if mode in ("full", "npc", "jobcontact") else "full"
     label = {"full": "character", "npc": "NPC", "jobcontact": "job contact"}[mode]
     if desc is None:
-        desc = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
+        raw  = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
+        desc = sanitize_desc(raw)
+        for w in screen_desc(desc):
+            print(f"  [safety] {w}")
 
     if mode == "npc":
         sys_prompt = NPC_SYSTEM_PROMPT
-        prompt = f"Generate a Firefly RPG NPC with these constraints: {desc}" if desc else "Generate a fully random Firefly RPG NPC."
+        prompt     = "Generate a fully random Firefly RPG NPC."
     elif mode == "jobcontact":
         sys_prompt = JOB_CONTACT_SYSTEM_PROMPT
-        prompt = f"Generate a Firefly RPG job contact encounter with these constraints: {desc}" if desc else "Generate a fully random Firefly RPG job contact encounter."
+        prompt     = "Generate a fully random Firefly RPG job contact encounter."
     else:
         sys_prompt = SYSTEM_PROMPT
-        prompt = f"Generate a Firefly RPG character for storytelling purposes with these constraints: {desc}" if desc else "Generate a fully random Firefly RPG character for storytelling purposes."
+        prompt     = "Generate a fully random Firefly RPG character for storytelling purposes."
+
+    if desc:
+        prompt += f"\n\n{wrap_desc(desc)}"
 
     result = strip_preamble(run_agent(prompt, sys_prompt))
+
+    warn = screen_output(result)
+    if warn:
+        print(f"  [safety] {warn}")
 
     print("\n" + result)
 
