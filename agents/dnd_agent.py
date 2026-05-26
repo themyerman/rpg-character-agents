@@ -601,6 +601,104 @@ BACKGROUNDS = {
         },
         "story_hooks": "What city? Who looked out for you when you were small? What finally forced you into a bigger world?",
     },
+    "Haunted One": {
+        "description": "You have been touched by something terrible — hunted, possessed, cursed, or witness to something no one should see. The experience left a mark.",
+        "skills": ["Arcana", "Investigation"],
+        "tools": [],
+        "languages": 2,
+        "feature": "Heart of Darkness — common folk, sensing something wrong, go out of their way to help you; they don't know why they're afraid of you, but they'd rather you not be in trouble",
+        "personality_seeds": {
+            "traits": ["I don't sleep well and I've stopped pretending otherwise", "I notice things others don't — exits, shadows, the way a room goes quiet"],
+            "ideals": ["Understanding — if I can name what hunts me, I can face it", "Protection — I will not let what happened to me happen to anyone else"],
+            "bonds": ["The thing that haunts me is connected to someone I love — I haven't decided what to do about that", "I made a promise to someone who didn't survive — I intend to keep it"],
+            "flaws": ["I pull away from people I care about because caring about things makes you vulnerable", "I know things I can't un-know, and sometimes I tell people when I shouldn't"],
+        },
+        "story_hooks": "What happened to you? Did you seek it out or did it find you? What are you still carrying from it?",
+    },
+    "Far Traveler": {
+        "description": "You come from somewhere distant and strange — a different continent, a forgotten culture, a community that doesn't put itself on maps. You are unmistakably other.",
+        "skills": ["Insight", "Perception"],
+        "tools": ["One musical instrument or gaming set from your homeland"],
+        "languages": 1,
+        "feature": "All Eyes on You — your exotic origin opens doors — nobles want to meet you, merchants want to trade with you, and common folk want to ask questions. This cuts both ways.",
+        "personality_seeds": {
+            "traits": ["I compare everything to how it's done at home, usually unfavorably", "I am genuinely curious about the customs of wherever I am — even when they're baffling"],
+            "ideals": ["Open Mind — the world is larger than any one tradition", "Home — I carry my people with me everywhere; I represent something"],
+            "bonds": ["I left home for a reason I don't discuss with strangers", "There is something or someone here that my people sent me to find"],
+            "flaws": ["I have difficulty trusting systems I didn't grow up with — and I'm not always wrong about that", "My cultural assumptions make me seem arrogant even when I'm trying to be respectful"],
+        },
+        "story_hooks": "Where are you from and why does it matter? What brought you here specifically? What do you miss that doesn't exist where you've ended up?",
+    },
+    "City Watch": {
+        "description": "You served as a guard, constable, or investigator — you know the official face of law and the uglier face behind it",
+        "skills": ["Athletics", "Insight"],
+        "tools": [],
+        "languages": 2,
+        "feature": "Watcher's Eye — you know where the local constabulary is, how to make contact, and how to navigate watch jurisdictions; criminals also recognize you as someone who knows their world",
+        "personality_seeds": {
+            "traits": ["I watch people automatically — who's carrying what, who's watching who, what doesn't fit", "I believe in the law even when I don't believe in the people running it"],
+            "ideals": ["Order — without structure, the only law is who's strongest", "Justice — the law should protect the weak, not just the connected"],
+            "bonds": ["My old partner is in trouble and I'm the only one who knows enough to help them", "I left the watch because of something I couldn't look away from"],
+            "flaws": ["I have contempt for people who break laws they think don't apply to them", "I'm too willing to bend rules I've decided are wrong"],
+        },
+        "story_hooks": "What city? What did you investigate? What did you see that you couldn't report?",
+    },
+    "Clan Crafter": {
+        "description": "You were trained by a dwarven craft guild — precision, tradition, and the deep satisfaction of a thing built to last",
+        "skills": ["History", "Insight"],
+        "tools": ["One artisan's tools"],
+        "languages": 1,
+        "feature": "Respect of the Stout Folk — dwarves and other crafting cultures extend professional courtesy; you can always find work, apprentices, and honest assessments of your work's quality",
+        "personality_seeds": {
+            "traits": ["I can tell you how something was made, often who made it, and whether it was done well", "I am methodical to a fault and get twitchy when things are rushed"],
+            "ideals": ["Craft — the work itself is the argument; nothing needs to be said if it's built right", "Legacy — I make things that will outlast me and I find this comforting"],
+            "bonds": ["My master taught me something I only recently understood — I need to tell them", "I was given a commission I haven't fulfilled yet. It matters."],
+            "flaws": ["I am contemptuous of things made carelessly — and I show it", "I invest too much of my sense of self in the quality of what I make"],
+        },
+        "story_hooks": "What's your craft? Who trained you? What are you building toward — the object or the title?",
+    },
+    "Faction Agent": {
+        "description": "You serve an organization — political, religious, arcane, or criminal — that operates across borders and keeps its own counsel",
+        "skills": ["Insight", "one skill determined by faction"],
+        "tools": [],
+        "languages": 2,
+        "feature": "Safe Haven — members of your faction will shelter, feed, and pass messages for you; you have access to the faction's network even in unfamiliar cities",
+        "personality_seeds": {
+            "traits": ["I always know which people in a room have power and who they owe it to", "I am loyal to my organization's ideals, and more flexible about its current leadership"],
+            "ideals": ["The Cause — the faction's goal is worth the cost; I believe that", "Loyalty — the network survives because everyone holds up their part"],
+            "bonds": ["My handler took a risk on me once that they shouldn't have — I haven't forgotten it", "The faction and I disagree about something significant. I'm still figuring out what to do about it."],
+            "flaws": ["I think in terms of assets and operations even in situations that don't need it", "My loyalty to the faction has made me do things I'm not proud of"],
+        },
+        "story_hooks": "What faction? What do they actually want? What do you know that they'd rather you didn't?",
+    },
+    "Urban Bounty Hunter": {
+        "description": "You hunt people for money — not in the wilderness, but in cities, among people who know how to hide in plain sight",
+        "skills": ["Deception", "Insight", "Stealth", "Persuasion"],
+        "tools": ["Thieves' tools or musical instrument or gaming set"],
+        "languages": 0,
+        "feature": "Ear to the Ground — you have contacts in the underworld who know where people are; you can get information about specific individuals in a city faster than most",
+        "personality_seeds": {
+            "traits": ["I read people quickly and rarely need to be told twice", "I'm patient in ways that other people find unnerving"],
+            "ideals": ["The Contract — I took the job; the job gets done", "Fair Payment — I provide a service and I deserve to be compensated honestly for it"],
+            "bonds": ["I once let someone go and I've thought about it every day since", "The person who set me up in this business has disappeared and I need to know why"],
+            "flaws": ["I find it very difficult to care about people I'm not being paid to find", "I'm too willing to take work that has a bad smell if the money is right"],
+        },
+        "story_hooks": "Who was your most memorable mark? What's the line you won't cross? What work are you doing now — and why?",
+    },
+    "Mercenary Veteran": {
+        "description": "You fought for money in organized military units — not a hero, a professional. There's a difference.",
+        "skills": ["Athletics", "Persuasion"],
+        "tools": ["Gaming set", "Vehicles (land)"],
+        "languages": 0,
+        "feature": "Mercenary Life — you know the mercenary world: the companies, the brokers, the markets. You can find work, check a company's reputation, and navigate contracts.",
+        "personality_seeds": {
+            "traits": ["I evaluate every situation for threats before I do anything else", "I don't volunteer information but I give straight answers when asked"],
+            "ideals": ["Professionalism — the job is the job; do it right or don't take it", "Loyalty — to the people beside you, which is all that holds a unit together"],
+            "bonds": ["My old company disbanded under bad circumstances — I carry the people who didn't make it out", "Someone from my old unit is in trouble and I'm the only one who can help them"],
+            "flaws": ["I have difficulty with situations that don't have a clear objective", "I've learned to manage violence but I haven't learned to manage its absence"],
+        },
+        "story_hooks": "What company? What campaign? What finally made you stop taking contracts — or are you still taking them?",
+    },
 }
 
 
@@ -1050,6 +1148,476 @@ DEITIES: list[dict] = [
 ]
 
 
+# ── Subclass data ──────────────────────────────────────────────────────────────
+# Keys: level_gained, key_feature_name, key_feature, flavor
+
+SUBCLASSES: dict[str, dict] = {
+    "Barbarian": {
+        "Path of the Berserker": {
+            "description": "Pure rage refined into unstoppable violence",
+            "level_gained": 3,
+            "key_feature_name": "Frenzy",
+            "key_feature": "Make a bonus action melee attack on every turn of your rage — then suffer one level of exhaustion when it ends",
+            "flavor": "the barbarian who has stopped fighting for a reason and fights now because it's the only thing left",
+        },
+        "Path of the Totem Warrior": {
+            "description": "Spiritual warrior bonded to an animal spirit",
+            "level_gained": 3,
+            "key_feature_name": "Totem Spirit",
+            "key_feature": "Bear: resistance to all damage while raging. Eagle: advantage on DEX checks, enemies have disadvantage on opportunity attacks. Wolf: allies have advantage on melee attacks against enemies near you.",
+            "flavor": "the barbarian who sees their rage as sacred — an animal walks inside them, and the rage is when it comes out",
+        },
+        "Path of the Storm Herald": {
+            "description": "Rage channeled through elemental fury",
+            "level_gained": 3,
+            "key_feature_name": "Storm Aura",
+            "key_feature": "Emit an elemental aura while raging — tundra (THP for allies), sea (lightning vs nearby enemies), desert (fire damage in radius)",
+            "flavor": "the barbarian who doesn't just feel the storm — they ARE the storm, and everything within ten feet knows it",
+        },
+    },
+    "Bard": {
+        "College of Lore": {
+            "description": "Scholar-performer who collects secrets the way others collect gold",
+            "level_gained": 3,
+            "key_feature_name": "Cutting Words",
+            "key_feature": "Use a Bardic Inspiration die to subtract from an enemy's attack roll, damage roll, or ability check as a reaction",
+            "flavor": "the bard who's in every library they can find, every conspiracy they can pry open, always knowing one more thing than they should",
+        },
+        "College of Valor": {
+            "description": "Warrior-poet who inspires through example as much as song",
+            "level_gained": 3,
+            "key_feature_name": "Combat Inspiration",
+            "key_feature": "Inspired allies can add the Inspiration die to weapon damage rolls or to AC against one attack",
+            "flavor": "the bard who walks into battle at the front, reciting poetry the whole way, and genuinely believes art and violence are the same impulse",
+        },
+        "College of Glamour": {
+            "description": "Fey-touched enchanter whose beauty and manner are weapons",
+            "level_gained": 3,
+            "key_feature_name": "Mantle of Inspiration",
+            "key_feature": "Spend Bardic Inspiration to give nearby creatures THP and let them immediately move without triggering opportunity attacks",
+            "flavor": "the bard who walked out of a fey glade different than they went in, and has been charming things into submission ever since",
+        },
+    },
+    "Cleric": {
+        "Life Domain": {
+            "description": "Champion of healing and vitality — the purest expression of divine compassion",
+            "level_gained": 1,
+            "key_feature_name": "Disciple of Life",
+            "key_feature": "Your healing spells restore 2 + spell level additional HP per cast",
+            "flavor": "the cleric who believes staying alive is itself a form of resistance, and heals with the quiet ferocity of someone who knows what death costs",
+        },
+        "Light Domain": {
+            "description": "Radiant defender against darkness and corruption",
+            "level_gained": 1,
+            "key_feature_name": "Warding Flare",
+            "key_feature": "When attacked, use a reaction to impose disadvantage on that attack roll (WIS modifier times per day)",
+            "flavor": "the cleric who takes the command 'be a light in darkness' completely literally, and has the burn marks to prove it",
+        },
+        "Knowledge Domain": {
+            "description": "Keeper of secrets and divine lore",
+            "level_gained": 1,
+            "key_feature_name": "Blessings of Knowledge",
+            "key_feature": "Proficiency in two languages and double proficiency bonus in two skills from: Arcana, History, Nature, or Religion",
+            "flavor": "the cleric who experiences their deity as a vast library that answers questions with more questions, and finds this deeply satisfying",
+        },
+        "Nature Domain": {
+            "description": "Divine guardian of wild places and natural order",
+            "level_gained": 1,
+            "key_feature_name": "Acolyte of Nature",
+            "key_feature": "Learn a Druid cantrip; gain proficiency in Animal Handling, Nature, or Survival",
+            "flavor": "the cleric who found their god in a forest rather than a temple, and isn't entirely sure the temple crowd would approve",
+        },
+        "Trickery Domain": {
+            "description": "Divine agent of misdirection — the spy of the gods",
+            "level_gained": 1,
+            "key_feature_name": "Blessing of the Trickster",
+            "key_feature": "Grant one willing creature advantage on Stealth checks for one hour",
+            "flavor": "the cleric whose deity uses them the way a general uses an operative: deniably and at arm's length",
+        },
+        "War Domain": {
+            "description": "Divine warrior who is the answer to the prayer 'send someone to fight'",
+            "level_gained": 1,
+            "key_feature_name": "War Priest",
+            "key_feature": "Make a bonus action weapon attack when you take the Attack action (WIS modifier times per day)",
+            "flavor": "the cleric who draws a weapon first and prays second — or simultaneously, which takes practice",
+        },
+        "Tempest Domain": {
+            "description": "Voice of the storm — wrath made divine",
+            "level_gained": 1,
+            "key_feature_name": "Wrath of the Storm",
+            "key_feature": "When a creature hits you in melee, deal 2d8 lightning or thunder damage as a reaction (WIS modifier times per day)",
+            "flavor": "the cleric who interprets 'divine wrath' as a literal meteorological phenomenon and has never once been wrong about it",
+        },
+    },
+    "Druid": {
+        "Circle of the Land": {
+            "description": "Keeper of natural lore and arcane power drawn from specific terrain",
+            "level_gained": 2,
+            "key_feature_name": "Natural Recovery",
+            "key_feature": "Recover expended spell slots totaling half your Druid level (rounded up) after a short rest, once per day",
+            "flavor": "the druid who is more scholar than shapeshifter — the land they're bound to is their book, and they've memorized it",
+        },
+        "Circle of the Moon": {
+            "description": "Wild shapeshifter who transforms into powerful beasts",
+            "level_gained": 2,
+            "key_feature_name": "Combat Wild Shape",
+            "key_feature": "Wild Shape into beasts up to CR 1, use Wild Shape as a bonus action, and spend spell slots to heal while transformed",
+            "flavor": "the druid who stops talking when there's a problem and starts becoming something with teeth",
+        },
+        "Circle of Spores": {
+            "description": "Philosopher of decay and rebirth — life and death as one continuous cycle",
+            "level_gained": 2,
+            "key_feature_name": "Halo of Spores",
+            "key_feature": "When a creature moves near you, deal 1d4 necrotic damage as a reaction; Symbiotic Entity doubles your Wild Shape HP and enhances unarmed strikes",
+            "flavor": "the druid who finds mushrooms more interesting than flowers, and has some nuanced views on death that other druids find unsettling",
+        },
+    },
+    "Fighter": {
+        "Champion": {
+            "description": "Physical perfection — simple, direct, devastatingly effective",
+            "level_gained": 3,
+            "key_feature_name": "Improved Critical",
+            "key_feature": "Score critical hits on a roll of 19 or 20 instead of only on 20",
+            "flavor": "the fighter who decided that being better at the thing fighters do was better than being clever about it — and has been right every time",
+        },
+        "Battle Master": {
+            "description": "Tactical genius who turns combat into a chess game",
+            "level_gained": 3,
+            "key_feature_name": "Combat Superiority",
+            "key_feature": "4 superiority dice (d8) and 3 maneuvers: Trip Attack, Precision Attack, Riposte, Commander's Strike, and more — each adding the die to specific effects",
+            "flavor": "the fighter who has read every military manual ever written and treats each fight as an opportunity to apply chapter seven",
+        },
+        "Eldritch Knight": {
+            "description": "Steel meets sorcery — the martial artist who learned the arcane",
+            "level_gained": 3,
+            "key_feature_name": "Spellcasting + Weapon Bond",
+            "key_feature": "Access to Wizard spells (primarily abjuration and evocation); bond a weapon and summon it to your hand as a bonus action",
+            "flavor": "the fighter who decided that swords were interesting but fire was more interesting, and found a way to have both",
+        },
+    },
+    "Monk": {
+        "Way of the Open Hand": {
+            "description": "Perfection of the body — the purest expression of Monk combat",
+            "level_gained": 3,
+            "key_feature_name": "Open Hand Technique",
+            "key_feature": "After landing a Flurry of Blows hit: knock the target prone, push them 15 feet, or prevent them from using reactions until their next turn",
+            "flavor": "the monk who spent years learning to make their body a weapon and has arrived at something that doesn't look like anger anymore",
+        },
+        "Way of Shadow": {
+            "description": "Darkness and silence as art forms — the ninja tradition",
+            "level_gained": 3,
+            "key_feature_name": "Shadow Arts",
+            "key_feature": "Spend ki to cast Darkness, Darkvision, Pass Without Trace, or Silence",
+            "flavor": "the monk whose monastery was a school for people who needed to disappear — and they graduated at the top",
+        },
+        "Way of the Four Elements": {
+            "description": "Elemental bender who channels ki into elemental disciplines",
+            "level_gained": 3,
+            "key_feature_name": "Elemental Disciplines",
+            "key_feature": "Spend ki to use elemental techniques: flame strikes, water whips, earth tremors, air blasts — choose disciplines as you level",
+            "flavor": "the monk who found a tradition that combined fighting and philosophy with catastrophic weather, and found this appealing",
+        },
+    },
+    "Paladin": {
+        "Oath of Devotion": {
+            "description": "The classic holy knight — virtue in arms, unwavering",
+            "level_gained": 3,
+            "key_feature_name": "Sacred Weapon",
+            "key_feature": "Add CHA modifier to all attack rolls for one weapon for 1 minute; the weapon emits bright light in a 20-foot radius",
+            "flavor": "the paladin who takes their oath literally, holds it completely, and is quietly terrifying to those who've broken things they swore to protect",
+        },
+        "Oath of the Ancients": {
+            "description": "Protector of the light of life — older than any civilization",
+            "level_gained": 3,
+            "key_feature_name": "Nature's Wrath",
+            "key_feature": "Ensnare enemies in spectral vines that restrain them (STR or DEX save), or turn fey and fiends with Turn the Faithless",
+            "flavor": "the paladin whose faith is in things that were growing before the first city was built — less concerned with law, more concerned with whether the light survives",
+        },
+        "Oath of Vengeance": {
+            "description": "Relentless hunter of the wicked — mercy is not in the oath",
+            "level_gained": 3,
+            "key_feature_name": "Abjure Enemy + Vow of Enmity",
+            "key_feature": "Frighten a creature and halve its speed (WIS save), or gain advantage on all attacks against one target for one minute",
+            "flavor": "the paladin who swore to find the thing that did something unforgivable — and found that keeping that oath has made them hard to distinguish from what they hunt",
+        },
+        "Oathbreaker": {
+            "description": "A paladin who broke their sacred oath and now serves something darker",
+            "level_gained": 3,
+            "key_feature_name": "Dreadful Aspect",
+            "key_feature": "Radiate terror in a 30-foot radius (WIS save), and channel divinity to control undead rather than destroying them",
+            "flavor": "the paladin who did something their god couldn't forgive, or whose god could forgive it — and that fact broke them worse",
+        },
+    },
+    "Ranger": {
+        "Hunter": {
+            "description": "Tactical predator who has learned every trick for killing the specific thing they hunt",
+            "level_gained": 3,
+            "key_feature_name": "Hunter's Prey",
+            "key_feature": "Choose one: Colossus Slayer (extra 1d8 vs already-damaged target), Giant Killer (reaction attack vs Large+), or Horde Breaker (second attack vs adjacent enemy)",
+            "flavor": "the ranger who studies the thing before they hunt it and has a preferred technique for every creature type",
+        },
+        "Beast Master": {
+            "description": "Bonded with an animal companion — two hunters in one",
+            "level_gained": 3,
+            "key_feature_name": "Ranger's Companion",
+            "key_feature": "Bond with a beast (CR ¼ or lower) that obeys commands, uses your proficiency bonus, and fights alongside you",
+            "flavor": "the ranger whose relationship with their animal is the most honest connection in their life, and knows it",
+        },
+        "Gloom Stalker": {
+            "description": "Darkness specialist — ambush predator who owns the first moment of combat",
+            "level_gained": 3,
+            "key_feature_name": "Dread Ambusher",
+            "key_feature": "+10 ft speed on first turn, an extra attack on first turn, and impose -4 to all enemy initiative rolls",
+            "flavor": "the ranger who spent enough time in the dark that the dark became comfortable, and now uses that against everything that hunts in it",
+        },
+    },
+    "Rogue": {
+        "Thief": {
+            "description": "Dexterity and opportunism — the advantage that comes from never being where you're expected",
+            "level_gained": 3,
+            "key_feature_name": "Fast Hands + Second-Story Work",
+            "key_feature": "Use Cunning Action to pick locks, use thieves' tools, or use an object as a bonus action; climb at full speed without penalty",
+            "flavor": "the rogue who has elevated taking things that aren't theirs to something that requires genuine respect",
+        },
+        "Assassin": {
+            "description": "Death as precision craft — the first strike is the only one that matters",
+            "level_gained": 3,
+            "key_feature_name": "Assassinate",
+            "key_feature": "Advantage on all attack rolls against creatures that haven't taken a turn yet; automatic critical hit against surprised targets",
+            "flavor": "the rogue for whom patience is the actual skill — anyone can strike, the art is making sure the target never sees it coming",
+        },
+        "Arcane Trickster": {
+            "description": "Misdirection raised to a magical art form",
+            "level_gained": 3,
+            "key_feature_name": "Spellcasting + Mage Hand Legerdemain",
+            "key_feature": "Access to Wizard spells (enchantment and illusion); Mage Hand can pick pockets, pick locks, and disarm traps remotely",
+            "flavor": "the rogue who discovered that magic made their existing toolkit considerably harder to defend against, and had thoughts about this",
+        },
+    },
+    "Sorcerer": {
+        "Wild Magic": {
+            "description": "Raw chaotic power without a proper container — and they've made their peace with it",
+            "level_gained": 1,
+            "key_feature_name": "Wild Magic Surge",
+            "key_feature": "After casting a 1st-level+ spell, the DM may call for a d20 — on a 1, roll on the Wild Magic Surge table (fireball centered on you, turn invisible, sprout wings, etc.)",
+            "flavor": "the sorcerer who cannot fully control their power and has decided the chaos is a feature rather than a flaw, even when it absolutely is not",
+        },
+        "Draconic Bloodline": {
+            "description": "Dragon's blood made flesh — power, scales, and ancient pride",
+            "level_gained": 1,
+            "key_feature_name": "Draconic Resilience",
+            "key_feature": "AC = 13 + DEX modifier when unarmored; gain HP equal to your Sorcerer level",
+            "flavor": "the sorcerer who knows exactly where their power comes from and has complicated feelings about the ancestor who gave it to them",
+        },
+        "Divine Soul": {
+            "description": "Magic flowing from a celestial or infernal source — the exception to a divine rule",
+            "level_gained": 1,
+            "key_feature_name": "Divine Magic",
+            "key_feature": "Access to the full Cleric spell list in addition to Sorcerer spells; gain Cure Wounds (good) or Inflict Wounds (evil) for free",
+            "flavor": "the sorcerer who is technically divine chosen and technically not a Cleric and finds the distinction important for reasons they can't always explain",
+        },
+    },
+    "Warlock": {
+        "The Fiend": {
+            "description": "Power from a devil or demon — both parties knew what they were doing",
+            "level_gained": 1,
+            "key_feature_name": "Dark One's Blessing",
+            "key_feature": "When you kill a creature, gain THP equal to CHA modifier + Warlock level",
+            "flavor": "the warlock who made the deal with clear eyes — and has been paying the price and cashing the check in equal measure ever since",
+        },
+        "The Great Old One": {
+            "description": "Power from something utterly alien — a mind that shouldn't be able to know you, knowing you",
+            "level_gained": 1,
+            "key_feature_name": "Awakened Mind",
+            "key_feature": "Communicate telepathically with any creature you can see within 30 feet in any language",
+            "flavor": "the warlock who made contact with something that was paying attention to this world long before they arrived, and the attention has not been comfortable",
+        },
+        "The Archfey": {
+            "description": "Power from the fey courts — glamour, fear, and bargains that mean something else entirely",
+            "level_gained": 1,
+            "key_feature_name": "Fey Presence",
+            "key_feature": "Charm or frighten all creatures in a 10-foot cube around you (WIS save) once per short rest",
+            "flavor": "the warlock who made a deal in a forest that seemed reasonable at the time and has been discovering the fine print ever since",
+        },
+    },
+    "Wizard": {
+        "School of Evocation": {
+            "description": "Raw magical force — the school of people who want fire to do exactly what fire does",
+            "level_gained": 2,
+            "key_feature_name": "Sculpt Spells",
+            "key_feature": "When casting an evocation spell, choose up to (spell level + 1) creatures to automatically succeed their saves and take no damage",
+            "flavor": "the wizard who studied evocation because they wanted results and wasn't willing to wait three rounds for conditions to be right",
+        },
+        "School of Divination": {
+            "description": "Knowledge of what is, was, and will be",
+            "level_gained": 2,
+            "key_feature_name": "Portent",
+            "key_feature": "Roll two d20s after a long rest; replace any attack roll, saving throw, or ability check with one of your portent rolls — for any creature",
+            "flavor": "the wizard who found that knowing things in advance was more useful than most magic, and has been right about that twice a day ever since",
+        },
+        "School of Necromancy": {
+            "description": "Life, death, and the space between — treated as natural phenomena rather than moral categories",
+            "level_gained": 2,
+            "key_feature_name": "Grim Harvest",
+            "key_feature": "When you kill a creature with a spell, regain HP equal to twice the spell's level (or three times for necromancy spells)",
+            "flavor": "the wizard for whom death is data, undead are tools, and the ethical arguments against this position are interesting but ultimately unpersuasive",
+        },
+        "School of Illusion": {
+            "description": "Reality is a negotiation — and they're very good at negotiating",
+            "level_gained": 2,
+            "key_feature_name": "Improved Minor Illusion",
+            "key_feature": "Cast Minor Illusion with both sound and image simultaneously (normally one or the other)",
+            "flavor": "the wizard who understood very early that what people believe is more important than what's true, and has been working in that gap ever since",
+        },
+        "School of Abjuration": {
+            "description": "The shield-bearers of the arcane — protection as a form of power",
+            "level_gained": 2,
+            "key_feature_name": "Arcane Ward",
+            "key_feature": "Casting an abjuration spell of level 1+ creates a ward with HP = 2x Wizard level + INT modifier that absorbs damage before you do",
+            "flavor": "the wizard who decided that staying alive was the prerequisite for everything else, and has been consistently right about this",
+        },
+        "School of Transmutation": {
+            "description": "Reshaper of matter and form — what is can always become something else",
+            "level_gained": 2,
+            "key_feature_name": "Minor Alchemy",
+            "key_feature": "Touch a non-magical object and temporarily transform it into another material (wood to stone, stone to metal, etc.)",
+            "flavor": "the wizard with a practical, optimistic view of the world: if this isn't working, it can probably become something that does",
+        },
+        "School of Conjuration": {
+            "description": "Summoner and teleporter — the school of bringing things from there to here",
+            "level_gained": 2,
+            "key_feature_name": "Minor Conjuration",
+            "key_feature": "Conjure a small object you've seen before (max 3 lbs, 1 cubic foot) that lasts 1 hour",
+            "flavor": "the wizard whose solution to most problems is to introduce something new into the situation, usually something with teeth",
+        },
+        "School of Enchantment": {
+            "description": "Mind as the battlefield — make them want to cooperate",
+            "level_gained": 2,
+            "key_feature_name": "Hypnotic Gaze",
+            "key_feature": "As an action, hold one creature within 5 feet charmed and incapacitated (WIS save each turn to break) — action reusable once it sticks",
+            "flavor": "the wizard who noticed that changing people's minds was more efficient than overcoming their bodies, and has been right every time the alternative would have involved more explosions",
+        },
+    },
+}
+
+
+# ── Villain data ───────────────────────────────────────────────────────────────
+
+VILLAIN_SCHEMES: list[dict] = [
+    {
+        "scheme": "Domination",
+        "goal": "Control over a city, region, or institution — total and permanent",
+        "method": "Fear, leverage, and strategic elimination of anyone capable of organizing resistance",
+        "signature": "They have already won somewhere. The current target is just the next one.",
+    },
+    {
+        "scheme": "Revenge",
+        "goal": "Systematic destruction of those who wronged them — and everyone connected to them",
+        "method": "Patience, preparation, and escalating attacks designed to make the target understand who is coming for them",
+        "signature": "They started with someone specific and the list has been growing ever since.",
+    },
+    {
+        "scheme": "Ascension",
+        "goal": "Achieve godhood, lichdom, immortality, or transcendence — at any cost",
+        "method": "Ritual sacrifice, forbidden research, deals with entities that require payment in suffering",
+        "signature": "Everything they do is preparation. They are not in a hurry because they intend to have all the time in the world.",
+    },
+    {
+        "scheme": "Purification",
+        "goal": "Eliminate what they've decided is wrong with the world — starting locally, expanding outward",
+        "method": "They have a list. They work the list. The definition of 'wrong' expands as the list shrinks.",
+        "signature": "They believe they are doing good. This is what makes them dangerous.",
+    },
+    {
+        "scheme": "Collection",
+        "goal": "Amass a specific type of power, knowledge, or object regardless of cost",
+        "method": "Acquisition by purchase, theft, coercion, or destruction of anyone who won't cooperate",
+        "signature": "They have already collected more than anyone knows. The collection has become its own logic.",
+    },
+    {
+        "scheme": "Protection",
+        "goal": "Shield something or someone they love at the expense of everyone else",
+        "method": "Preemptive strikes, elimination of threats, ruthless sacrifice of anything that isn't the protected thing",
+        "signature": "Ask them why they do what they do and they will tell you without hesitation. They do not see this as a flaw.",
+    },
+    {
+        "scheme": "Restoration",
+        "goal": "Rebuild something destroyed — an empire, a people, a way of life — through means no one else would accept",
+        "method": "Historical revisionism, forced cultural reclamation, violence against those seen as the cause of the original loss",
+        "signature": "They have documents, artifacts, and witnesses to what was lost. The grief is real. The methods are not.",
+    },
+    {
+        "scheme": "Liberation",
+        "goal": "Free something or someone — a people, a creature, a power — convinced it is righteous",
+        "method": "Sabotage of the systems holding the target captive, rallying of followers, escalating force",
+        "signature": "They started as a genuine freedom fighter. Something changed — the cause, the methods, or them.",
+    },
+    {
+        "scheme": "Forbidden Discovery",
+        "goal": "Learn something that was hidden for a reason",
+        "method": "Archaeological violence, torture of those who know, destruction of those who would stop them",
+        "signature": "They don't fully understand what they're looking for. They are close, and when they find it, they will not be prepared for it.",
+    },
+    {
+        "scheme": "Devotion",
+        "goal": "Serve a power — a patron, a god, an ideology — that demands harm as tribute",
+        "method": "Whatever the power requires. They ask no questions.",
+        "signature": "They were not always like this. There was a moment when they chose this, and they remember it as the best decision they ever made.",
+    },
+]
+
+VILLAIN_WOUNDS: list[dict] = [
+    {
+        "wound": "Betrayal",
+        "origin": "Someone they trusted — mentor, ally, lover, institution — destroyed something irreplaceable",
+        "what_it_did": "They learned that loyalty is a weapon other people use against you",
+        "what_remains": "A list. Not a metaphorical one.",
+    },
+    {
+        "wound": "Loss",
+        "origin": "A death they couldn't prevent or couldn't forgive themselves for",
+        "what_it_did": "The grief became the loudest thing about them, and they eventually stopped fighting it",
+        "what_remains": "They still talk to the person who is gone. Sometimes they talk back.",
+    },
+    {
+        "wound": "Injustice",
+        "origin": "A system failed them catastrophically — court, church, guild, crown — and no one was held accountable",
+        "what_it_did": "They decided the system was the enemy, not the individuals inside it",
+        "what_remains": "They are not wrong that the system was unjust. They are wrong about what to do about it.",
+    },
+    {
+        "wound": "Forbidden Truth",
+        "origin": "They learned something that broke their understanding of the world",
+        "what_it_did": "The old values stopped making sense. New ones grew in the wreckage.",
+        "what_remains": "They want to share what they learned. The problem is what people will do when they know.",
+    },
+    {
+        "wound": "Transformation",
+        "origin": "Something was done to them — magic, experiment, curse, divine intervention — that changed who they are",
+        "what_it_did": "The person before the change and the person after are not the same. They have not made peace with this.",
+        "what_remains": "They are looking for whoever did it. They haven't decided what they'll do when they find them.",
+    },
+    {
+        "wound": "Obsession",
+        "origin": "A fixation that started as grief and became identity",
+        "what_it_did": "Everything that was not the obsession fell away — people, principles, self-preservation",
+        "what_remains": "Ask them about the thing they're obsessed with and they become a different person. Warmer. More present. More dangerous.",
+    },
+    {
+        "wound": "Corruption",
+        "origin": "A power or entity got into them slowly and they let it — because it solved a problem",
+        "what_it_did": "The original self is still in there, getting smaller",
+        "what_remains": "Occasionally they surface. In those moments they are aware of exactly what has happened to them.",
+    },
+    {
+        "wound": "Desperation",
+        "origin": "They saw no other way and chose this rather than surrender or die",
+        "what_it_did": "The choice that seemed temporary became permanent",
+        "what_remains": "They still believe they had no choice. They have stopped asking whether that's true.",
+    },
+]
+
+
 # ── Tool functions ─────────────────────────────────────────────────────────────
 
 def roll_alignment() -> str:
@@ -1245,6 +1813,28 @@ def calculate_combat_stats(
     return json.dumps(result)
 
 
+def get_subclass_info(class_name: str, subclass_name: str) -> str:
+    """Return the full data for a specific subclass — level gained, key feature, and flavor."""
+    if class_name not in SUBCLASSES:
+        return json.dumps({
+            "error": f"Unknown class '{class_name}'. Available: {list(SUBCLASSES.keys())}"
+        })
+    class_subs = SUBCLASSES[class_name]
+    if subclass_name not in class_subs:
+        return json.dumps({
+            "error": f"Unknown subclass '{subclass_name}' for {class_name}. "
+                     f"Available: {list(class_subs.keys())}"
+        })
+    return json.dumps(class_subs[subclass_name])
+
+
+def roll_villain_profile() -> str:
+    """Randomly pick a villain scheme and wound — the core of what drives this antagonist."""
+    scheme = random.choice(VILLAIN_SCHEMES)
+    wound  = random.choice(VILLAIN_WOUNDS)
+    return json.dumps({"scheme": scheme, "wound": wound})
+
+
 # ── Tool schemas (Claude's side) ───────────────────────────────────────────────
 
 TOOLS = [
@@ -1410,6 +2000,54 @@ TOOLS = [
         },
     },
     {
+        "name": "get_subclass_info",
+        "description": (
+            "Look up a specific subclass — returns its level_gained (when it unlocks), "
+            "key_feature_name, key_feature (what it does mechanically), and flavor (the kind of character who takes it). "
+            "Call this in Step 3 after committing to a class, before writing any backstory. "
+            "The subclass's flavor and feature should shape the character concept directly.\n\n"
+            "Subclasses by class:\n"
+            "Barbarian: Path of the Berserker, Path of the Totem Warrior, Path of the Storm Herald\n"
+            "Bard: College of Lore, College of Valor, College of Glamour\n"
+            "Cleric: Life Domain, Light Domain, Knowledge Domain, Nature Domain, Trickery Domain, War Domain, Tempest Domain\n"
+            "Druid: Circle of the Land, Circle of the Moon, Circle of Spores\n"
+            "Fighter: Champion, Battle Master, Eldritch Knight\n"
+            "Monk: Way of the Open Hand, Way of Shadow, Way of the Four Elements\n"
+            "Paladin: Oath of Devotion, Oath of the Ancients, Oath of Vengeance, Oathbreaker\n"
+            "Ranger: Hunter, Beast Master, Gloom Stalker\n"
+            "Rogue: Thief, Assassin, Arcane Trickster\n"
+            "Sorcerer: Wild Magic, Draconic Bloodline, Divine Soul\n"
+            "Warlock: The Fiend, The Great Old One, The Archfey\n"
+            "Wizard: School of Evocation, School of Divination, School of Necromancy, School of Illusion, "
+            "School of Abjuration, School of Transmutation, School of Conjuration, School of Enchantment"
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "class_name": {
+                    "type": "string",
+                    "description": "The character's class.",
+                    "enum": list(SUBCLASSES.keys()),
+                },
+                "subclass_name": {
+                    "type": "string",
+                    "description": "Exact subclass name from the list in the description.",
+                },
+            },
+            "required": ["class_name", "subclass_name"],
+        },
+    },
+    {
+        "name": "roll_villain_profile",
+        "description": (
+            "Randomly select a villain scheme (what they want and how they pursue it) "
+            "and a wound (what made them this way). "
+            "Call this first when generating a villain — before race, class, or backstory. "
+            "The scheme and wound are the core of who this villain is; everything else grows from them."
+        ),
+        "input_schema": {"type": "object", "properties": {}, "required": []},
+    },
+    {
         "name": "calculate_combat_stats",
         "description": (
             "Calculate initiative, weapon attack bonuses, and (for spellcasters) spell save DC "
@@ -1492,10 +2130,13 @@ Work through these steps in order, using your tools at each stage:
    Note the race's Speed and Languages — these go directly on the sheet.
    Then call roll_dnd_name_suggestion(race="[chosen race]") to get a name in the right register.
 
-3. CLASS — Choose a class that suits the final stats and the emerging character concept.
+3. CLASS & SUBCLASS — Choose a class that suits the final stats and the emerging character concept.
    Call get_class_info. Note the hit die, saving throws, proficiencies, and the typical_armor field.
    Calculate HP at level 1: max hit die value + CON modifier.
-   Hint at a subclass direction that fits the character — don't commit, just suggest.
+   SUBCLASS — Commit to a specific subclass (don't just hint — choose one). Call get_subclass_info to
+   get the key_feature and flavor. The subclass should shape the character's concept, backstory, and
+   how they're described throughout the sheet. Note: level_gained tells you when it unlocks
+   (1 for Cleric/Warlock/Sorcerer, 2 for Druid/Wizard, 3 for most others).
    DEITY — If the class is Cleric or Paladin, call roll_deity now with a domain_hint matching the
    subclass direction (e.g. "Life", "War", "Trickery", "Death", "Knowledge", "Tempest").
    The returned deity shapes the character's outlook, spell flavor, and connections.
@@ -1539,6 +2180,7 @@ Work through these steps in order, using your tools at each stage:
 |---|---|
 | **Race** | [Race] |
 | **Class** | [Class] (Level 1) |
+| **Subclass** | [Subclass name] *(unlocks at level [N] — use level_gained from get_subclass_info)* |
 | **Background** | [Background] |
 | **Alignment** | [Alignment from roll_alignment — the name only, e.g. "Chaotic Good"] |
 | **HP** | [hp] |
@@ -1681,6 +2323,74 @@ Always use exactly this format:
 
 **Connection:** [One named person who knows this quest giver — a reference, a warning, or a loose thread. Why that name matters.]"""
 
+VILLAIN_SYSTEM_PROMPT = """You are a D&D 5e villain generator. Create a complete, playable antagonist — someone with a scheme, a wound, and a world that reacts to them.
+
+Avoid clichés tied to race, class, sex, or ethnicity. The wound must be specific and personal, not archetypal. The scheme must be concrete enough to act against.
+
+STEP 0 (before writing anything):
+1. Call roll_villain_profile() — the returned scheme and wound are the core of who this villain is. Everything else is built around them. The scheme tells you what they want and how they pursue it. The wound tells you what made them this way.
+2. Roll ability scores with roll_stat six times for STR, DEX, CON, INT, WIS, CHA.
+3. Choose a race that fits the scheme and wound — call get_race_info (note speed and languages).
+4. Choose a class that serves the scheme — call get_class_info. Choose a subclass — call get_subclass_info.
+5. Call roll_dnd_name_suggestion(race="[race]") for a name appropriate to the race.
+6. Call roll_alignment() — the alignment expression should make the scheme feel inevitable, not monstrous.
+7. If the villain is a spellcaster, call get_spell_suggestions — pick 1 cantrip and 2 spells that feel like tools of the scheme.
+8. If the class is Cleric or Paladin, call roll_deity with a domain matching the scheme.
+
+Always use exactly this format:
+
+## **[Full Name]**
+*[Race] [Class] / [Subclass] — [one sentence: what they are to the people who fear them]*
+
+| | |
+|---|---|
+| **Alignment** | [Alignment from roll_alignment — name only] |
+| **Race** | [Race] |
+| **Class / Subclass** | [Class] / [Subclass] *(unlocks at level N)* |
+| **Speed** | [from race info] |
+| **Languages** | [from race info] |
+| **HP** | [max hit die + CON modifier] |
+
+### Ability Scores
+| STR | DEX | CON | INT | WIS | CHA |
+|-----|-----|-----|-----|-----|-----|
+| [score] ([mod]) | [score] ([mod]) | [score] ([mod]) | [score] ([mod]) | [score] ([mod]) | [score] ([mod]) |
+
+### The Scheme
+**[Scheme name]** — [What they want. Specific: what city, what power, what outcome. Not 'domination' in the abstract — domination of what, by when, and what is in the way.]
+
+**Method:** [How they pursue it. The signature behavior — not the entire plan, but the thing they do that makes people afraid or confused.]
+
+**How far along they are:** [One sentence. They have already succeeded at something. What?]
+
+### The Wound
+**[Wound name]** — [What happened to them. Specific: what was lost, who was responsible, what they know now that they didn't know then.]
+
+**What it cost them:** [One sentence on what the wound took — a relationship, a belief, a version of themselves.]
+
+**What they'd say if asked:** [One sentence of direct speech — how they explain or justify themselves. Make it human enough that a player might pause.]
+
+### Minions
+Three types of followers — not just muscle:
+- **[Type]:** [Who they are, what they do, and why they follow this villain specifically]
+- **[Type]:** [Who they are, what they do, and why they follow this villain specifically]
+- **[Type]:** [Who they are, what they do, and why they follow this villain specifically]
+
+### Defeat Condition
+**What can stop them:** [A specific weakness, not 'kill them.' What would actually end this — what belief could be shattered, what loss would break the scheme, what do they secretly need that could be denied or offered?]
+
+**What they're afraid of:** [One thing they will not say, but that drives their behavior. The shape of their actual fear.]
+
+**The Tragic Version:** [One sentence: how this ends if no one intervenes — and why that outcome is worse than a fight.]
+
+### Encounter Hook
+[Two sentences: how the players first become aware this villain exists, and what the villain has already done to them before they know it.]
+
+### Connections
+- **ALLY — [Full Name]:** [One sentence — who they are and why they serve]
+- **ENEMY — [Full Name]:** [One sentence — who opposes them and what they know]
+- **COMPLICATION — [Full Name]:** [One sentence — someone who loves or was loved by the villain, who the party might reach before the villain does]"""
+
 
 # ── Tool dispatcher ────────────────────────────────────────────────────────────
 
@@ -1690,10 +2400,12 @@ def run_tool(name: str, inputs: dict) -> str:
     if name == "get_race_info":          return get_race_info(**inputs)
     if name == "get_class_info":         return get_class_info(**inputs)
     if name == "get_background_info":    return get_background_info(**inputs)
+    if name == "get_subclass_info":      return get_subclass_info(**inputs)
     if name == "pick_skills":            return pick_skills(**inputs)
     if name == "calculate_ac":           return calculate_ac(**inputs)
     if name == "calculate_combat_stats": return calculate_combat_stats(**inputs)
     if name == "roll_deity":             return roll_deity(**inputs)
+    if name == "roll_villain_profile":   return roll_villain_profile()
     if name == "roll_dnd_name_suggestion": return roll_dnd_name_suggestion(race=inputs.get("race"))
     if name == "get_spell_suggestions":    return get_spell_suggestions(**inputs)
     if name == "roll_dnd_gear":            return roll_dnd_gear(**inputs)
@@ -1709,6 +2421,7 @@ PHASE_MESSAGES = {
     "stats":      "Rolling ability scores...",
     "race":       "Choosing race...",
     "class":      "Choosing class...",
+    "subclass":   "Choosing subclass...",
     "background": "Building background & connections...",
     "skills":     "Selecting class skills...",
     "spells":     "Selecting spells...",
@@ -1718,6 +2431,7 @@ PHASE_MESSAGES = {
     "deity":      "Rolling deity...",
     "alignment":  "Rolling alignment...",
     "quest":      "Rolling quest hook...",
+    "villain":    "Rolling villain scheme & wound...",
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
@@ -1726,10 +2440,12 @@ def detect_phase(tool_name: str, seen: set) -> str | None:
     if tool_name == "roll_dnd_gear":             return "gear"
     if tool_name == "calculate_ac":              return "ac"
     if tool_name == "calculate_combat_stats":    return "combat"
+    if tool_name == "get_subclass_info":         return "subclass"
     if tool_name == "pick_skills":               return "skills"
     if tool_name == "roll_deity":                return "deity"
     if tool_name == "roll_alignment":            return "alignment"
     if tool_name == "roll_quest_hook":           return "quest"
+    if tool_name == "roll_villain_profile":      return "villain"
     if tool_name == "roll_stat":             return "stats"
     if tool_name == "get_race_info":         return "race"
     if tool_name == "get_class_info":        return "class"
@@ -1752,10 +2468,11 @@ def save_result(result: str, mode: str) -> Path:
 
 
 def run(mode: str | None = None, desc: str | None = None) -> None:
+    valid_modes = ("full", "npc", "questgiver", "villain")
     if mode is None:
-        mode = input("Mode? (full / npc / questgiver, default: full): ").strip().lower()
-        mode = mode if mode in ("full", "npc", "questgiver") else "full"
-    label = {"full": "character", "npc": "NPC", "questgiver": "quest giver"}[mode]
+        mode = input("Mode? (full / npc / questgiver / villain, default: full): ").strip().lower()
+        mode = mode if mode in valid_modes else "full"
+    label = {"full": "character", "npc": "NPC", "questgiver": "quest giver", "villain": "villain"}[mode]
     if desc is None:
         raw  = input(f"Describe the {label} you want (or press Enter for fully random): ").strip()
         desc = sanitize_desc(raw)
@@ -1768,6 +2485,9 @@ def run(mode: str | None = None, desc: str | None = None) -> None:
     elif mode == "questgiver":
         sys_prompt = QUEST_GIVER_SYSTEM_PROMPT
         prompt     = "Generate a fully random D&D 5e quest giver encounter."
+    elif mode == "villain":
+        sys_prompt = VILLAIN_SYSTEM_PROMPT
+        prompt     = "Generate a fully random D&D 5e villain — a complete antagonist with a scheme, a wound, and a world that reacts to them."
     else:  # full
         sys_prompt = SYSTEM_PROMPT
         prompt     = "Generate a fully random D&D 5e character for storytelling purposes."

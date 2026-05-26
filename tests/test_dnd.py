@@ -16,8 +16,10 @@ from agents.dnd_agent import (
     get_race_info,
     get_class_info,
     get_background_info,
+    get_subclass_info,
     roll_alignment,
     roll_quest_hook,
+    roll_villain_profile,
     calculate_ac,
     calculate_combat_stats,
     pick_skills,
@@ -38,6 +40,9 @@ from agents.dnd_agent import (
     ALL_SKILLS,
     PROFICIENCY_BONUS,
     SPELLCASTING_STAT,
+    SUBCLASSES,
+    VILLAIN_SCHEMES,
+    VILLAIN_WOUNDS,
 )
 
 
@@ -953,3 +958,272 @@ class TestCalculateCombatStats:
     def test_system_prompt_mentions_spell_save_dc(self):
         import agents.dnd_agent as m
         assert "Spell Save DC" in m.SYSTEM_PROMPT
+
+
+# ── SCAG backgrounds ───────────────────────────────────────────────────────────
+
+class TestScagBackgrounds:
+    SCAG = ["Haunted One", "Far Traveler", "City Watch", "Clan Crafter",
+            "Faction Agent", "Urban Bounty Hunter", "Mercenary Veteran"]
+
+    def test_all_scag_backgrounds_present(self):
+        for bg in self.SCAG:
+            assert bg in BACKGROUNDS, f"'{bg}' missing from BACKGROUNDS"
+
+    def test_haunted_one_has_arcana(self):
+        assert "Arcana" in BACKGROUNDS["Haunted One"]["skills"]
+
+    def test_far_traveler_has_perception(self):
+        assert "Perception" in BACKGROUNDS["Far Traveler"]["skills"]
+
+    def test_city_watch_has_athletics_and_insight(self):
+        bg = BACKGROUNDS["City Watch"]
+        assert "Athletics" in bg["skills"]
+        assert "Insight" in bg["skills"]
+
+    def test_clan_crafter_has_history_and_insight(self):
+        bg = BACKGROUNDS["Clan Crafter"]
+        assert "History" in bg["skills"]
+        assert "Insight" in bg["skills"]
+
+    def test_mercenary_veteran_has_athletics_and_persuasion(self):
+        bg = BACKGROUNDS["Mercenary Veteran"]
+        assert "Athletics" in bg["skills"]
+        assert "Persuasion" in bg["skills"]
+
+    def test_urban_bounty_hunter_has_deception(self):
+        assert "Deception" in BACKGROUNDS["Urban Bounty Hunter"]["skills"]
+
+    def test_all_backgrounds_have_required_keys(self):
+        required = {"description", "skills", "feature", "personality_seeds", "story_hooks"}
+        for name, data in BACKGROUNDS.items():
+            missing = required - set(data.keys())
+            assert not missing, f"'{name}' missing keys: {missing}"
+
+    def test_total_backgrounds_at_least_20(self):
+        assert len(BACKGROUNDS) >= 20
+
+
+# ── SUBCLASSES structure ───────────────────────────────────────────────────────
+
+class TestSubclassesStructure:
+    REQUIRED_KEYS = {"description", "level_gained", "key_feature_name", "key_feature", "flavor"}
+
+    def test_subclasses_covers_all_12_classes(self):
+        for class_name in CLASSES:
+            assert class_name in SUBCLASSES, f"{class_name} missing from SUBCLASSES"
+
+    def test_every_subclass_has_required_keys(self):
+        for class_name, subs in SUBCLASSES.items():
+            for sub_name, data in subs.items():
+                missing = self.REQUIRED_KEYS - set(data.keys())
+                assert not missing, f"{class_name}/{sub_name} missing: {missing}"
+
+    def test_level_gained_values_are_valid(self):
+        valid = {1, 2, 3}
+        for class_name, subs in SUBCLASSES.items():
+            for sub_name, data in subs.items():
+                assert data["level_gained"] in valid, \
+                    f"{class_name}/{sub_name} has invalid level_gained={data['level_gained']}"
+
+    def test_cleric_subclasses_gain_at_level_1(self):
+        for sub_name, data in SUBCLASSES["Cleric"].items():
+            assert data["level_gained"] == 1, f"Cleric/{sub_name} should unlock at level 1"
+
+    def test_warlock_subclasses_gain_at_level_1(self):
+        for sub_name, data in SUBCLASSES["Warlock"].items():
+            assert data["level_gained"] == 1, f"Warlock/{sub_name} should unlock at level 1"
+
+    def test_sorcerer_subclasses_gain_at_level_1(self):
+        for sub_name, data in SUBCLASSES["Sorcerer"].items():
+            assert data["level_gained"] == 1, f"Sorcerer/{sub_name} should unlock at level 1"
+
+    def test_wizard_subclasses_gain_at_level_2(self):
+        for sub_name, data in SUBCLASSES["Wizard"].items():
+            assert data["level_gained"] == 2, f"Wizard/{sub_name} should unlock at level 2"
+
+    def test_druid_subclasses_gain_at_level_2(self):
+        for sub_name, data in SUBCLASSES["Druid"].items():
+            assert data["level_gained"] == 2, f"Druid/{sub_name} should unlock at level 2"
+
+    def test_fighter_subclasses_gain_at_level_3(self):
+        for sub_name, data in SUBCLASSES["Fighter"].items():
+            assert data["level_gained"] == 3, f"Fighter/{sub_name} should unlock at level 3"
+
+    def test_barbarian_has_berserker(self):
+        assert "Path of the Berserker" in SUBCLASSES["Barbarian"]
+
+    def test_bard_has_three_subclasses(self):
+        assert len(SUBCLASSES["Bard"]) >= 3
+
+    def test_rogue_has_assassin(self):
+        assert "Assassin" in SUBCLASSES["Rogue"]
+
+    def test_paladin_has_oathbreaker(self):
+        assert "Oathbreaker" in SUBCLASSES["Paladin"]
+
+    def test_wizard_has_eight_schools(self):
+        assert len(SUBCLASSES["Wizard"]) == 8
+
+    def test_total_subclasses_at_least_40(self):
+        total = sum(len(v) for v in SUBCLASSES.values())
+        assert total >= 40
+
+
+# ── get_subclass_info ──────────────────────────────────────────────────────────
+
+class TestGetSubclassInfo:
+    def test_returns_json_string(self):
+        result = get_subclass_info("Wizard", "School of Evocation")
+        assert isinstance(result, str)
+        data = json.loads(result)
+        assert isinstance(data, dict)
+
+    def test_returns_all_required_keys(self):
+        data = json.loads(get_subclass_info("Fighter", "Champion"))
+        for key in ("description", "level_gained", "key_feature_name", "key_feature", "flavor"):
+            assert key in data
+
+    def test_champion_level_gained_is_3(self):
+        data = json.loads(get_subclass_info("Fighter", "Champion"))
+        assert data["level_gained"] == 3
+
+    def test_life_domain_level_gained_is_1(self):
+        data = json.loads(get_subclass_info("Cleric", "Life Domain"))
+        assert data["level_gained"] == 1
+
+    def test_circle_of_moon_level_gained_is_2(self):
+        data = json.loads(get_subclass_info("Druid", "Circle of the Moon"))
+        assert data["level_gained"] == 2
+
+    def test_fiend_warlock_has_dark_ones_blessing(self):
+        data = json.loads(get_subclass_info("Warlock", "The Fiend"))
+        assert "Blessing" in data["key_feature_name"]
+
+    def test_unknown_class_returns_error(self):
+        data = json.loads(get_subclass_info("Gunslinger", "Dead Eye"))
+        assert "error" in data
+
+    def test_unknown_subclass_returns_error(self):
+        data = json.loads(get_subclass_info("Wizard", "School of Pyromancy"))
+        assert "error" in data
+
+    def test_tool_in_tools_list(self):
+        import agents.dnd_agent as m
+        names = [t["name"] for t in m.TOOLS]
+        assert "get_subclass_info" in names
+
+    def test_system_prompt_mentions_get_subclass_info(self):
+        import agents.dnd_agent as m
+        assert "get_subclass_info" in m.SYSTEM_PROMPT
+
+    def test_system_prompt_mentions_subclass_row(self):
+        import agents.dnd_agent as m
+        assert "Subclass" in m.SYSTEM_PROMPT
+
+    def test_detect_phase_subclass(self):
+        assert detect_phase("get_subclass_info", set()) == "subclass"
+
+    def test_phase_message_subclass(self):
+        import agents.dnd_agent as m
+        assert "subclass" in m.PHASE_MESSAGES
+
+
+# ── Villain mode ───────────────────────────────────────────────────────────────
+
+class TestVillainData:
+    def test_villain_schemes_at_least_8(self):
+        assert len(VILLAIN_SCHEMES) >= 8
+
+    def test_villain_wounds_at_least_8(self):
+        assert len(VILLAIN_WOUNDS) >= 8
+
+    def test_scheme_has_required_keys(self):
+        required = {"scheme", "goal", "method", "signature"}
+        for s in VILLAIN_SCHEMES:
+            missing = required - set(s.keys())
+            assert not missing, f"Scheme '{s.get('scheme')}' missing: {missing}"
+
+    def test_wound_has_required_keys(self):
+        required = {"wound", "origin", "what_it_did", "what_remains"}
+        for w in VILLAIN_WOUNDS:
+            missing = required - set(w.keys())
+            assert not missing, f"Wound '{w.get('wound')}' missing: {missing}"
+
+    def test_revenge_scheme_present(self):
+        names = {s["scheme"] for s in VILLAIN_SCHEMES}
+        assert "Revenge" in names
+
+    def test_betrayal_wound_present(self):
+        names = {w["wound"] for w in VILLAIN_WOUNDS}
+        assert "Betrayal" in names
+
+    def test_all_scheme_goals_non_empty(self):
+        for s in VILLAIN_SCHEMES:
+            assert len(s["goal"]) > 10, f"Scheme '{s['scheme']}' has thin goal"
+
+    def test_all_wound_origins_non_empty(self):
+        for w in VILLAIN_WOUNDS:
+            assert len(w["origin"]) > 10, f"Wound '{w['wound']}' has thin origin"
+
+
+class TestRollVillainProfile:
+    def test_returns_json_string(self):
+        result = roll_villain_profile()
+        assert isinstance(result, str)
+        data = json.loads(result)
+        assert isinstance(data, dict)
+
+    def test_has_scheme_and_wound_keys(self):
+        data = json.loads(roll_villain_profile())
+        assert "scheme" in data
+        assert "wound" in data
+
+    def test_scheme_is_dict(self):
+        data = json.loads(roll_villain_profile())
+        assert isinstance(data["scheme"], dict)
+
+    def test_wound_is_dict(self):
+        data = json.loads(roll_villain_profile())
+        assert isinstance(data["wound"], dict)
+
+    def test_returns_variety_across_rolls(self):
+        schemes = set()
+        for _ in range(30):
+            data = json.loads(roll_villain_profile())
+            schemes.add(data["scheme"]["scheme"])
+        assert len(schemes) >= 3, "Expected variety in villain schemes over 30 rolls"
+
+    def test_tool_in_tools_list(self):
+        import agents.dnd_agent as m
+        names = [t["name"] for t in m.TOOLS]
+        assert "roll_villain_profile" in names
+
+    def test_villain_system_prompt_exists(self):
+        import agents.dnd_agent as m
+        assert hasattr(m, "VILLAIN_SYSTEM_PROMPT")
+        assert len(m.VILLAIN_SYSTEM_PROMPT) > 200
+
+    def test_villain_system_prompt_mentions_scheme(self):
+        import agents.dnd_agent as m
+        assert "Scheme" in m.VILLAIN_SYSTEM_PROMPT
+
+    def test_villain_system_prompt_mentions_wound(self):
+        import agents.dnd_agent as m
+        assert "Wound" in m.VILLAIN_SYSTEM_PROMPT
+
+    def test_villain_system_prompt_mentions_defeat_condition(self):
+        import agents.dnd_agent as m
+        assert "Defeat Condition" in m.VILLAIN_SYSTEM_PROMPT
+
+    def test_villain_system_prompt_mentions_minions(self):
+        import agents.dnd_agent as m
+        assert "Minions" in m.VILLAIN_SYSTEM_PROMPT
+
+    def test_detect_phase_villain(self):
+        assert detect_phase("roll_villain_profile", set()) == "villain"
+
+    def test_run_includes_villain_mode(self):
+        import inspect, agents.dnd_agent as m
+        source = inspect.getsource(m.run)
+        assert "villain" in source
