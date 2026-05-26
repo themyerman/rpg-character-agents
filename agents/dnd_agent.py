@@ -31,6 +31,20 @@ ALL_SKILLS = [
     "Sleight of Hand", "Stealth", "Survival",
 ]
 
+PROFICIENCY_BONUS = 2  # Level 1; all characters start here
+
+# Which ability score drives spellcasting for each class (non-casters omitted)
+SPELLCASTING_STAT: dict[str, str] = {
+    "Bard":     "CHA",
+    "Cleric":   "WIS",
+    "Druid":    "WIS",
+    "Paladin":  "CHA",
+    "Ranger":   "WIS",
+    "Sorcerer": "CHA",
+    "Warlock":  "CHA",
+    "Wizard":   "INT",
+}
+
 
 # ── Utility functions ──────────────────────────────────────────────────────────
 
@@ -1186,6 +1200,51 @@ def roll_deity(domain_hint: str = "", alignment_hint: str = "") -> str:
     return json.dumps(deity)
 
 
+def calculate_combat_stats(
+    class_name: str,
+    str_modifier: int,
+    dex_modifier: int,
+    int_modifier: int = 0,
+    wis_modifier: int = 0,
+    cha_modifier: int = 0,
+) -> str:
+    """Return initiative, weapon attack bonuses, and (for spellcasters) spell save DC
+    and spell attack bonus. All values assume level 1 (proficiency bonus +2)."""
+    if class_name not in CLASSES:
+        return json.dumps({
+            "error": f"Unknown class '{class_name}'. Available: {list(CLASSES.keys())}"
+        })
+
+    pb = PROFICIENCY_BONUS
+    mod_map = {
+        "STR": str_modifier, "DEX": dex_modifier,
+        "INT": int_modifier, "WIS": wis_modifier, "CHA": cha_modifier,
+    }
+
+    def fmt(n: int) -> str:
+        return f"+{n}" if n >= 0 else str(n)
+
+    result: dict = {
+        "proficiency_bonus":  pb,
+        "initiative":         fmt(dex_modifier),
+        "str_attack_bonus":   fmt(str_modifier + pb),
+        "dex_attack_bonus":   fmt(dex_modifier + pb),
+        "note": (
+            "Use str_attack_bonus for STR-based melee weapons (longswords, axes, etc.). "
+            "Use dex_attack_bonus for finesse weapons (rapiers, daggers) and ranged attacks."
+        ),
+    }
+
+    spell_stat = SPELLCASTING_STAT.get(class_name)
+    if spell_stat:
+        spell_mod = mod_map[spell_stat]
+        result["spellcasting_ability"]  = spell_stat
+        result["spell_save_dc"]         = 8 + pb + spell_mod
+        result["spell_attack_bonus"]    = fmt(pb + spell_mod)
+
+    return json.dumps(result)
+
+
 # ── Tool schemas (Claude's side) ───────────────────────────────────────────────
 
 TOOLS = [
@@ -1350,6 +1409,45 @@ TOOLS = [
             "required": [],
         },
     },
+    {
+        "name": "calculate_combat_stats",
+        "description": (
+            "Calculate initiative, weapon attack bonuses, and (for spellcasters) spell save DC "
+            "and spell attack bonus at level 1. Call this immediately after calculate_ac. "
+            "Proficiency bonus at level 1 is always +2."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "class_name": {
+                    "type": "string",
+                    "description": "The character's class.",
+                    "enum": list(CLASSES.keys()),
+                },
+                "str_modifier": {
+                    "type": "integer",
+                    "description": "STR modifier (may be negative).",
+                },
+                "dex_modifier": {
+                    "type": "integer",
+                    "description": "DEX modifier (may be negative).",
+                },
+                "int_modifier": {
+                    "type": "integer",
+                    "description": "INT modifier — needed for Wizard spellcasting DC.",
+                },
+                "wis_modifier": {
+                    "type": "integer",
+                    "description": "WIS modifier — needed for Cleric, Druid, Ranger spellcasting DC.",
+                },
+                "cha_modifier": {
+                    "type": "integer",
+                    "description": "CHA modifier — needed for Bard, Paladin, Sorcerer, Warlock spellcasting DC.",
+                },
+            },
+            "required": ["class_name", "str_modifier", "dex_modifier"],
+        },
+    },
     DND_NAME_TOOL_SCHEMA,
     DND_SPELL_TOOL_SCHEMA,
     DND_GEAR_TOOL_SCHEMA,
@@ -1421,7 +1519,7 @@ Work through these steps in order, using your tools at each stage:
    Let the tension complicate the backstory. Let the shadow hint at where they might go wrong.
    Do not write "this character is [alignment]" in the backstory — let it live in what they do.
 
-6. GEAR & AC — Call roll_dnd_gear(class_name="[chosen class]") — all returned items must appear in Equipment.
+6. GEAR & AC & COMBAT — Call roll_dnd_gear(class_name="[chosen class]") — all returned items must appear in Equipment.
    Then immediately call calculate_ac:
    - Use the armor_type from the class's typical_armor field, adjusted if the gear roll returned different armor
    - Pass the DEX modifier
@@ -1429,6 +1527,9 @@ Work through these steps in order, using your tools at each stage:
    - For Barbarian: use "Barbarian Unarmored" and pass con_modifier
    - For Monk: use "Monk Unarmored" and pass wis_modifier
    - For Lizardfolk without armor: use "Natural Armor"
+   Then immediately call calculate_combat_stats(class_name="[class]", str_modifier=X, dex_modifier=Y).
+   - For spellcasting classes also pass the relevant ability modifier:
+     Wizard → int_modifier; Cleric/Druid/Ranger → wis_modifier; Bard/Paladin/Sorcerer/Warlock → cha_modifier.
 
 7. CHARACTER SHEET — Always use exactly this format:
 
@@ -1443,7 +1544,11 @@ Work through these steps in order, using your tools at each stage:
 | **HP** | [hp] |
 | **AC** | [from calculate_ac result] |
 | **Speed** | [from race info — e.g. "30 ft"] |
+| **Initiative** | [from calculate_combat_stats — e.g. "+2"] |
 | **Proficiency Bonus** | +2 |
+| **Attack Bonus** | [from calculate_combat_stats — list the relevant bonus(es): e.g. "STR +4" for fighters, "DEX +5 / STR +3" for rogues, "Spell +6" for pure casters] |
+| **Spell Save DC** | [from calculate_combat_stats — omit this row entirely for non-spellcasters] |
+| **Spell Attack Bonus** | [from calculate_combat_stats — omit this row entirely for non-spellcasters] |
 
 ### Ability Scores
 | STR | DEX | CON | INT | WIS | CHA |
@@ -1580,14 +1685,15 @@ Always use exactly this format:
 # ── Tool dispatcher ────────────────────────────────────────────────────────────
 
 def run_tool(name: str, inputs: dict) -> str:
-    if name == "roll_stat":           return roll_stat()
-    if name == "roll_dice":           return roll_dice(**inputs)
-    if name == "get_race_info":       return get_race_info(**inputs)
-    if name == "get_class_info":      return get_class_info(**inputs)
-    if name == "get_background_info": return get_background_info(**inputs)
-    if name == "pick_skills":         return pick_skills(**inputs)
-    if name == "calculate_ac":        return calculate_ac(**inputs)
-    if name == "roll_deity":          return roll_deity(**inputs)
+    if name == "roll_stat":              return roll_stat()
+    if name == "roll_dice":              return roll_dice(**inputs)
+    if name == "get_race_info":          return get_race_info(**inputs)
+    if name == "get_class_info":         return get_class_info(**inputs)
+    if name == "get_background_info":    return get_background_info(**inputs)
+    if name == "pick_skills":            return pick_skills(**inputs)
+    if name == "calculate_ac":           return calculate_ac(**inputs)
+    if name == "calculate_combat_stats": return calculate_combat_stats(**inputs)
+    if name == "roll_deity":             return roll_deity(**inputs)
     if name == "roll_dnd_name_suggestion": return roll_dnd_name_suggestion(race=inputs.get("race"))
     if name == "get_spell_suggestions":    return get_spell_suggestions(**inputs)
     if name == "roll_dnd_gear":            return roll_dnd_gear(**inputs)
@@ -1608,24 +1714,26 @@ PHASE_MESSAGES = {
     "spells":     "Selecting spells...",
     "gear":       "Rolling starting gear...",
     "ac":         "Calculating AC...",
+    "combat":     "Calculating combat stats...",
     "deity":      "Rolling deity...",
     "alignment":  "Rolling alignment...",
     "quest":      "Rolling quest hook...",
 }
 
 def detect_phase(tool_name: str, seen: set) -> str | None:
-    if tool_name == "roll_dnd_name_suggestion": return "name"
-    if tool_name == "get_spell_suggestions":    return "spells"
-    if tool_name == "roll_dnd_gear":            return "gear"
-    if tool_name == "calculate_ac":             return "ac"
-    if tool_name == "pick_skills":              return "skills"
-    if tool_name == "roll_deity":               return "deity"
-    if tool_name == "roll_alignment":           return "alignment"
-    if tool_name == "roll_quest_hook":          return "quest"
-    if tool_name == "roll_stat":            return "stats"
-    if tool_name == "get_race_info":        return "race"
-    if tool_name == "get_class_info":       return "class"
-    if tool_name == "get_background_info":  return "background"
+    if tool_name == "roll_dnd_name_suggestion":  return "name"
+    if tool_name == "get_spell_suggestions":     return "spells"
+    if tool_name == "roll_dnd_gear":             return "gear"
+    if tool_name == "calculate_ac":              return "ac"
+    if tool_name == "calculate_combat_stats":    return "combat"
+    if tool_name == "pick_skills":               return "skills"
+    if tool_name == "roll_deity":                return "deity"
+    if tool_name == "roll_alignment":            return "alignment"
+    if tool_name == "roll_quest_hook":           return "quest"
+    if tool_name == "roll_stat":             return "stats"
+    if tool_name == "get_race_info":         return "race"
+    if tool_name == "get_class_info":        return "class"
+    if tool_name == "get_background_info":   return "background"
     return None
 
 

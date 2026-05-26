@@ -19,6 +19,7 @@ from agents.dnd_agent import (
     roll_alignment,
     roll_quest_hook,
     calculate_ac,
+    calculate_combat_stats,
     pick_skills,
     roll_deity,
     detect_phase,
@@ -35,6 +36,8 @@ from agents.dnd_agent import (
     SKILL_POOLS,
     DEITIES,
     ALL_SKILLS,
+    PROFICIENCY_BONUS,
+    SPELLCASTING_STAT,
 )
 
 
@@ -784,3 +787,169 @@ class TestDetectPhaseNewTools:
 
     def test_roll_deity_returns_deity(self):
         assert detect_phase("roll_deity", set()) == "deity"
+
+    def test_calculate_combat_stats_returns_combat(self):
+        assert detect_phase("calculate_combat_stats", set()) == "combat"
+
+
+# ── calculate_combat_stats ─────────────────────────────────────────────────────
+
+class TestCalculateCombatStats:
+    # ── return structure ────────────────────────────────────────────────────────
+
+    def test_returns_json_string(self):
+        result = calculate_combat_stats("Fighter", str_modifier=3, dex_modifier=1)
+        assert isinstance(result, str)
+        data = json.loads(result)
+        assert isinstance(data, dict)
+
+    def test_proficiency_bonus_is_2(self):
+        data = json.loads(calculate_combat_stats("Fighter", str_modifier=2, dex_modifier=1))
+        assert data["proficiency_bonus"] == 2
+
+    def test_proficiency_bonus_constant_matches(self):
+        assert PROFICIENCY_BONUS == 2
+
+    def test_has_initiative(self):
+        data = json.loads(calculate_combat_stats("Rogue", str_modifier=0, dex_modifier=3))
+        assert "initiative" in data
+
+    def test_has_str_attack_bonus(self):
+        data = json.loads(calculate_combat_stats("Fighter", str_modifier=3, dex_modifier=1))
+        assert "str_attack_bonus" in data
+
+    def test_has_dex_attack_bonus(self):
+        data = json.loads(calculate_combat_stats("Rogue", str_modifier=0, dex_modifier=3))
+        assert "dex_attack_bonus" in data
+
+    # ── initiative math ────────────────────────────────────────────────────────
+
+    def test_initiative_equals_dex_modifier(self):
+        data = json.loads(calculate_combat_stats("Ranger", str_modifier=1, dex_modifier=3))
+        assert data["initiative"] == "+3"
+
+    def test_initiative_negative_dex(self):
+        data = json.loads(calculate_combat_stats("Barbarian", str_modifier=4, dex_modifier=-1))
+        assert data["initiative"] == "-1"
+
+    def test_initiative_zero_dex(self):
+        data = json.loads(calculate_combat_stats("Fighter", str_modifier=3, dex_modifier=0))
+        assert data["initiative"] == "+0"
+
+    # ── attack bonus math ──────────────────────────────────────────────────────
+
+    def test_str_attack_is_str_mod_plus_proficiency(self):
+        data = json.loads(calculate_combat_stats("Fighter", str_modifier=3, dex_modifier=1))
+        # STR mod 3 + proficiency 2 = +5
+        assert data["str_attack_bonus"] == "+5"
+
+    def test_dex_attack_is_dex_mod_plus_proficiency(self):
+        data = json.loads(calculate_combat_stats("Rogue", str_modifier=0, dex_modifier=4))
+        # DEX mod 4 + proficiency 2 = +6
+        assert data["dex_attack_bonus"] == "+6"
+
+    def test_attack_bonus_with_negative_str(self):
+        data = json.loads(calculate_combat_stats("Wizard", str_modifier=-1, dex_modifier=2))
+        assert data["str_attack_bonus"] == "+1"   # -1 + 2
+
+    # ── non-caster has no spell stats ─────────────────────────────────────────
+
+    def test_barbarian_has_no_spell_save_dc(self):
+        data = json.loads(calculate_combat_stats("Barbarian", str_modifier=4, dex_modifier=1))
+        assert "spell_save_dc" not in data
+
+    def test_fighter_has_no_spellcasting_ability(self):
+        data = json.loads(calculate_combat_stats("Fighter", str_modifier=3, dex_modifier=2))
+        assert "spellcasting_ability" not in data
+
+    def test_rogue_has_no_spell_attack_bonus(self):
+        data = json.loads(calculate_combat_stats("Rogue", str_modifier=0, dex_modifier=3))
+        assert "spell_attack_bonus" not in data
+
+    # ── caster spell stats ─────────────────────────────────────────────────────
+
+    def test_wizard_spellcasting_ability_is_int(self):
+        data = json.loads(calculate_combat_stats("Wizard", str_modifier=0, dex_modifier=1, int_modifier=3))
+        assert data["spellcasting_ability"] == "INT"
+
+    def test_wizard_spell_save_dc(self):
+        # 8 + proficiency (2) + INT mod (3) = 13
+        data = json.loads(calculate_combat_stats("Wizard", str_modifier=0, dex_modifier=1, int_modifier=3))
+        assert data["spell_save_dc"] == 13
+
+    def test_wizard_spell_attack_bonus(self):
+        # proficiency (2) + INT mod (3) = +5
+        data = json.loads(calculate_combat_stats("Wizard", str_modifier=0, dex_modifier=1, int_modifier=3))
+        assert data["spell_attack_bonus"] == "+5"
+
+    def test_cleric_spellcasting_ability_is_wis(self):
+        data = json.loads(calculate_combat_stats("Cleric", str_modifier=1, dex_modifier=0, wis_modifier=3))
+        assert data["spellcasting_ability"] == "WIS"
+
+    def test_cleric_spell_save_dc(self):
+        # 8 + 2 + 3 = 13
+        data = json.loads(calculate_combat_stats("Cleric", str_modifier=1, dex_modifier=0, wis_modifier=3))
+        assert data["spell_save_dc"] == 13
+
+    def test_warlock_spellcasting_ability_is_cha(self):
+        data = json.loads(calculate_combat_stats("Warlock", str_modifier=0, dex_modifier=1, cha_modifier=4))
+        assert data["spellcasting_ability"] == "CHA"
+
+    def test_warlock_spell_save_dc(self):
+        # 8 + 2 + 4 = 14
+        data = json.loads(calculate_combat_stats("Warlock", str_modifier=0, dex_modifier=1, cha_modifier=4))
+        assert data["spell_save_dc"] == 14
+
+    def test_bard_spellcasting_ability_is_cha(self):
+        data = json.loads(calculate_combat_stats("Bard", str_modifier=0, dex_modifier=2, cha_modifier=3))
+        assert data["spellcasting_ability"] == "CHA"
+
+    def test_druid_spellcasting_ability_is_wis(self):
+        data = json.loads(calculate_combat_stats("Druid", str_modifier=0, dex_modifier=1, wis_modifier=4))
+        assert data["spellcasting_ability"] == "WIS"
+
+    def test_ranger_spellcasting_ability_is_wis(self):
+        data = json.loads(calculate_combat_stats("Ranger", str_modifier=1, dex_modifier=3, wis_modifier=2))
+        assert data["spellcasting_ability"] == "WIS"
+
+    def test_paladin_spellcasting_ability_is_cha(self):
+        data = json.loads(calculate_combat_stats("Paladin", str_modifier=3, dex_modifier=1, cha_modifier=2))
+        assert data["spellcasting_ability"] == "CHA"
+
+    def test_sorcerer_spellcasting_ability_is_cha(self):
+        data = json.loads(calculate_combat_stats("Sorcerer", str_modifier=0, dex_modifier=1, cha_modifier=4))
+        assert data["spellcasting_ability"] == "CHA"
+
+    # ── spellcasting stat coverage ─────────────────────────────────────────────
+
+    def test_spellcasting_stat_has_8_classes(self):
+        assert len(SPELLCASTING_STAT) == 8
+
+    def test_spellcasting_stat_covers_all_caster_classes(self):
+        expected = {"Bard", "Cleric", "Druid", "Paladin", "Ranger", "Sorcerer", "Warlock", "Wizard"}
+        assert set(SPELLCASTING_STAT.keys()) == expected
+
+    # ── unknown class error ────────────────────────────────────────────────────
+
+    def test_unknown_class_returns_error(self):
+        data = json.loads(calculate_combat_stats("Gunslinger", str_modifier=2, dex_modifier=3))
+        assert "error" in data
+
+    # ── tool wiring ────────────────────────────────────────────────────────────
+
+    def test_tool_in_tools_list(self):
+        import agents.dnd_agent as m
+        names = [t["name"] for t in m.TOOLS]
+        assert "calculate_combat_stats" in names
+
+    def test_system_prompt_mentions_calculate_combat_stats(self):
+        import agents.dnd_agent as m
+        assert "calculate_combat_stats" in m.SYSTEM_PROMPT
+
+    def test_system_prompt_mentions_initiative(self):
+        import agents.dnd_agent as m
+        assert "Initiative" in m.SYSTEM_PROMPT
+
+    def test_system_prompt_mentions_spell_save_dc(self):
+        import agents.dnd_agent as m
+        assert "Spell Save DC" in m.SYSTEM_PROMPT
