@@ -10,6 +10,7 @@ from pathlib import Path
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
+from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
 from lib.utils import get_client, pick
 from lib.dice import DND_TOOLS, TRAVELLER_TOOLS, run_tool_dnd, run_tool_traveller
 
@@ -271,7 +272,7 @@ def build_prompt(sheets: list[str], fresh_count: int, party_size: int,
     if fresh_count:
         parts.append(f"Generate {fresh_count} additional character sketch(es) to complete a {label} of {party_size}, then synthesize all into the party brief.")
     if theme:
-        parts.append(f"\n\nTheme / constraints from the GM: {theme}")
+        parts.append(f"\n\n{wrap_desc(theme, 'Theme / constraints from the GM')}")
     return "".join(parts)
 
 
@@ -363,7 +364,10 @@ def run(game: str | None = None) -> None:
                 print(f"\nUsing {len(sheets)} from folder, generating {fresh_count} fresh.")
 
     # 5. Theme / constraints
-    theme = input(f"\nAny themes, constraints, or specifics? (e.g. 'gothic horror, vampire hunters' or press Enter for fully random): ").strip()
+    raw_theme = input(f"\nAny themes, constraints, or specifics? (e.g. 'gothic horror, vampire hunters' or press Enter for fully random): ").strip()
+    theme     = sanitize_desc(raw_theme)
+    for warning in screen_desc(theme):
+        print(f"  [safety] {warning}")
 
     # 6. Build prompt
     prompt = build_prompt(sheets, fresh_count, party_size, label, theme)
@@ -392,6 +396,10 @@ def run(game: str | None = None) -> None:
     lines = result.strip().splitlines()
     heading_idx = next((i for i, l in enumerate(lines) if l.startswith("##")), 0)
     result = "\n".join(lines[heading_idx:])
+
+    warning = screen_output(result)
+    if warning:
+        print(f"  [safety] {warning}")
 
     print("\n" + result)
 

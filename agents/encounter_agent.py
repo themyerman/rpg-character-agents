@@ -31,6 +31,7 @@ from lib.ships import (
     SCUM_SHIP_TOOL_SCHEMA,
     DND_SHIP_TOOL_SCHEMA,
 )
+from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
 from lib.utils import get_client, run_agent_loop, slug, pick, strip_preamble
 
 
@@ -718,7 +719,7 @@ def run_encounter(game: str, desc: str = "", party_brief: str | None = None) -> 
 
     parts = [f"Generate a {game_label} encounter."]
     if desc:
-        parts.append(f"Constraints or themes: {desc}")
+        parts.append(wrap_desc(desc, "Constraints or themes"))
     if party_brief:
         parts.append(
             f"\nThe following party brief describes the crew this encounter is for. "
@@ -753,11 +754,18 @@ def run(game: str | None = None) -> None:
     if party_brief:
         print("[Party brief loaded — encounter will be tailored to this crew]")
 
-    desc = input(
+    raw_desc = input(
         "\nAny themes, constraints, or specifics? (or press Enter for fully random):\n> "
     ).strip()
+    desc = sanitize_desc(raw_desc)
+    for warning in screen_desc(desc):
+        print(f"  [safety] {warning}")
 
     result = strip_preamble(run_encounter(game, desc, party_brief))
+
+    warning = screen_output(result)
+    if warning:
+        print(f"  [safety] {warning}")
 
     print("\n" + result)
 

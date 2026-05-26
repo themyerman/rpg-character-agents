@@ -17,6 +17,7 @@ from agents import dnd_agent
 from agents import firefly_agent
 from agents import scum_villainy_agent
 from agents import traveller_agent
+from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
 from lib.utils import get_client, pick, run_agent_loop, strip_preamble
 
 
@@ -75,8 +76,8 @@ def generate_npc(game: str, relationship: str, context_hint: str,
     parts = [
         f"Generate a {config['label']} NPC.",
         f"This NPC is part of a group whose relationship is: {rel_label}.",
-        f"Shared context: {context_hint}" if context_hint else "",
-        f"Overall group direction: {modifier}" if modifier else "",
+        wrap_desc(context_hint, "Shared context") if context_hint else "",
+        wrap_desc(modifier, "Overall group direction") if modifier else "",
         f"This is NPC #{index} of the cluster — make them distinct from the others.",
         "Keep names culturally diverse and distinct from each other.",
     ]
@@ -224,15 +225,21 @@ def run(game: str | None = None, relationship: str | None = None,
             count = 3
 
     if not context_hint:
-        context_hint = input(
+        raw_context = input(
             "Shared context for the cluster? "
             "(e.g. 'post-war veterans on a mining station', or press Enter to skip): "
         ).strip()
+        context_hint = sanitize_desc(raw_context)
+        for warning in screen_desc(context_hint):
+            print(f"  [safety] {warning}")
 
-    modifier = input(
+    raw_modifier = input(
         "Any overall direction for the group? "
         "(e.g. 'all hiding something', 'one of them is lying', or press Enter to skip): "
     ).strip()
+    modifier = sanitize_desc(raw_modifier)
+    for warning in screen_desc(modifier):
+        print(f"  [safety] {warning}")
 
     rel_label = dict(RELATIONSHIP_TYPES).get(relationship, relationship)
     label     = GAME_AGENTS[game]["label"]
@@ -243,11 +250,17 @@ def run(game: str | None = None, relationship: str | None = None,
     for i in range(1, count + 1):
         print(f"  [{i}/{count}] Generating NPC...")
         npc = generate_npc(game, relationship, context_hint, modifier, i)
+        out_warning = screen_output(npc)
+        if out_warning:
+            print(f"  [safety] {out_warning}")
         npcs.append(npc)
         print(f"    ✓ {_extract_name(npc)}")
 
     print("\nSynthesizing connection web and GM hooks...")
     synthesis = synthesize_cluster(npcs, game, relationship)
+    out_warning = screen_output(synthesis)
+    if out_warning:
+        print(f"  [safety] {out_warning}")
 
     filepath = save_cluster(synthesis, npcs, game, relationship)
     print(f"\nSaved → {filepath.relative_to(Path(__file__).parent)}\n")

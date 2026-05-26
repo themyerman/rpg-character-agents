@@ -23,6 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from lib.names import roll_name_suggestion, NAME_TOOL_SCHEMA
+from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
 from lib.utils import get_client, run_agent_loop, slug, pick
 
 
@@ -400,7 +401,10 @@ def run(game: str | None = None) -> None:
         game = pick("Which game?", GAMES)
 
     location_brief = _load_location_brief(game)
-    desc = input("\nDescribe the rumor you want (or press Enter for fully random):\n> ").strip()
+    raw_desc = input("\nDescribe the rumor you want (or press Enter for fully random):\n> ").strip()
+    desc     = sanitize_desc(raw_desc)
+    for warning in screen_desc(desc):
+        print(f"  [safety] {warning}")
 
     system_prompt = GAME_SYSTEM_PROMPTS[game]
     tools         = GAME_TOOLS[game]
@@ -410,12 +414,16 @@ def run(game: str | None = None) -> None:
     if location_brief:
         prompt += f"\n\nThis rumor is set in or connected to the following location:\n\n{location_brief}"
     if desc:
-        prompt += f"\n\nGM's concept or constraints: {desc}"
+        prompt += f"\n\n{wrap_desc(desc, 'GM concept or constraints')}"
 
     print()
     result = run_agent_loop(
         prompt, system_prompt, tools, run_tool, detect_phase, PHASE_MESSAGES
     )
+
+    warning = screen_output(result)
+    if warning:
+        print(f"  [safety] {warning}")
 
     path = save_rumor(result, game)
     print(f"\nSaved to {path}")
