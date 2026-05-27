@@ -6,6 +6,8 @@
 | **Appears to be** | A respected glassblower of the Cinderhall Guild, mid-fifties, prosperous but visibly unslept |
 | **Actually is** | *(revealed only in Truth 2, 3, or 4 below)* |
 | **Alignment** | Lawful Good |
+| **Speed** | 30 ft |
+| **Languages** | Common, Dwarvish (trade; learned from guild contacts) |
 
 **Appearance:** A barrel-chested man in a fine but rumpled green coat, the cuffs scorched at the edges from a lifetime near furnaces. He carries a small lacquered case under one arm and keeps glancing at the tavern door; his right hand is bandaged, and there's fresh ink — not soot — staining the fingers of his left.
 

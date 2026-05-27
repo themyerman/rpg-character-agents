@@ -4,10 +4,17 @@
 |---|---|
 | **Race** | Wood Elf |
 | **Class** | Druid (Level 1) |
+| **Subclass** | Circle of the Land — Coast *(unlocks at level 2)* |
 | **Background** | Sailor |
 | **Alignment** | Neutral Good |
 | **HP** | 10 |
+| **AC** | 16 (Hide + shield) |
+| **Speed** | 35 ft |
+| **Initiative** | +2 |
 | **Proficiency Bonus** | +2 |
+| **Attack Bonus** | STR +1 / DEX +4 |
+| **Spell Save DC** | 14 |
+| **Spell Attack Bonus** | +6 |
 
 ### Ability Scores
 | STR | DEX | CON | INT | WIS | CHA |
@@ -26,7 +33,9 @@
 ### Proficiencies & Skills
 - **Saving Throws:** Intelligence, Wisdom
 - **Skills:** Perception, Survival, Athletics, Nature
-- **Tools & Other:** Navigator's tools, Water vehicles, Herbalism kit, Druidic, Elvish, Common
+- **Passive Perception:** 19 (10 + WIS 4 + proficiency 5)
+- **Languages:** Common, Elvish, Druidic
+- **Tools & Other:** Navigator's tools, Vehicles (water), Herbalism kit
 
 ### Personality
 - **Trait:** Counts knots when she's nervous — finger to thumb, finger to thumb — and has been known to braid kelp into her hair without realizing she's doing it.
@@ -49,14 +58,12 @@
 - 10 gp in mixed coastal coin
 - A brass whistle that only summons gulls now. She found it on the spar with her after the wreck; she doesn't know what it was before, and suspects it belonged to someone who didn't survive.
 
-### Spells
-*Level 1 Druid — 2 cantrips known, 2 first-level slots, prepares 5 spells (WIS 18 + Level 1)*
-
-**Cantrips**
+### Cantrips
 - **Guidance** — She offers it like an extra hand on the rigging. The sea taught her to trust feedback over instinct; this is the same thing, translated inland.
 - **Shillelagh** — Wood that remembers being alive. She uses it on the scimitar when she has to, and it feels more honest than the blade.
 
-**1st Level** *(Prepares: Entangle, Healing Word, Speak with Animals, Fog Cloud — 2 slots per rest)*
+### Spells Known
+*Level 1 Druid — 2 first-level slots; prepares 5 spells (WIS 18 + Level 1)*
 - **Entangle** — The ocean had no roots. She finds this spell disconcerting and useful in exactly equal measure.
 - **Healing Word** — Urgent and economical, the way you'd shout a warning across a pitching deck. No ceremony; just the word and a hand on the shoulder.
 - **Speak with Animals** — She trusts birds more than harbor masters and deep fish more than either. This spell confirms what she already suspected.

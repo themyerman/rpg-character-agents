@@ -4,10 +4,17 @@
 |---|---|
 | **Race** | Dragonborn (copper ancestry — acid) |
 | **Class** | Paladin (Level 1) |
+| **Subclass** | Oath of the Ancients *(unlocks at level 3)* |
 | **Background** | Hermit |
 | **Alignment** | Lawful Neutral |
 | **HP** | 14 |
+| **AC** | 18 (Chain Mail + shield) |
+| **Speed** | 30 ft |
+| **Initiative** | −1 |
 | **Proficiency Bonus** | +2 |
+| **Attack Bonus** | STR +3 |
+| **Spell Save DC** | 12 |
+| **Spell Attack Bonus** | +4 |
 
 ### Ability Scores
 | STR | DEX | CON | INT | WIS | CHA |
@@ -25,8 +32,10 @@
 
 ### Proficiencies & Skills
 - **Saving Throws:** Wisdom, Charisma
-- **Skills:** Medicine, Religion (background); Insight, Intimidation (class)
-- **Tools & Other:** Herbalism kit; one extra language learned during isolation (Draconic + Common + one more — Sylvan, picked up from a copper-scaled hermit's marginalia)
+- **Skills:** Medicine, Religion, Insight, Intimidation
+- **Passive Perception:** 11 (10 + WIS 1)
+- **Languages:** Common, Draconic, Sylvan (acquired during hermitage from a copper-scaled hermit's marginalia)
+- **Tools & Other:** Herbalism kit
 
 ### Personality
 - **Trait:** She measures her words like a miser counting coins, and when she finally speaks people lean in without realizing they have.
@@ -47,9 +56,8 @@
 - A stoppered jar of dirt from the threshold of her hermitage
 - A folded child's mitten she has carried for eleven years. The left hand, worn soft at the fingers. She found it on the road below the shrine and cannot say with certainty which of them was meant to find it.
 
-### Spells
+### Spells Known
 *Level 1 Paladin — no cantrips; 2 first-level slots; prepares 2 spells (CHA +2 + half level 0)*
-
 - **Bless** — She places her hand on a shoulder and says nothing. This is what she is doing. The god's weight, loaned. She does not announce it.
 - **Thunderous Smite** — The oath made audible. In eleven years of solitude she never used it. She has used it twice since coming down the mountain, and both times she was more afraid of herself afterward than whatever she hit.
 

@@ -4,10 +4,15 @@
 |---|---|
 | **Race** | Lightfoot Halfling |
 | **Class** | Rogue (Level 1) |
+| **Subclass** | Thief *(unlocks at level 3)* |
 | **Background** | Urchin |
 | **Alignment** | Chaotic Neutral |
 | **HP** | 8 |
+| **AC** | 14 (Leather + DEX) |
+| **Speed** | 25 ft |
+| **Initiative** | +3 |
 | **Proficiency Bonus** | +2 |
+| **Attack Bonus** | DEX +5 / STR +2 |
 
 ### Ability Scores
 | STR | DEX | CON | INT | WIS | CHA |
@@ -26,7 +31,9 @@
 ### Proficiencies & Skills
 - **Saving Throws:** Dexterity, Intelligence
 - **Skills:** Stealth, Sleight of Hand, Deception, Insight, Investigation, Perception
-- **Tools & Other:** Thieves' tools, Disguise kit, Common, Halfling
+- **Passive Perception:** 16 (10 + WIS 1 + proficiency 5)
+- **Languages:** Common, Halfling
+- **Tools & Other:** Thieves' tools, Disguise kit
 
 ### Personality
 - **Trait:** Pip cannot stop talking. Not nervous chatter — *commentary*. She narrates fights, insults guards mid-arrest, and roasts the party's tactical decisions while picking the lock.
@@ -49,5 +56,3 @@
 
 ### Backstory
 Pip grew up running messages and lifting purses for a Tallow Quarter crew until Vance Coppersmile took her brother as payment for a job she'd botched — she was eleven, he was eight, and she hasn't seen him since. For three years she's been working her way up by working her way *out*, scraping together skills and contacts and reputation in towns far enough from home that her name doesn't get her killed on sight. Now she's circling back, broke and loud and dangerous in ways she wasn't before, hunting a rumor that her brother is still alive in a Coppersmile warehouse two cities away — and she's looking for a crew stupid enough to help her burn the place down.
-
-*Subclass direction: She's a natural **Thief** — quick fingers, fast escapes, Fast Hands letting her disarm traps and pick pockets in a single breath. Though there's an **Arcane Trickster** in her future if she ever discovers the cantrip that lets her steal from across a room.*

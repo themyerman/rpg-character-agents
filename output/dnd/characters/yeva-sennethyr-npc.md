@@ -4,6 +4,8 @@
 | | |
 |---|---|
 | **Alignment** | True Neutral |
+| **Speed** | 30 ft |
+| **Languages** | Common (rusty), Druidic (self-taught), Sylvan (partial) |
 | **DEX** | 13 (+1) |
 | **WIS** | 14 (+2) |
 | **CHA** | 11 (+0) |

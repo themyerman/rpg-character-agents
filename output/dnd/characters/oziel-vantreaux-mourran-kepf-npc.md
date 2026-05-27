@@ -4,6 +4,8 @@
 | | |
 |---|---|
 | **Alignment** | Chaotic Good |
+| **Speed** | 30 ft |
+| **Languages** | Common, Elvish, one additional (he claims five, three are serviceable) |
 | **CHA** | 16 (+3) |
 | **DEX** | 16 (+3) |
 | **WIS** | 11 (+0) |

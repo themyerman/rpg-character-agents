@@ -4,6 +4,8 @@
 | | |
 |---|---|
 | **Alignment** | Chaotic Neutral |
+| **Speed** | 30 ft |
+| **Languages** | Common, Orc |
 | **STR** | 14 (+2) |
 | **CON** | 12 (+1) |
 | **WIS** | 11 (+0) |
