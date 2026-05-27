@@ -1,0 +1,29 @@
+## **Isabela Bone-And-Brass**
+*Agency liaison, traveling as a railroad surveyor — she carries a leather portfolio and a Colt nobody ever sees her draw.*
+
+| | |
+|---|---|
+| **Appears to be** | A U.S. government contractor with discretionary funds, hiring a posse to "retrieve survey equipment and personnel" from an abandoned camp in the Wasatch foothills. |
+| **Actually is** | *(revealed only in Truth 2, 3, or 4 below)* |
+
+**Appearance:** She keeps her gloves on indoors — fine kid leather, buttoned at the wrist, even when she eats. Her left ear is missing the lobe, a clean slice healed white, and she touches it when she's thinking. A brass surveyor's compass sits open on the table beside her coffee. The needle doesn't point north. It points at whichever member of the posse last spoke.
+
+**The Pitch:** *"I'll be direct, because your time is worth what I'm paying for it. Three years ago a government survey team went into a box canyon east of Promontory to map mineral deposits. They stopped reporting in the spring of '74. Two crews have been sent since. The first didn't come back. The second came back, but — well. Two of them are in a sanitarium in Denver and the third walked into the Great Salt Lake one morning in his nightshirt. I need people who aren't connected to Washington, who don't have families that'll write congressmen, and who can ride into that canyon, find whatever's left of those men or their notes, and bring it out. The pay reflects the risk. I am not lying to you about the risk."*
+
+**The Job:** Ride to Skull Wash Canyon, four days east of Ogden. Locate the original 1874 survey camp. Recover any field journals, instrument readings, or personal effects of the seven-man team led by one Lieutenant Hollis Yardley. If any of the men are still alive — "in whatever sense" — bring them out. Two weeks, start to finish. She'll meet the posse back in Ogden at the Deseret Hotel.
+
+**The Payment:** $300 each on completion. $75 each up front, in fresh federal notes from a sealed envelope she sets on the table without flourish. A letter of safe passage signed by someone whose name is blacked out but whose seal isn't — good for getting out of one piece of legal trouble, no questions, no follow-up. She mentions, almost as an afterthought, that she can also "make a name disappear from a wanted list," and looks at no one in particular when she says it.
+
+**The Truth (GM rolls 1d4 in secret — only one is real):**
+
+1. **Straightforward** — The survey team found a silver vein and were murdered by a claim-jumping gang that's been squatting in the canyon ever since, living off the supplies. The gang has grown to nine men and one woman, well-armed, dug in, and they shoot anything that rides in. The journals are in a strongbox under a bunk. The Agency genuinely doesn't know what happened — they just need to know, and they need the paperwork back before someone else finds the silver.
+
+2. **One Layer Down** — Lieutenant Yardley deserted, taking the team and the survey funds with him to start a small community in the canyon. They're alive, farming, peaceable, and have no interest in being "rescued." The two men in the Denver sanitarium are there because they refused to lie about what they found and the Agency needed them quiet. Isabela believes she's recovering kidnapped soldiers. She's wrong. The job becomes: do you drag families back to a government that will erase them, or lie to the woman who paid you?
+
+3. **The Real Story** — The canyon contains a Reckoner manifestation — a *place* that eats memory and identity, slowly, the longer you stay. The Agency has been studying it for three years by sending in crews and examining what comes back. Isabela knows. The "retrieval" framing is for the posse's morale; she needs fresh observational data and physical samples, and lost men are an acceptable cost. The compass that points at speakers is her instrument for measuring how much of a person is still *there* when they return. She will use it on the posse over coffee, and they won't notice.
+
+4. **The Real West** — There was no survey team. Skull Wash Canyon is a Shoshone burial ground that a small band has been quietly tending for sixty years, hidden from the reservation system, hidden from the railroads, hidden from everyone. The Agency learned of it from an informant and wants it cleared — the land has properties Washington wants to study and can't study while people live on it. The "missing soldiers" cover story has been refined across three previous posses, each sent in believing they were rescuing white men and each one used to drive families further into the rocks or kill the ones who wouldn't leave. Isabela knows exactly what she is doing. She is very good at her job. The people in that canyon have done nothing but bury their dead and tend a spring, and the land has been watching every crew that comes through the gap.
+
+**Why They'd Take It:** $375 each is a year's honest wages, half of it before they've saddled up, and the letter of safe passage is the kind of thing a posse member with a past would sell a finger for. Isabela also lets slip — carefully, after the deal is struck — that the Agency keeps files on "persons of unusual capability," and she can pull a file. Any file. Even one with a posse member's name on it. Even one with a name they used to use.
+
+**Connection:** Mae Ferguson, who runs the telegraph office in Ogden, took a wire for Isabela last week and another one three years back. Asked about her, Mae will say only this: *"She pays in cash, she tips the boy, and she's the politest woman I ever met. The first time she came through, she had both her ears."* Mae won't say more, won't be drawn out, and locks the office early the night the posse rides out.
