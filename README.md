@@ -320,6 +320,7 @@ Generates a complete ship profile: technical specifications, physical descriptio
 - **D&D** — hull points, damage threshold, speed in knots, crew min/max, cargo, weapon mounts; four size tiers (sloop to man-o-war)
 - **Firefly** — Cortex dice (d4–d12) for Engines, Agility, Strength, Toughness; crew and cargo in narrative terms
 - **Scum and Villainy** — FitD speed and hull tiers, cargo slots, optional special systems (cloaking plating, hardened vault, Hegemony transponder with unclear provenance, Ur-band receiver, etc.)
+- **Alien RPG** — Hull rating, armor, maneuverability, crew and passenger capacity, cargo class, FTL status; W-Y commercial and USCM military vessels
 
 **Output sections:** Registry table → Description → History (with named former captains/owners) → Quirks → Crew Roles → Current Situation → GM Notes
 
@@ -470,6 +471,7 @@ Communication barriers range from `low` (electromagnetic — ship sensors can pa
 - **Firefly** — Personal, bittersweet: named for battles, lost ideals, second chances (*Serenity*, *Perdition's Flame*, *Borrowed Time*)
 - **Scum and Villainy** — Criminal-poetic: dark elegance, sardonic irony, implied menace (*Pale Dreamer*, *Nothing Personal*, *Gentle Reminder*)
 - **D&D** — Nautical/heroic: sea mythology, legendary creatures, weather and ocean imagery (*Kraken's Bane*, *Leviathan's Wake*, *Tidal Fury*)
+- **Alien RPG** — Corporate/utilitarian: Weyland-Yutani commercial registrations and USCM military designations (*USCSS Nostromo*, *Sulaco*, *Covenant*). No Deadlands entries — the Weird West doesn't have ships.
 
 ---
 
@@ -639,6 +641,7 @@ rpg-character-agents/
     │   ├── parties/
     │   ├── clusters/
     │   ├── encounters/
+    │   ├── ships/
     │   ├── locations/
     │   ├── rumors/
     │   └── events/

@@ -19,14 +19,20 @@ from agents.encounter_agent import (
     TRAVELLER_ENCOUNTER_SEED_SCHEMA,
     FIREFLY_ENCOUNTER_SEED_SCHEMA,
     SCUM_ENCOUNTER_SEED_SCHEMA,
+    ALIEN_ENCOUNTER_SEED_SCHEMA,
+    DEADLANDS_ENCOUNTER_SEED_SCHEMA,
     DND_ENCOUNTER_TOOLS,
     TRAVELLER_ENCOUNTER_TOOLS,
     FIREFLY_ENCOUNTER_TOOLS,
     SCUM_ENCOUNTER_TOOLS,
+    ALIEN_ENCOUNTER_TOOLS,
+    DEADLANDS_ENCOUNTER_TOOLS,
     roll_dnd_encounter_seed,
     roll_traveller_encounter_seed,
     roll_firefly_encounter_seed,
     roll_scum_encounter_seed,
+    roll_alien_encounter_seed,
+    roll_deadlands_encounter_seed,
     SEED_ROLLERS,
     list_party_files,
     save_encounter,
@@ -34,12 +40,14 @@ from agents.encounter_agent import (
     make_run_tool,
 )
 
-ALL_GAMES = ["dnd", "traveller", "firefly", "scum"]
+ALL_GAMES = ["dnd", "traveller", "firefly", "scum", "alien", "deadlands"]
 ALL_SEED_SCHEMAS = [
     DND_ENCOUNTER_SEED_SCHEMA,
     TRAVELLER_ENCOUNTER_SEED_SCHEMA,
     FIREFLY_ENCOUNTER_SEED_SCHEMA,
     SCUM_ENCOUNTER_SEED_SCHEMA,
+    ALIEN_ENCOUNTER_SEED_SCHEMA,
+    DEADLANDS_ENCOUNTER_SEED_SCHEMA,
 ]
 
 
@@ -47,6 +55,9 @@ ALL_SEED_SCHEMAS = [
 
 class TestEncounterPools:
     REQUIRED_KEYS = {"contexts", "situations", "complications", "motivations"}
+
+    def test_all_six_games_present(self):
+        assert set(ENCOUNTER_POOLS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
     def test_all_games_present(self):
         for game in ALL_GAMES:
@@ -129,6 +140,9 @@ class TestEncounterPools:
 # ── GAME_SUBDIRS ──────────────────────────────────────────────────────────────
 
 class TestGameSubdirs:
+    def test_all_six_games_have_subdir(self):
+        assert set(GAME_SUBDIRS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
+
     def test_all_games_have_subdir(self):
         for game in ALL_GAMES:
             assert game in GAME_SUBDIRS
@@ -137,7 +151,7 @@ class TestGameSubdirs:
         assert GAME_SUBDIRS["scum"] == "scum_villainy"
 
     def test_other_games_map_to_themselves(self):
-        for game in ("dnd", "traveller", "firefly"):
+        for game in ("dnd", "traveller", "firefly", "alien", "deadlands"):
             assert GAME_SUBDIRS[game] == game
 
 
@@ -182,6 +196,8 @@ class TestSeedRollers:
             "traveller": roll_traveller_encounter_seed,
             "firefly":   roll_firefly_encounter_seed,
             "scum":      roll_scum_encounter_seed,
+            "alien":     roll_alien_encounter_seed,
+            "deadlands": roll_deadlands_encounter_seed,
         }
         for game, fn in fn_map.items():
             data = json.loads(fn())
@@ -198,6 +214,8 @@ class TestSeedSchemas:
             (TRAVELLER_ENCOUNTER_SEED_SCHEMA, "roll_traveller_encounter_seed"),
             (FIREFLY_ENCOUNTER_SEED_SCHEMA,   "roll_firefly_encounter_seed"),
             (SCUM_ENCOUNTER_SEED_SCHEMA,      "roll_scum_encounter_seed"),
+            (ALIEN_ENCOUNTER_SEED_SCHEMA,     "roll_alien_encounter_seed"),
+            (DEADLANDS_ENCOUNTER_SEED_SCHEMA, "roll_deadlands_encounter_seed"),
         ]
         for schema, name in expected:
             assert schema["name"] == name
@@ -224,22 +242,23 @@ class TestSeedSchemas:
         assert "Traveller" in TRAVELLER_ENCOUNTER_SEED_SCHEMA["description"]
         assert "Firefly" in FIREFLY_ENCOUNTER_SEED_SCHEMA["description"]
         assert "Scum" in SCUM_ENCOUNTER_SEED_SCHEMA["description"]
+        assert "Alien" in ALIEN_ENCOUNTER_SEED_SCHEMA["description"]
+        assert "Deadlands" in DEADLANDS_ENCOUNTER_SEED_SCHEMA["description"]
 
     def test_descriptions_discourage_defaults(self):
         """Each description should remind the model not to default to clichés."""
-        cliche_warnings = [
-            DND_ENCOUNTER_SEED_SCHEMA["description"],
-            TRAVELLER_ENCOUNTER_SEED_SCHEMA["description"],
-            FIREFLY_ENCOUNTER_SEED_SCHEMA["description"],
-            SCUM_ENCOUNTER_SEED_SCHEMA["description"],
-        ]
-        for desc in cliche_warnings:
-            assert "prevent" in desc.lower() or "first" in desc.lower()
+        for schema in ALL_SEED_SCHEMAS:
+            desc = schema["description"]
+            assert "prevent" in desc.lower() or "first" in desc.lower(), \
+                f"Schema '{schema['name']}' description lacks a cliché-prevention note"
 
 
 # ── GAME_TOOLS lists ──────────────────────────────────────────────────────────
 
 class TestGameTools:
+    def test_all_six_games_in_game_tools(self):
+        assert set(GAME_TOOLS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
+
     def test_all_games_in_game_tools(self):
         for game in ALL_GAMES:
             assert game in GAME_TOOLS
@@ -250,6 +269,8 @@ class TestGameTools:
             "traveller": "roll_traveller_encounter_seed",
             "firefly":   "roll_firefly_encounter_seed",
             "scum":      "roll_scum_encounter_seed",
+            "alien":     "roll_alien_encounter_seed",
+            "deadlands": "roll_deadlands_encounter_seed",
         }
         for game, expected_name in seed_names.items():
             tool_names = [t["name"] for t in GAME_TOOLS[game]]
@@ -262,11 +283,16 @@ class TestGameTools:
             assert "roll_name_suggestion" in tool_names, \
                 f"'{game}' tools missing roll_name_suggestion"
 
-    def test_each_game_tools_has_ship_schema(self):
-        for game in ALL_GAMES:
+    def test_space_games_have_ship_schema(self):
+        # Traveller, Firefly, Scum, and Alien all use ships; DnD and Deadlands do not
+        for game in ("traveller", "firefly", "scum", "alien"):
             tool_names = [t["name"] for t in GAME_TOOLS[game]]
             assert "roll_ship_name" in tool_names, \
                 f"'{game}' tools missing roll_ship_name"
+
+    def test_deadlands_has_no_ship_schema(self):
+        tool_names = [t["name"] for t in GAME_TOOLS["deadlands"]]
+        assert "roll_ship_name" not in tool_names
 
     def test_no_duplicate_tool_names_per_game(self):
         for game in ALL_GAMES:
@@ -282,6 +308,7 @@ class TestDetectPhase:
         for name in (
             "roll_dnd_encounter_seed", "roll_traveller_encounter_seed",
             "roll_firefly_encounter_seed", "roll_scum_encounter_seed",
+            "roll_alien_encounter_seed", "roll_deadlands_encounter_seed",
         ):
             assert detect_phase(name, set()) == "seed"
 
@@ -311,7 +338,7 @@ class TestMakeRunTool:
         assert "suggested_name" in result
 
     def test_ship_name_dispatches_with_correct_game(self):
-        for game in ALL_GAMES:
+        for game in ("dnd", "traveller", "firefly", "scum", "alien"):
             fn = make_run_tool(game)
             result = json.loads(fn("roll_ship_name", {}))
             assert "name" in result
