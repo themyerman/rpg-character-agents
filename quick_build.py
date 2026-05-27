@@ -15,6 +15,7 @@ Generates without prompting:
 All files land in output/ exactly where the interactive agents would put them.
 """
 
+import random
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -102,6 +103,27 @@ def _step(label: str) -> None:
     print(f"\n── {label} {'─' * max(1, 46 - len(label))}")
 
 
+def _character_prompts(game: str, count: int = 3) -> list[str]:
+    """Return `count` character generation prompts with distinct role/archetype seeds.
+
+    For games with archetype/role tables (alien, deadlands) we pick distinct
+    entries so back-to-back generations don't converge on the same character.
+    Other games get plain "fully random" prompts — the model handles variety
+    through its own tool-use seeding (stat rolls, background tables, etc.).
+    """
+    if game == "deadlands":
+        archetypes = list(deadlands_agent.ARCHETYPES.keys())
+        picks = random.sample(archetypes, min(count, len(archetypes)))
+        return [f"Generate a fully random character. Archetype: {a}." for a in picks]
+
+    if game == "alien":
+        roles = list(alien_agent.ROLES.keys())
+        picks = random.sample(roles, min(count, len(roles)))
+        return [f"Generate a fully random character. Role: {r}." for r in picks]
+
+    return ["Generate a fully random character."] * count
+
+
 def _generate_location(game: str) -> Path:
     result = run_agent_loop(
         "Generate a location for the GM.",
@@ -141,12 +163,11 @@ def build_session(game: str) -> None:
     print(f"  3 {char_label}s · 1 NPC · 1 location · 1 hook · 2 rumors")
     print(f"{'═' * 50}")
 
-    # 3 characters (full or cinematic depending on game)
-    for i in range(1, 4):
+    # 3 characters — varied prompts so the model can't converge on the same archetype
+    char_prompts = _character_prompts(game)
+    for i, prompt in enumerate(char_prompts, 1):
         _step(f"{char_label.capitalize()} {i} of 3")
-        result = strip_preamble(agent.run_agent(
-            "Generate a fully random character.", char_sysprompt
-        ))
+        result = strip_preamble(agent.run_agent(prompt, char_sysprompt))
         path = agent.save_result(result, char_mode)
         paths.append(path)
         print(f"  → {path.name}")
