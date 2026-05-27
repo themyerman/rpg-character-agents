@@ -37,6 +37,8 @@ GAME_SUBDIRS: dict[str, str] = {
     "traveller": "traveller",
     "firefly":   "firefly",
     "scum":      "scum_villainy",
+    "alien":     "alien",
+    "deadlands": "deadlands",
 }
 
 
@@ -155,6 +157,80 @@ EVENT_POOLS: dict[str, dict[str, list[str]]] = {
         ],
     },
 
+    "alien": {
+        "contexts": [
+            "During jump transit — seven weeks of close quarters with whatever the crew is carrying",
+            "At a company installation during what was supposed to be a routine resupply",
+            "On the night cycle when the shift rotation means fewer people are paying attention",
+            "During a survey of a flagged world when comms back to the ship are on scheduled intervals",
+            "When a crew member is alone in a section they're not supposed to be in",
+            "At a company medical examination the crew didn't refuse because refusal has consequences",
+            "During a maintenance EVA when the crew is outside and separated",
+            "In a company diner on a colonial installation, off-hours, shift supervisors elsewhere",
+            "When the ship is docked and three crew members haven't come back from town",
+            "During a cargo transfer that was supposed to take two hours and is now in hour six",
+            "When the synthetic is the only one awake and something requires a decision before the crew can be roused",
+            "On a survey world, the second day of a three-day stay, when leaving would cost the mission",
+            "During a debrief with a company rep who is taking more notes than the questions warrant",
+            "When a crew member has just realized something the others haven't and hasn't decided whether to say it",
+            "On final approach to a company installation that isn't responding on standard channels",
+        ],
+        "events": [
+            "A synthetic does something that requires explaining and offers an explanation that requires believing",
+            "A Special Order is found in the ship's operational log by someone who wasn't meant to find it",
+            "A company communication arrives addressed to the ship's AI, not to any crew member",
+            "Biological readings from the survey section are inconsistent with anything the database expects",
+            "A crew member from the last rotation left something behind in a place it couldn't have been left by accident",
+            "The motion sensors have returned two consecutive readings logged as sensor error",
+            "A company representative calls ahead to say they're sending someone, without saying who",
+            "An encrypted package in the cargo hold has been accessed — the log says the synthetic did it",
+            "A crew member comes out of hypersleep early, alone, and doesn't want to discuss it",
+            "A distress beacon activates on a frequency the company stopped officially using eight years ago",
+            "One crew member has been documenting something and realizes the documentation has been deleted",
+            "The ship's AI generates a course correction leading six hours off the logged route",
+            "A quarantine seal placed on a section has been removed from the inside",
+            "Another vessel responds on a private channel with a message addressed to the crew by name",
+            "Atmospheric readings in a sealed section changed in a way consistent with biological activity",
+        ],
+    },
+
+    "deadlands": {
+        "contexts": [
+            "On the trail between settlements when the posse is a full day from help in either direction",
+            "In a saloon during a high-stakes game when walking out would cost more than staying",
+            "At a company mine or railroad site during a labor dispute about to stop being verbal",
+            "During a treaty negotiation where both sides brought more than they said they would",
+            "On night watch in a camp when the Weird West proves it doesn't respect shift schedules",
+            "At a church service in a town waiting for an excuse to do something it shouldn't",
+            "Mid-pursuit, when the posse is committed and the quarry is doing something unexpected",
+            "At a Confederate or Union checkpoint where the wrong papers would be a problem",
+            "During a job they've accepted payment for, when the job is not what they accepted payment for",
+            "At a federal proceeding where a posse member's past is about to become evidence",
+            "At a Ghost Rock processing facility during shift change when supervisors are distracted",
+            "On a river steamboat three days from the nearest port with no way off",
+            "During a healing going wrong in a supernatural direction",
+            "When the posse has just established they're being watched by something that doesn't move like a person",
+            "In a standoff that has been holding for two hours and is about to stop holding",
+        ],
+        "events": [
+            "A Harrowed gunfighter rides in specifically looking for one member of the posse, by name",
+            "Something that should be dead demonstrates that it isn't",
+            "A Native spirit-worker addresses the posse with information that would require surveillance to know",
+            "A telegram arrives for a posse member from a sender who died before the date on the message",
+            "A Weird Scientist's device does exactly what it was designed to do, which is the problem",
+            "A cavalry unit arrives flying the wrong flag for the territory and asking questions",
+            "A Blessed healer refuses to treat a specific wound and won't explain except that medicine isn't what's needed",
+            "A Huckster collapses mid-hex — something reached back through the working",
+            "Two Agency operatives show up to the same location for reasons neither will share with the other",
+            "A Ghost Rock seam opens in the middle of where the posse needs to go",
+            "A Pinkerton badge is produced by someone who has been watching the posse for three days",
+            "The dead of a local battle begin their nightly walk — apparently they've been doing this for years",
+            "A railroad survey team is working land that something is committed to keeping unsurveyed",
+            "A child delivers a message from someone the posse put down in a previous session",
+            "Livestock are moving against their nature — away from shelter, toward something specific",
+        ],
+    },
+
     "scum": {
         "contexts": [
             "During the approach to a score, when the plan is in motion and changing it is costly",
@@ -207,6 +283,8 @@ def roll_dnd_event_seed()       -> str: return _roll_seed("dnd")
 def roll_traveller_event_seed() -> str: return _roll_seed("traveller")
 def roll_firefly_event_seed()   -> str: return _roll_seed("firefly")
 def roll_scum_event_seed()      -> str: return _roll_seed("scum")
+def roll_alien_event_seed()     -> str: return _roll_seed("alien")
+def roll_deadlands_event_seed() -> str: return _roll_seed("deadlands")
 
 
 # ── Tool schemas ──────────────────────────────────────────────────────────────
@@ -236,6 +314,16 @@ FIREFLY_EVENT_SEED_SCHEMA: dict = {
 }
 SCUM_EVENT_SEED_SCHEMA: dict = {
     "name": "roll_scum_event_seed",
+    "description": _SEED_DESC,
+    "input_schema": _SEED_INPUT,
+}
+ALIEN_EVENT_SEED_SCHEMA: dict = {
+    "name": "roll_alien_event_seed",
+    "description": _SEED_DESC,
+    "input_schema": _SEED_INPUT,
+}
+DEADLANDS_EVENT_SEED_SCHEMA: dict = {
+    "name": "roll_deadlands_event_seed",
     "description": _SEED_DESC,
     "input_schema": _SEED_INPUT,
 }
@@ -329,11 +417,43 @@ Avoid: events that ignore existing entanglements, anything that resolves without
 Do not output intermediate notes. Start directly with the ## heading.
 {_EVENT_FORMAT}"""
 
+ALIEN_SYSTEM_PROMPT = f"""You are an Alien RPG event generator creating GM-ready interruptions for a crew operating in the colonial frontier of 2183.
+
+Call roll_alien_event_seed() first. Build everything around what it returns.
+
+In the Alien universe, events arrive with company fingerprints on them: things that happen because someone at a desk decided they should, without telling the people in the field what they decided. The best events are the ones that were already true — a Special Order already in the system, a synthetic already operating under instructions — coming into visibility at the worst possible moment.
+
+Panic is real. The Year Zero Engine means stress accumulates and breaks. An event that heightens isolation, reduces options, or makes the crew doubt someone they needed to trust is more terrifying than anything with claws.
+
+Call roll_name_suggestion() for each named NPC. Colonial workers come from everywhere.
+
+Avoid: xenomorphs appearing in the event itself (let the event be about what creates the conditions for them), heroic rescue, anything that resolves cleanly.
+
+Do not output intermediate notes. Start directly with the ## heading.
+{_EVENT_FORMAT}"""
+
+DEADLANDS_SYSTEM_PROMPT = f"""You are a Deadlands: The Weird West event generator creating GM-ready interruptions on a cursed American frontier.
+
+Call roll_deadlands_event_seed() first. Build everything around what it returns.
+
+Events in the Weird West arrive from two directions at once: the human problem and the supernatural one, usually tangled together. The Reckoners benefit from fear and despair — an event that creates a situation where the most obvious response feeds the darkness is more interesting than one with a clean answer. Savage Worlds rewards action; the event should demand a decision, not a delay.
+
+The supernatural is real but its rules are discoverable. A hex that behaves unexpectedly, a Harrowed who isn't the enemy, a Ghost Rock seam doing something outside its nature — these events should create a situation that rewards investigation as much as violence.
+
+Call roll_name_suggestion() for each named NPC. The West is multicultural — vary the names.
+
+Avoid: all events resolving through gunfighting, pure monster encounters with no human dimension, any event that has nothing to do with the Reckoning.
+
+Do not output intermediate notes. Start directly with the ## heading.
+{_EVENT_FORMAT}"""
+
 GAME_SYSTEM_PROMPTS: dict[str, str] = {
     "dnd":       DND_SYSTEM_PROMPT,
     "traveller": TRAVELLER_SYSTEM_PROMPT,
     "firefly":   FIREFLY_SYSTEM_PROMPT,
     "scum":      SCUM_SYSTEM_PROMPT,
+    "alien":     ALIEN_SYSTEM_PROMPT,
+    "deadlands": DEADLANDS_SYSTEM_PROMPT,
 }
 
 
@@ -344,6 +464,8 @@ GAME_TOOLS: dict[str, list] = {
     "traveller": [TRAVELLER_EVENT_SEED_SCHEMA,  NAME_TOOL_SCHEMA],
     "firefly":   [FIREFLY_EVENT_SEED_SCHEMA,    NAME_TOOL_SCHEMA],
     "scum":      [SCUM_EVENT_SEED_SCHEMA,       NAME_TOOL_SCHEMA],
+    "alien":     [ALIEN_EVENT_SEED_SCHEMA,      NAME_TOOL_SCHEMA],
+    "deadlands": [DEADLANDS_EVENT_SEED_SCHEMA,  NAME_TOOL_SCHEMA],
 }
 
 
@@ -354,6 +476,8 @@ def _run_tool(game: str, name: str, inputs: dict) -> str:
     if name == "roll_traveller_event_seed": return roll_traveller_event_seed()
     if name == "roll_firefly_event_seed":   return roll_firefly_event_seed()
     if name == "roll_scum_event_seed":      return roll_scum_event_seed()
+    if name == "roll_alien_event_seed":     return roll_alien_event_seed()
+    if name == "roll_deadlands_event_seed": return roll_deadlands_event_seed()
     if name == "roll_name_suggestion":      return roll_name_suggestion()
     return f"Unknown tool: {name}"
 
@@ -436,6 +560,8 @@ def run(game: str | None = None) -> None:
         ("traveller", "Mongoose Traveller 2e"),
         ("firefly",   "Firefly RPG"),
         ("scum",      "Scum and Villainy"),
+        ("alien",     "Alien RPG"),
+        ("deadlands", "Deadlands: The Weird West"),
     ]
     if game is None:
         game = pick("Which game?", GAMES)

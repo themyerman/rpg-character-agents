@@ -36,6 +36,8 @@ GAME_SUBDIRS: dict[str, str] = {
     "traveller": "traveller",
     "firefly":   "firefly",
     "scum":      "scum_villainy",
+    "alien":     "alien",
+    "deadlands": "deadlands",
 }
 
 
@@ -127,6 +129,48 @@ RUMOR_SUBJECTS: dict[str, list[str]] = {
         "A crew being blackmailed with something they swear they didn't do, and the evidence is convincing",
         "A contact who has been dead for six months, whose name keeps appearing on recent documents",
     ],
+
+    "alien": [
+        "A survey team filed a preliminary find and hasn't checked in since — the company flagged the system restricted",
+        "A synthetic on a commercial hauler has been giving inconsistent answers about the last transit",
+        "A Weyland-Yutani directive came through that contradicts what operations was told at briefing",
+        "A colonial administrator disappeared between a routine inspection and the report that was filed",
+        "A Union Aerospace contractor is paying for biological specimen acquisition, no questions asked",
+        "A USCM patrol vessel went dark on a standard sweep — command's response was unusually fast",
+        "A derelict beacon logged two months ago at a company-tracked system has been removed from traffic data",
+        "A med-tech on a processing installation is selling something to someone, quietly, for a lot of credits",
+        "A closed company installation has been pulling power intermittently — the maintenance logs don't explain it",
+        "A crew member from a survey mission came back alone and won't speak about the rest of the team",
+        "An independent salvager was paid a specific sum to stop asking about a specific hull registry",
+        "A Special Order arrived for a cargo-class synthetic aboard a hauler — the crew wasn't informed",
+        "A company doctor has been doing follow-up exams on returning survey crews without logging them",
+        "A Hyperdyne rep arrived at an installation that wasn't on any scheduled rotation",
+        "A Colonial Marine unit was pulled from active duty mid-deployment for reassignment without orders",
+        "A licensed salvage claim on an LV-designation system has been administratively blocked for eighteen months",
+        "An independent colony stopped accepting company supply contracts six months ago — no explanation",
+        "A ship's AI has been running a subroutine it wasn't loaded with and nobody at maintenance will explain",
+    ],
+
+    "deadlands": [
+        "A Ghost Rock mine is running three shifts and none of the night-shift workers have been seen in town",
+        "A Harrowed gunslinger has been hired by the railroad to clear a Right of Way — permanently",
+        "A Pinkerton agent has been asking about the Agency operative who was supposed to deliver something last month",
+        "A travelling medicine show's cures are working — specifically and verifiably — and the doctor won't say how",
+        "A wanted man came to turn himself in and was told by the Marshal that he doesn't exist on paper",
+        "The Black River Rail Company is surveying land that three different people swear can't be surveyed",
+        "A Sioux war party came within sight of the fort, stopped, looked at something invisible, and left",
+        "A Weird Scientist's latest work has been purchased, and the price suggests a military application",
+        "A Ghost Rock seam opened on homestead land and the family that found it hasn't been seen since",
+        "The local Blessed healer has been refusing to treat certain injuries and won't say why",
+        "A Texas Ranger rode through without stopping — the third one this month, all heading the same direction",
+        "An Apache war leader who died three years ago has been seen twice this week",
+        "A Huckster who used to work the river boats is now working for a cattle baron and the hands are afraid",
+        "A cavalry patrol that went to investigate unusual activity hasn't come back — the colonel filed a routine report",
+        "A letter arrived for someone who died six months before the postmark date",
+        "The creek has been running off-color since the mining operation upstream started a new process",
+        "A travelling preacher is collecting names — volunteers for something he won't name from the pulpit",
+        "A railroad contract was awarded, transferred, voided, and reissued — and the land it covers changed each time",
+    ],
 }
 
 # Shared truth-angle — how the rumor relates to reality
@@ -163,6 +207,8 @@ def roll_dnd_rumor_seed()       -> str: return _roll_seed("dnd")
 def roll_traveller_rumor_seed() -> str: return _roll_seed("traveller")
 def roll_firefly_rumor_seed()   -> str: return _roll_seed("firefly")
 def roll_scum_rumor_seed()      -> str: return _roll_seed("scum")
+def roll_alien_rumor_seed()     -> str: return _roll_seed("alien")
+def roll_deadlands_rumor_seed() -> str: return _roll_seed("deadlands")
 
 
 # ── Tool schemas ──────────────────────────────────────────────────────────────
@@ -192,6 +238,16 @@ FIREFLY_RUMOR_SEED_SCHEMA: dict = {
 }
 SCUM_RUMOR_SEED_SCHEMA: dict = {
     "name": "roll_scum_rumor_seed",
+    "description": _SEED_DESC,
+    "input_schema": _SEED_INPUT,
+}
+ALIEN_RUMOR_SEED_SCHEMA: dict = {
+    "name": "roll_alien_rumor_seed",
+    "description": _SEED_DESC,
+    "input_schema": _SEED_INPUT,
+}
+DEADLANDS_RUMOR_SEED_SCHEMA: dict = {
+    "name": "roll_deadlands_rumor_seed",
     "description": _SEED_DESC,
     "input_schema": _SEED_INPUT,
 }
@@ -286,11 +342,43 @@ Avoid: vague faction conflict without specifics, Ur artifacts as simple treasure
 Do not output intermediate notes. Start directly with the ## heading.
 {_RUMOR_FORMAT}"""
 
+ALIEN_SYSTEM_PROMPT = f"""You are an Alien RPG rumor generator creating GM-ready gossip in the colonial frontier of 2183.
+
+Call roll_alien_rumor_seed() first. Build everything around what it returns.
+
+In the colonial frontier, rumors travel through ship crews, dockworkers, and the kind of conversation people have when they're fairly sure they're not being recorded. Weyland-Yutani is not the only danger, but it is the most patient — the company's interests run long, and individual crews run short. The most dangerous rumors are the ones the company already knows about and has decided to let circulate.
+
+The truth-angle is your GM constraint — follow it precisely. If it says "deliberate plant," consider who benefits from this information being in circulation — it is probably not the crew.
+
+Call roll_name_suggestion() for each named NPC. Colonial workers come from everywhere — vary the cultural origins.
+
+Avoid: xenomorphs as the central subject of the rumor (they work better as what the rumor is circling around), heroic marines, rumors without corporate dimension.
+
+Do not output intermediate notes. Start directly with the ## heading.
+{_RUMOR_FORMAT}"""
+
+DEADLANDS_SYSTEM_PROMPT = f"""You are a Deadlands: The Weird West rumor generator creating GM-ready gossip for a cursed American frontier.
+
+Call roll_deadlands_rumor_seed() first. Build everything around what it returns.
+
+The Reckoning changed everything. Ghost Rock is everywhere and so is what it attracts. Rumors in the Weird West travel by telegraph, saloon talk, and the kind of story that spreads because people need to warn each other. The supernatural is real, but most people still aren't sure how real — denying it is a survival strategy until you can't anymore.
+
+The truth-angle is your GM constraint — follow it precisely. The Weird West has layers: the mundane motive on top, the supernatural element underneath, and the Reckoning underneath that.
+
+Call roll_name_suggestion() for each named NPC. The West is multicultural — Spanish, Chinese, Native nations, freed slaves, European immigrants. Reflect that.
+
+Avoid: all-white casts, vague "Indian magic" without specificity, generic outlaws with no Weird West texture.
+
+Do not output intermediate notes. Start directly with the ## heading.
+{_RUMOR_FORMAT}"""
+
 GAME_SYSTEM_PROMPTS: dict[str, str] = {
     "dnd":       DND_SYSTEM_PROMPT,
     "traveller": TRAVELLER_SYSTEM_PROMPT,
     "firefly":   FIREFLY_SYSTEM_PROMPT,
     "scum":      SCUM_SYSTEM_PROMPT,
+    "alien":     ALIEN_SYSTEM_PROMPT,
+    "deadlands": DEADLANDS_SYSTEM_PROMPT,
 }
 
 
@@ -301,6 +389,8 @@ GAME_TOOLS: dict[str, list] = {
     "traveller": [TRAVELLER_RUMOR_SEED_SCHEMA,  NAME_TOOL_SCHEMA],
     "firefly":   [FIREFLY_RUMOR_SEED_SCHEMA,    NAME_TOOL_SCHEMA],
     "scum":      [SCUM_RUMOR_SEED_SCHEMA,       NAME_TOOL_SCHEMA],
+    "alien":     [ALIEN_RUMOR_SEED_SCHEMA,      NAME_TOOL_SCHEMA],
+    "deadlands": [DEADLANDS_RUMOR_SEED_SCHEMA,  NAME_TOOL_SCHEMA],
 }
 
 
@@ -311,6 +401,8 @@ def _run_tool(game: str, name: str, inputs: dict) -> str:
     if name == "roll_traveller_rumor_seed": return roll_traveller_rumor_seed()
     if name == "roll_firefly_rumor_seed":   return roll_firefly_rumor_seed()
     if name == "roll_scum_rumor_seed":      return roll_scum_rumor_seed()
+    if name == "roll_alien_rumor_seed":     return roll_alien_rumor_seed()
+    if name == "roll_deadlands_rumor_seed": return roll_deadlands_rumor_seed()
     if name == "roll_name_suggestion":      return roll_name_suggestion()
     return f"Unknown tool: {name}"
 
@@ -396,6 +488,8 @@ def run(game: str | None = None) -> None:
         ("traveller", "Mongoose Traveller 2e"),
         ("firefly",   "Firefly RPG"),
         ("scum",      "Scum and Villainy"),
+        ("alien",     "Alien RPG"),
+        ("deadlands", "Deadlands: The Weird West"),
     ]
     if game is None:
         game = pick("Which game?", GAMES)

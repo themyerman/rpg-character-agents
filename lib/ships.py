@@ -118,6 +118,34 @@ SHIP_POOLS: dict[str, dict] = {
             "Keelboat", "Warship", "Longship", "Galley", "Drakkar",
         ],
     },
+
+    "alien": {
+        "register": (
+            "Corporate/utilitarian — Weyland-Yutani commercial and USCM military vessels. "
+            "Names drawn from mythology, geography, and the company's quiet sense of irony. "
+            "Every hull registry is on file somewhere. The company knows exactly where each ship is."
+        ),
+        "names": [
+            "Nostromo", "Sulaco", "Narcissus", "Prometheus", "Covenant",
+            "Patna", "Anesidora", "Montero", "Marlow", "Gaspar",
+            "Yelena", "Cronus", "Auriga", "Lorelei", "Legato",
+            "Sotillo", "Torrens", "Kutner", "Maginot", "Hadley",
+            "Heracles", "Rigel", "Arcturus", "Cygnus", "Perihelion",
+            "Fury", "Shoshone", "Long Passage", "Iron Meridian", "Pale Horizon",
+        ],
+        "classes": [
+            "USCSS Class M Commercial Hauler",
+            "USCSS Class C Commercial Transport",
+            "USCM Conestoga-class Troopship",
+            "USCM Bougainville-class Assault Transport",
+            "Weyland-Yutani Survey Vessel",
+            "Colonial Administration Transport",
+            "Independent Deep-Space Salvage Vessel",
+            "Lockmart CM-88B Bison Medium Utility Transport",
+            "Deep Orbit Science Platform",
+            "Class 3 Work Tug",
+        ],
+    },
 }
 
 
@@ -182,6 +210,16 @@ DND_SHIP_TOOL_SCHEMA: dict = {
         "Get a D&D ship name and class for a nautical campaign. Call this when "
         "naming any vessel. Names draw on sea mythology, legendary creatures, "
         "and the ocean's indifference to human ambition."
+    ),
+    "input_schema": {"type": "object", "properties": {}, "required": []},
+}
+
+ALIEN_SHIP_TOOL_SCHEMA: dict = {
+    "name": "roll_ship_name",
+    "description": (
+        "Get an Alien RPG ship name and class. Call this when naming the crew's "
+        "vessel or any ship they encounter. Names follow the Weyland-Yutani and "
+        "USCM registers — corporate, utilitarian, with mythology underneath."
     ),
     "input_schema": {"type": "object", "properties": {}, "required": []},
 }

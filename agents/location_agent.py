@@ -22,7 +22,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from lib.names import roll_name_suggestion, NAME_TOOL_SCHEMA
-from lib.ships import roll_ship_name, TRAVELLER_SHIP_TOOL_SCHEMA, FIREFLY_SHIP_TOOL_SCHEMA, SCUM_SHIP_TOOL_SCHEMA
+from lib.ships import roll_ship_name, TRAVELLER_SHIP_TOOL_SCHEMA, FIREFLY_SHIP_TOOL_SCHEMA, SCUM_SHIP_TOOL_SCHEMA, ALIEN_SHIP_TOOL_SCHEMA
 from lib.utils import get_client, run_agent_loop, slug, pick
 from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
 
@@ -36,6 +36,8 @@ GAME_SUBDIRS: dict[str, str] = {
     "traveller": "traveller",
     "firefly":   "firefly",
     "scum":      "scum_villainy",
+    "alien":     "alien",
+    "deadlands": "deadlands",
 }
 
 
@@ -386,6 +388,168 @@ LOCATION_POOLS: dict[str, dict[str, list[str]]] = {
             "Someone is auctioning something the crew recognises, and it wasn't for sale",
         ],
     },
+
+    "alien": {
+        "types": [
+            "A Weyland-Yutani colonial processing plant on an LV-designation moon, two thousand workers",
+            "A USCSS commercial hauler eleven months into a fourteen-month haul, skeleton crew",
+            "A Colonial Marine forward operating base on a barely-terraformed world",
+            "A Gateway Station transit hub — the last proper facility before the outer systems",
+            "An independent deep-space salvage vessel working the margins of a contested survey zone",
+            "A company planetary survey installation, automated — except it isn't running automated",
+            "A corporate medical research station in a system nobody has a reason to visit",
+            "A Weyland-Yutani administrative center on a mid-tier colony world, mostly overlooked",
+            "A terraforming progress station thirty years into a hundred-year project",
+            "An independent mining cooperative on a mineral-rich rock with company interest",
+            "A synthetic calibration and maintenance depot staffed by people who find synthetics unsettling",
+            "A deep-space relay installation with a two-person crew and a six-month rotation",
+            "A frontier colony that rejected the company acquisition offer three years ago",
+            "A USCM Conestoga-class troopship between deployments — full crew, not much to do",
+            "A company extraction facility in a system the company doesn't officially operate in",
+            "A colonial trade hub where independent operators and company interests overlap uneasily",
+            "A survey base camp established four weeks ago on a world flagged for biological interest",
+            "A closed company installation whose closure paperwork was filed but whose power draw didn't stop",
+            "An orbital transfer station above a barely-habitable world with more activity than it should",
+            "A company med-bay aboard a long-haul vessel where routine transit stopped being routine",
+        ],
+        "conditions": [
+            "A recent company directive changed something that was working, without explanation",
+            "A crew member has been acting differently since the last transit and can't account for it",
+            "Communications lag to the nearest relay has made response times longer than comfortable",
+            "A synthetic flagged an anomaly in its own behavioral log, which synthetics don't normally do",
+            "Resupply is three weeks overdue and the company's response has been administrative",
+            "Two corporate teams are both on-site under different pretexts and aware of each other",
+            "A crew member received a personal message and hasn't spoken about it since",
+            "Equipment certified as functional has been failing in specific and consistent ways",
+            "A worker union grievance has been filed and is being handled by someone who isn't HR",
+            "Something in the cargo manifest was wrong when they loaded — nobody caught it until now",
+            "Night-cycle maintenance is being done by synthetics who shouldn't be awake during night cycle",
+            "A company inspection team arrived unannounced and is being pointedly cooperative",
+            "Biological readings from the last survey are inconsistent with anything in the database",
+            "A crew member has been running unauthorized searches on the company data archive",
+            "A motion sensor triggered once, was logged as sensor error, and logged twice more since",
+            "A Special Order has been logged in the ship's operational system without crew explanation",
+            "Someone has requested a transfer off this posting and the request was denied without comment",
+            "An old crew member's effects were found in a locker that shouldn't have been in use",
+            "The last vessel to leave this location filed a report using language that means something",
+            "Fuel reserves are at 60% and the next resupply is calculated but not confirmed",
+        ],
+        "complications": [
+            "The synthetic assigned here has received instructions through a channel the crew can't access",
+            "A crew member was the only survivor of something they haven't fully described",
+            "The company's legal interest means witnesses are a liability",
+            "What the crew was told about the mission is accurate, and completely wrong about what matters",
+            "Two crew members have conflicting orders from the same level of the hierarchy",
+            "The exit route requires passing through whatever is making the sensors inconsistent",
+            "Help is coming — but who the company is sending is an important question",
+            "A crew member's family is under company employment, which constrains their options",
+            "The obvious safe choice is exactly what the company wants everyone to choose",
+            "Something has been here longer than the installation, and the installation was built over it",
+            "What looks like a malfunction is operating as intended — just not for the crew's benefit",
+            "The person with the most information has already made a deal about what to share",
+            "Evidence exists in the ship's AI log, and the AI has a Special Order covering it",
+            "Physical containment requires tools that are in the section nobody wants to enter",
+            "A crew member is an asset, not just an employee — they just don't know it yet",
+        ],
+        "hooks": [
+            "A motion tracker returns a reading in a section that has been sealed for six months",
+            "A synthetic asks a crew member a question that can only be interpreted as a warning",
+            "An encrypted company message is waiting for someone who isn't alive to receive it",
+            "Another crew needs to talk — not over comms, in person, away from the logs",
+            "Something in the cargo hold is drawing more power than cargo should draw",
+            "A crew member finds personal effects from a previous survey team reported as lost",
+            "The AI produces a navigation plot that leads somewhere the crew wasn't planning to go",
+            "A company representative arrives on a shuttle that wasn't on the traffic schedule",
+            "A system alert is flagged as sensor malfunction — one crew member disagrees",
+            "Someone has been in the vents. Regularly. The footprints are sized for a person.",
+            "A job offer comes from a source not on any company registry",
+            "A company bonus payment arrives for a mission the crew hasn't been assigned yet",
+            "A crew member's bio-monitor shows elevated cortisol readings for seventy-two hours",
+            "The previous crew left something behind — not personal effects",
+            "A message on a dead company channel, recent timestamp — someone is still out there",
+        ],
+    },
+
+    "deadlands": {
+        "types": [
+            "A railroad town that appeared in eighteen months and hasn't decided what it is yet",
+            "A Ghost Rock mine under company management — company housing, company store, company law",
+            "A river town on the Big Muddy where traffic moves things that don't go on manifests",
+            "A frontier fort at 60% strength with resupply two weeks late and no explanation coming",
+            "A border town sitting between Confederate-controlled territory and Union-occupied land",
+            "A California Maze settlement carved into the cliff face, accessible only by boat",
+            "A cattle trail waystation where the economy is violence and the law is whoever shot last",
+            "An Apache community that has survived three removal attempts by making itself hard to find",
+            "A tent city around a new Ghost Rock strike the assay office hasn't registered yet",
+            "A Mormon agricultural settlement that is either peaceful or very good at appearing so",
+            "A Harrowed town — occupied, functional, the original residents didn't leave voluntarily",
+            "A reconstruction settlement under Union administration where the politics run two layers deep",
+            "A Sioux encampment at the edge of treaty land, positioned to see what's coming",
+            "A Black Hills mining settlement where the Hills have started responding to what's taken",
+            "A river steamboat running between territories that don't trust each other, carrying things from both",
+            "A medicine show encampment two weeks past when medicine shows usually move on",
+            "A cavalry bivouac between a completed mission and orders that haven't arrived",
+            "A Maze Runner port on a fog-shrouded island nobody put on official charts",
+            "A Blessed community around a well that stayed drought-proof through the Bad Years",
+            "A cross-territory trade depot where Agency men and Pinkertons pretend not to notice each other",
+        ],
+        "conditions": [
+            "A Ghost Rock shipment went missing and the company sent someone who isn't a lawman to find it",
+            "A Harrowed gunfighter has ridden in and is staying at the hotel under a false name nobody believes",
+            "The local Marshal received a wire from the Agency two days ago and hasn't shared what it said",
+            "Something died near the water supply last week and the creek has run strange since",
+            "A circuit-riding Blessed healer arrived but has been refusing to leave since her first night",
+            "Two railroad survey teams are working the same stretch of land under different company flags",
+            "The Ghost Rock seam that supplies this town has started producing ore that burns differently",
+            "A bounty hunter arrived looking for someone — several locals gave different descriptions of the same person",
+            "A vision-seeker from one of the Nations has been sitting outside town for three days",
+            "News arrived that a town two days east has gone silent — no telegraph, no riders",
+            "A Weird Scientist set up a workshop in the livery stable and the horses won't go near it",
+            "The funeral home has been doing three times its normal business and the doctor won't say why",
+            "Both the Confederate and Union couriers arrived on the same day without knowing about each other",
+            "A medicine show left behind three people who asked to stay, which medicine shows don't do",
+            "Someone has been buying up land claims quietly, in cash, without asking what's on the land",
+            "The local preacher stopped giving sermons and started giving warnings",
+            "A wanted poster arrived for someone living here under a different name — the description is exact",
+            "The company's night shift isn't surfacing at the end of shift, but the lift is still running",
+            "An army scout came through asking about trail conditions north — the kind before something large moves",
+            "Three travelers from different directions all arrived carrying the same story about one valley over",
+        ],
+        "complications": [
+            "The person the party needs is protected by someone who will take a killing personally",
+            "The obvious solution is exactly what the Reckoners want to happen",
+            "A Harrowed local has been protecting this community in ways it doesn't know and wouldn't accept",
+            "The law here is technically legitimate and practically in someone's pocket",
+            "Two factions with legitimate grievances are both right",
+            "What looks supernatural has a human cause — or what looks human has a supernatural cause",
+            "The Agency and the Pinkertons both want the same outcome for different reasons",
+            "Someone knows the truth and has decided the community is better off not knowing",
+            "The Ghost Rock in this area is doing something it shouldn't, and has been for a while",
+            "A Native medicine tradition is the only solution, and access requires trust not yet earned",
+            "The Weird Scientist who caused the problem is the only one who can explain it",
+            "Killing the monster solves the symptom and ignores the cause",
+            "The person everyone fears is less dangerous than what they're keeping at bay",
+            "Legal title to the land changes everything about who can do what",
+            "An old wrong is the bedrock of the current peace — disturbing it brings down more than the guilty",
+        ],
+        "hooks": [
+            "A local comes to the party specifically — not the Marshal, not a neighbor — and won't say how they knew",
+            "Something is for sale that the party recognizes from a situation that ended badly",
+            "A wanted poster with a description that matches someone the party has reason to know",
+            "A body found in the street with no visible wounds and an expression of absolute terror",
+            "A child who saw something and is telling the party because adults won't listen",
+            "A Harrowed person very obviously Harrowed trying to pass as living and not quite managing",
+            "A telegram waiting at the post office for a name the party didn't give anyone",
+            "A job offered at exactly the price the party needs and not a cent more",
+            "Someone from a previous situation, in different clothes, under a different name",
+            "An Agency badge produced quietly and a request made even more quietly",
+            "A fresh grave in an established cemetery — no headstone, no service, dug yesterday",
+            "A Ghost Rock sample brought in for assay that the assayer refuses to touch",
+            "A local business generating no revenue that has been open for six months",
+            "Music from an empty building, same song, every night at the same time",
+            "A stranger riding in from the direction of the town that went quiet",
+        ],
+    },
 }
 
 
@@ -404,12 +568,16 @@ def roll_dnd_location_seed()       -> str: return _roll_seed("dnd")
 def roll_traveller_location_seed() -> str: return _roll_seed("traveller")
 def roll_firefly_location_seed()   -> str: return _roll_seed("firefly")
 def roll_scum_location_seed()      -> str: return _roll_seed("scum")
+def roll_alien_location_seed()     -> str: return _roll_seed("alien")
+def roll_deadlands_location_seed() -> str: return _roll_seed("deadlands")
 
 SEED_ROLLERS: dict[str, callable] = {
     "dnd":       roll_dnd_location_seed,
     "traveller": roll_traveller_location_seed,
     "firefly":   roll_firefly_location_seed,
     "scum":      roll_scum_location_seed,
+    "alien":     roll_alien_location_seed,
+    "deadlands": roll_deadlands_location_seed,
 }
 
 
@@ -440,6 +608,16 @@ FIREFLY_LOCATION_SEED_SCHEMA: dict = {
 }
 SCUM_LOCATION_SEED_SCHEMA: dict = {
     "name": "roll_scum_location_seed",
+    "description": _SEED_DESC,
+    "input_schema": _SEED_INPUT,
+}
+ALIEN_LOCATION_SEED_SCHEMA: dict = {
+    "name": "roll_alien_location_seed",
+    "description": _SEED_DESC,
+    "input_schema": _SEED_INPUT,
+}
+DEADLANDS_LOCATION_SEED_SCHEMA: dict = {
+    "name": "roll_deadlands_location_seed",
     "description": _SEED_DESC,
     "input_schema": _SEED_INPUT,
 }
@@ -522,11 +700,36 @@ Call roll_ship_name() to name any significant vessel present.
 Do not output intermediate notes. Start directly with the ## heading.
 {_LOCATION_FORMAT}"""
 
+ALIEN_SYSTEM_PROMPT = f"""You are an Alien RPG location generator creating vivid, unsettling settings in the colonial frontier of 2183.
+
+Call roll_alien_location_seed() first. Build everything around what it returns.
+
+In the Alien universe, locations have layers: the official purpose, the company's actual interest, and whatever is making the sensors return inconsistent readings. A processing plant is never just a processing plant. The company's hand is always present — sometimes through a synthetic, sometimes through a Special Order nobody else has read, sometimes through the conspicuous absence of people who would normally intervene.
+
+Call roll_name_suggestion() for each NPC. Colonial workers come from everywhere — vary the cultural origins.
+Call roll_ship_name() to name any significant vessel present at this location.
+
+Do not output intermediate notes. Start directly with the ## heading.
+{_LOCATION_FORMAT}"""
+
+DEADLANDS_SYSTEM_PROMPT = f"""You are a Deadlands: The Weird West location generator creating vivid, cursed settings on the American frontier.
+
+Call roll_deadlands_location_seed() first. Build everything around what it returns.
+
+Deadlands locations exist at the intersection of the mundane frontier and the Reckoning. A mining town is also a place where Ghost Rock is doing something to the people who work near it. A border town is also a place where Confederate and Union pressures create dynamics that nobody in power is trying to resolve. The supernatural is real but contested — most people explain it away until they can't anymore.
+
+Call roll_name_suggestion() for each NPC. The West is multicultural — Spanish, Chinese, Native nations, freed slaves, European immigrants. Reflect that.
+
+Do not output intermediate notes. Start directly with the ## heading.
+{_LOCATION_FORMAT}"""
+
 GAME_SYSTEM_PROMPTS: dict[str, str] = {
     "dnd":       DND_SYSTEM_PROMPT,
     "traveller": TRAVELLER_SYSTEM_PROMPT,
     "firefly":   FIREFLY_SYSTEM_PROMPT,
     "scum":      SCUM_SYSTEM_PROMPT,
+    "alien":     ALIEN_SYSTEM_PROMPT,
+    "deadlands": DEADLANDS_SYSTEM_PROMPT,
 }
 
 
@@ -552,6 +755,15 @@ GAME_TOOLS: dict[str, list] = {
         NAME_TOOL_SCHEMA,
         SCUM_SHIP_TOOL_SCHEMA,
     ],
+    "alien": [
+        ALIEN_LOCATION_SEED_SCHEMA,
+        NAME_TOOL_SCHEMA,
+        ALIEN_SHIP_TOOL_SCHEMA,
+    ],
+    "deadlands": [
+        DEADLANDS_LOCATION_SEED_SCHEMA,
+        NAME_TOOL_SCHEMA,
+    ],
 }
 
 
@@ -562,6 +774,8 @@ def _run_tool(game: str, name: str, inputs: dict) -> str:
     if name == "roll_traveller_location_seed": return roll_traveller_location_seed()
     if name == "roll_firefly_location_seed":   return roll_firefly_location_seed()
     if name == "roll_scum_location_seed":      return roll_scum_location_seed()
+    if name == "roll_alien_location_seed":     return roll_alien_location_seed()
+    if name == "roll_deadlands_location_seed": return roll_deadlands_location_seed()
     if name == "roll_name_suggestion":         return roll_name_suggestion()
     if name == "roll_ship_name":               return roll_ship_name(game)
     return f"Unknown tool: {name}"
@@ -620,6 +834,8 @@ def run(game: str | None = None) -> None:
         ("traveller", "Mongoose Traveller 2e"),
         ("firefly",   "Firefly RPG"),
         ("scum",      "Scum and Villainy"),
+        ("alien",     "Alien RPG"),
+        ("deadlands", "Deadlands: The Weird West"),
     ]
     if game is None:
         game = pick("Which game?", GAMES)

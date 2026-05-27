@@ -13,6 +13,8 @@ from agents.event_agent import (
     roll_traveller_event_seed,
     roll_firefly_event_seed,
     roll_scum_event_seed,
+    roll_alien_event_seed,
+    roll_deadlands_event_seed,
     save_event,
     detect_phase,
     EVENT_POOLS,
@@ -23,23 +25,27 @@ from agents.event_agent import (
     TRAVELLER_EVENT_SEED_SCHEMA,
     FIREFLY_EVENT_SEED_SCHEMA,
     SCUM_EVENT_SEED_SCHEMA,
+    ALIEN_EVENT_SEED_SCHEMA,
+    DEADLANDS_EVENT_SEED_SCHEMA,
 )
 
 
-GAMES = ["dnd", "traveller", "firefly", "scum"]
+GAMES = ["dnd", "traveller", "firefly", "scum", "alien", "deadlands"]
 ROLLERS = {
     "dnd":       roll_dnd_event_seed,
     "traveller": roll_traveller_event_seed,
     "firefly":   roll_firefly_event_seed,
     "scum":      roll_scum_event_seed,
+    "alien":     roll_alien_event_seed,
+    "deadlands": roll_deadlands_event_seed,
 }
 
 
 # ── EVENT_POOLS structure ─────────────────────────────────────────────────────
 
 class TestEventPools:
-    def test_all_four_games_present(self):
-        assert set(EVENT_POOLS.keys()) == {"dnd", "traveller", "firefly", "scum"}
+    def test_all_six_games_present(self):
+        assert set(EVENT_POOLS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
     def test_each_game_has_contexts_and_events(self):
         for game in GAMES:
@@ -168,7 +174,7 @@ class TestEventToolSchemas:
 
 class TestEventGameTools:
     def test_all_games_have_tools(self):
-        assert set(GAME_TOOLS.keys()) == {"dnd", "traveller", "firefly", "scum"}
+        assert set(GAME_TOOLS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
     def test_each_game_has_seed_and_name_tool(self):
         for game in GAMES:
@@ -186,13 +192,15 @@ class TestEventGameTools:
 
 class TestEventSystemPrompts:
     def test_all_games_have_prompts(self):
-        assert set(GAME_SYSTEM_PROMPTS.keys()) == {"dnd", "traveller", "firefly", "scum"}
+        assert set(GAME_SYSTEM_PROMPTS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
     def test_prompts_mention_correct_seed_tool(self):
         assert "roll_dnd_event_seed" in GAME_SYSTEM_PROMPTS["dnd"]
         assert "roll_traveller_event_seed" in GAME_SYSTEM_PROMPTS["traveller"]
         assert "roll_firefly_event_seed" in GAME_SYSTEM_PROMPTS["firefly"]
         assert "roll_scum_event_seed" in GAME_SYSTEM_PROMPTS["scum"]
+        assert "roll_alien_event_seed" in GAME_SYSTEM_PROMPTS["alien"]
+        assert "roll_deadlands_event_seed" in GAME_SYSTEM_PROMPTS["deadlands"]
 
     def test_prompts_are_non_empty(self):
         for game, prompt in GAME_SYSTEM_PROMPTS.items():
@@ -291,8 +299,8 @@ class TestSaveEvent:
 # ── GAME_SUBDIRS ──────────────────────────────────────────────────────────────
 
 class TestEventGameSubdirs:
-    def test_all_four_games_present(self):
-        assert set(GAME_SUBDIRS.keys()) == {"dnd", "traveller", "firefly", "scum"}
+    def test_all_six_games_present(self):
+        assert set(GAME_SUBDIRS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
     def test_scum_maps_to_scum_villainy(self):
         assert GAME_SUBDIRS["scum"] == "scum_villainy"

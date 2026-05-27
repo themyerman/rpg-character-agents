@@ -13,6 +13,8 @@ from agents.location_agent import (
     roll_traveller_location_seed,
     roll_firefly_location_seed,
     roll_scum_location_seed,
+    roll_alien_location_seed,
+    roll_deadlands_location_seed,
     save_location,
     detect_phase,
     LOCATION_POOLS,
@@ -21,25 +23,29 @@ from agents.location_agent import (
     TRAVELLER_LOCATION_SEED_SCHEMA,
     FIREFLY_LOCATION_SEED_SCHEMA,
     SCUM_LOCATION_SEED_SCHEMA,
+    ALIEN_LOCATION_SEED_SCHEMA,
+    DEADLANDS_LOCATION_SEED_SCHEMA,
     GAME_TOOLS,
     GAME_SYSTEM_PROMPTS,
 )
 
 
-GAMES = ["dnd", "traveller", "firefly", "scum"]
+GAMES = ["dnd", "traveller", "firefly", "scum", "alien", "deadlands"]
 ROLLERS = {
     "dnd":       roll_dnd_location_seed,
     "traveller": roll_traveller_location_seed,
     "firefly":   roll_firefly_location_seed,
     "scum":      roll_scum_location_seed,
+    "alien":     roll_alien_location_seed,
+    "deadlands": roll_deadlands_location_seed,
 }
 
 
 # ── LOCATION_POOLS structure ──────────────────────────────────────────────────
 
 class TestLocationPools:
-    def test_all_four_games_present(self):
-        assert set(LOCATION_POOLS.keys()) == {"dnd", "traveller", "firefly", "scum"}
+    def test_all_six_games_present(self):
+        assert set(LOCATION_POOLS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
     def test_each_game_has_four_categories(self):
         required = {"types", "conditions", "complications", "hooks"}
@@ -152,7 +158,7 @@ class TestLocationToolSchemas:
 
 class TestGameTools:
     def test_all_games_have_tools(self):
-        assert set(GAME_TOOLS.keys()) == {"dnd", "traveller", "firefly", "scum"}
+        assert set(GAME_TOOLS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
     def test_dnd_has_seed_and_name_but_no_ship(self):
         names = {t["name"] for t in GAME_TOOLS["dnd"]}
@@ -177,7 +183,7 @@ class TestGameTools:
 
 class TestGameSystemPrompts:
     def test_all_games_have_system_prompt(self):
-        assert set(GAME_SYSTEM_PROMPTS.keys()) == {"dnd", "traveller", "firefly", "scum"}
+        assert set(GAME_SYSTEM_PROMPTS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
     def test_each_prompt_is_non_empty_string(self):
         for game, prompt in GAME_SYSTEM_PROMPTS.items():
@@ -189,6 +195,8 @@ class TestGameSystemPrompts:
         assert "roll_traveller_location_seed" in GAME_SYSTEM_PROMPTS["traveller"]
         assert "roll_firefly_location_seed" in GAME_SYSTEM_PROMPTS["firefly"]
         assert "roll_scum_location_seed" in GAME_SYSTEM_PROMPTS["scum"]
+        assert "roll_alien_location_seed" in GAME_SYSTEM_PROMPTS["alien"]
+        assert "roll_deadlands_location_seed" in GAME_SYSTEM_PROMPTS["deadlands"]
 
 
 # ── detect_phase ──────────────────────────────────────────────────────────────
@@ -272,8 +280,8 @@ class TestSaveLocation:
 # ── GAME_SUBDIRS ──────────────────────────────────────────────────────────────
 
 class TestGameSubdirs:
-    def test_all_four_games_present(self):
-        assert set(GAME_SUBDIRS.keys()) == {"dnd", "traveller", "firefly", "scum"}
+    def test_all_six_games_present(self):
+        assert set(GAME_SUBDIRS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
     def test_scum_maps_to_scum_villainy(self):
         assert GAME_SUBDIRS["scum"] == "scum_villainy"

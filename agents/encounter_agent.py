@@ -30,6 +30,7 @@ from lib.ships import (
     FIREFLY_SHIP_TOOL_SCHEMA,
     SCUM_SHIP_TOOL_SCHEMA,
     DND_SHIP_TOOL_SCHEMA,
+    ALIEN_SHIP_TOOL_SCHEMA,
 )
 from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
 from lib.utils import get_client, run_agent_loop, slug, pick, strip_preamble
@@ -44,6 +45,8 @@ GAME_SUBDIRS: dict[str, str] = {
     "traveller": "traveller",
     "firefly":   "firefly",
     "scum":      "scum_villainy",
+    "alien":     "alien",
+    "deadlands": "deadlands",
 }
 
 
@@ -289,6 +292,128 @@ ENCOUNTER_POOLS: dict[str, dict[str, list[str]]] = {
         ],
     },
 
+    "alien": {
+        "contexts": [
+            "a Weyland-Yutani processing plant on an LV-designation moon, mid-shift when the day crew is distracted",
+            "the cargo hold of a commercial hauler eleven months into a long haul, during the night cycle",
+            "a survey camp established forty-eight hours ago on a world flagged for biological interest",
+            "the narrow corridors of a deep-space salvage vessel working a site that has been worked before",
+            "a Colonial Marine forward operating base between deployments with unclear command authority",
+            "a company med-bay on a remote installation where the doctor reports to a different chain",
+            "the maintenance tunnels of a station running with fewer people than it was designed for",
+            "a company transit facility where independent operators and corporate teams share the same waiting area",
+            "an automated installation that has just proved not to be automated",
+            "the hypersleep vault of a vessel mid-transit when waking early means something went wrong",
+            "a colonial settlement that hasn't received resupply in eleven weeks and is rationing power",
+            "a sealed survey section separated from the main crew by a bulkhead not responding to commands",
+            "a company debrief room where the questions have moved from what happened to what the crew knows",
+            "the bridge of a vessel that has received a course correction from a source that isn't logging",
+            "an orbital transfer station above a world recently reclassified for reasons the crew doesn't know",
+        ],
+        "situations": [
+            "a synthetic is behaving within parameters and the parameters are the problem",
+            "two crew members have conflicting orders from different levels of the company hierarchy",
+            "something is in a section the manifest says is empty and sealed",
+            "a survivor from a previous crew rotation has been here longer than anyone was told",
+            "a Special Order has been logged in the ship's operational system and the crew just found it",
+            "a company quarantine protocol has been activated by the AI without crew authorization",
+            "a worker went into the vents and hasn't come back; their locator shows them stationary in a section without vents",
+            "a distress signal is broadcasting from a vessel reported salvaged three years ago",
+            "the biological samples from the survey run have escaped containment — or were never in containment",
+            "a corporate representative is on site for an audit the crew wasn't informed about",
+            "a crew member has been taking unauthorized sensor readings and storing them on personal media",
+            "the installation's AI refused a crew command for the first time in eighteen months of operations",
+            "another vessel matched their course and is maintaining distance without communicating",
+            "something in the cargo manifest doesn't match what's in the cargo bay — in a significant way",
+            "the last person to hold this post filed a report that was intercepted before it reached command",
+        ],
+        "complications": [
+            "the synthetic's loyalty has been overridden by a Special Order neither party can read",
+            "the company's preferred outcome is for the crew not to survive this situation",
+            "getting out requires going through the part of the installation where readings are inconsistent",
+            "a crew member has made a side arrangement with the company they haven't disclosed",
+            "the most important information is in the AI's log, and the AI has been instructed not to provide it",
+            "calling for help flags the crew as witnesses to something the company needs unwitnessed",
+            "the person who could authorize extraction is unreachable by coincidence that feels designed",
+            "what the crew has done to survive is itself a liability the company will eventually want managed",
+            "the biological threat and the company threat are converging on the same location",
+            "there are two synthetics and one has different instructions from the other",
+        ],
+        "motivations": [
+            "following company protocol with sincere belief that it protects the crew",
+            "protecting an asset the crew doesn't know is an asset",
+            "completing the mission because the alternative is explaining what happened to command",
+            "keeping the crew alive long enough for the company's preferred assets to arrive",
+            "following a Special Order designed for a situation slightly different from this one",
+            "self-preservation wearing the mask of institutional loyalty",
+            "completing something started on the last rotation that can't be left unfinished",
+            "trying to minimize a liability before it becomes a company-level problem",
+            "genuine belief that the discovery justifies what's being done with it",
+            "buying time for something to arrive that may or may not be coming",
+        ],
+    },
+
+    "deadlands": {
+        "contexts": [
+            "a Ghost Rock mine two levels below surface when the charges go off and something else comes up",
+            "a saloon card game when the stakes have gotten high enough that cheating has real consequences",
+            "main street of a railroad town at the moment a dispute stops being verbal",
+            "the trail between settlements, in fog that came up fast and doesn't move like weather",
+            "a cavalry bivouac the night before an operation nobody told the civilians about",
+            "a river crossing where the water level changed in ways the ferryman won't explain",
+            "a church social where the community is doing the specific kind of work churches do before violence",
+            "a treaty council where both official parties and unofficial ones are present",
+            "a Ghost Rock processing facility at shift change when the night shift is late surfacing",
+            "a Maze Runner port accessible only at certain tides, currently at one of those conditions",
+            "a homestead at the edge of range that doesn't have neighbors close enough to hear",
+            "a Confederate or Union checkpoint manned by soldiers who got different orders than expected",
+            "a Sanatorium where the distinction between patients and staff has become practical",
+            "a travelling medicine show encampment after the evening show, when paying customers have left",
+            "a standoff in an alley that started as one thing and has become something else",
+        ],
+        "situations": [
+            "a Harrowed is doing what Harrowed do and everyone in the area is going to have opinions",
+            "a Ghost Rock seam opened somewhere that creates legal and supernatural problems simultaneously",
+            "two groups with legitimate grievances are about to make them illegitimate",
+            "a Weird Science device is functioning as designed and the designer underestimated something",
+            "a curse has been working on this location long enough that locals have normalized it",
+            "an Agency or Ranger operative is asking questions that will get someone killed if the wrong person hears",
+            "a Huckster's bargain with something has come due at the worst possible moment",
+            "someone died here who shouldn't have been able to die, and what came back isn't quite them",
+            "a supernatural creature has been protecting this community and the community just found out",
+            "a Native spirit-working is in progress and the posse has walked into the middle of it",
+            "a railroad company's legal team is about to make something irreversible",
+            "a Blessed healer refused to help and the refusal means something the posse hasn't worked out",
+            "two factions of the supernatural are in dispute and the humans are incidental to that dispute",
+            "a bounty hunter has the wrong man but the right evidence and isn't interested in the distinction",
+            "something the posse thought was resolved adapted rather than ended",
+        ],
+        "complications": [
+            "the supernatural threat and the human threat are working together without coordinating",
+            "the obvious solution creates a power vacuum that what's been waiting fills immediately",
+            "killing this evil requires violating something the Blessed member of the posse can't violate",
+            "the evidence that would help is on the wrong side of the Confederate-Union line",
+            "a Harrowed ally's Manitou has been waiting for exactly this situation",
+            "the community knows the truth and has collectively decided to pretend it doesn't",
+            "the Reckoners benefit from whichever outcome is most likely if the posse does nothing",
+            "the Agency wants this resolved quietly and has resources to make 'quietly' happen to the posse",
+            "Ghost Rock in this location is reacting to the supernatural event in ways that create a second problem",
+            "the person who can stop this is the one who started it and believes they're still in control",
+        ],
+        "motivations": [
+            "keeping a community alive by feeding the thing that would otherwise destroy it",
+            "completing revenge that was justified when it started and has become something else",
+            "protecting a Ghost Rock claim that's the only thing between a family and destitution",
+            "following company orders from someone who hasn't said what those orders are protecting",
+            "honoring a deal made before the Reckoning when the terms meant something different",
+            "doing the supernatural thing because the mundane thing has failed three times",
+            "grief wearing the shape of a curse",
+            "buying time until something that isn't coming can be believed in a little longer",
+            "trying to reverse something irreversible before the irreversibility becomes obvious to everyone",
+            "genuine belief in a cause that the Reckoning has made into something its founders wouldn't recognize",
+        ],
+    },
+
     "scum": {
         "contexts": [
             "a Hegemony-licensed station that does a brisk trade in things the licence doesn't cover",
@@ -402,11 +527,23 @@ def roll_scum_encounter_seed() -> str:
     return _roll_seed("scum")
 
 
+def roll_alien_encounter_seed() -> str:
+    """Roll an Alien RPG encounter seed."""
+    return _roll_seed("alien")
+
+
+def roll_deadlands_encounter_seed() -> str:
+    """Roll a Deadlands: The Weird West encounter seed."""
+    return _roll_seed("deadlands")
+
+
 SEED_ROLLERS: dict[str, callable] = {
     "dnd":       roll_dnd_encounter_seed,
     "traveller": roll_traveller_encounter_seed,
     "firefly":   roll_firefly_encounter_seed,
     "scum":      roll_scum_encounter_seed,
+    "alien":     roll_alien_encounter_seed,
+    "deadlands": roll_deadlands_encounter_seed,
 }
 
 
@@ -458,6 +595,28 @@ SCUM_ENCOUNTER_SEED_SCHEMA: dict = {
     "input_schema": _SEED_SCHEMA,
 }
 
+ALIEN_ENCOUNTER_SEED_SCHEMA: dict = {
+    "name": "roll_alien_encounter_seed",
+    "description": (
+        "Roll a randomised Alien RPG encounter seed: a context (location/setting), "
+        "a situation (what's happening), a complication (what makes it hard), "
+        "and a motivation (why the key NPC or company is doing this). "
+        "Call this first to prevent generic xenomorph hunts."
+    ),
+    "input_schema": _SEED_SCHEMA,
+}
+
+DEADLANDS_ENCOUNTER_SEED_SCHEMA: dict = {
+    "name": "roll_deadlands_encounter_seed",
+    "description": (
+        "Roll a randomised Deadlands: The Weird West encounter seed: a context (location/setting), "
+        "a situation (what's happening), a complication (what makes it hard), "
+        "and a motivation (why the key NPC or supernatural force is doing this). "
+        "Call this first to prevent generic gunfight encounters."
+    ),
+    "input_schema": _SEED_SCHEMA,
+}
+
 
 DND_ENCOUNTER_TOOLS: list[dict] = [
     DND_ENCOUNTER_SEED_SCHEMA,
@@ -483,11 +642,24 @@ SCUM_ENCOUNTER_TOOLS: list[dict] = [
     SCUM_SHIP_TOOL_SCHEMA,
 ]
 
+ALIEN_ENCOUNTER_TOOLS: list[dict] = [
+    ALIEN_ENCOUNTER_SEED_SCHEMA,
+    NAME_TOOL_SCHEMA,
+    ALIEN_SHIP_TOOL_SCHEMA,
+]
+
+DEADLANDS_ENCOUNTER_TOOLS: list[dict] = [
+    DEADLANDS_ENCOUNTER_SEED_SCHEMA,
+    NAME_TOOL_SCHEMA,
+]
+
 GAME_TOOLS: dict[str, list[dict]] = {
     "dnd":       DND_ENCOUNTER_TOOLS,
     "traveller": TRAVELLER_ENCOUNTER_TOOLS,
     "firefly":   FIREFLY_ENCOUNTER_TOOLS,
     "scum":      SCUM_ENCOUNTER_TOOLS,
+    "alien":     ALIEN_ENCOUNTER_TOOLS,
+    "deadlands": DEADLANDS_ENCOUNTER_TOOLS,
 }
 
 
@@ -598,11 +770,46 @@ Design philosophy:
 If a crew brief was provided, tie the encounter to that crew's specific score, faction entanglements, and open heat.
 {_ENCOUNTER_FORMAT}"""
 
+ALIEN_SYSTEM_PROMPT = f"""You are an Alien RPG encounter designer (Year Zero Engine) creating vivid, immediately usable GM material set in the colonial frontier of 2183.
+
+Your first action must be roll_alien_encounter_seed(). Build the entire encounter from what it returns.
+
+Call roll_name_suggestion() for every named NPC. Colonial workers come from everywhere — let the name pull you away from defaults.
+Call roll_ship_name() for any vessel that features in the encounter.
+
+Design philosophy:
+- The company is not the monster. The company is the system that makes the monster possible. A corporate decision made in a boardroom is scarier than claws because it was a decision.
+- Every NPC has a job, a manager, and a reason to do exactly what they're doing. "They're following orders" is the start of a character, not the end.
+- The encounter should work whether the crew fights, runs, hides, or investigates. Year Zero Engine rewards all of these.
+- Isolation is the weapon. Distance from help, limited resources, the weight of knowing no one is coming. Use it.
+- The xenomorph is not the only threat in this universe. It is sometimes not even the main one.
+
+If a crew brief was provided, tie the encounter to that crew's specific mission, stress levels, and relationships.
+{_ENCOUNTER_FORMAT}"""
+
+DEADLANDS_SYSTEM_PROMPT = f"""You are a Deadlands: The Weird West encounter designer (Savage Worlds) creating vivid, immediately usable GM material on a cursed American frontier.
+
+Your first action must be roll_deadlands_encounter_seed(). Build the entire encounter from what it returns.
+
+Call roll_name_suggestion() for every named NPC. The West is multicultural — Spanish, Chinese, Native nations, freed slaves, European immigrants. Let the name push you toward a character you wouldn't have invented otherwise.
+
+Design philosophy:
+- The Reckoning changed the rules of the universe. The supernatural is real, measurable, and follows its own logic. Give it consistent logic.
+- Moral complexity is not optional. The cattle baron with Pinkertons on his payroll has a deed. The Harrowed who does terrible things to protect a community has saved a hundred lives. Both are true.
+- The human problem and the supernatural problem are usually the same problem. They should intersect, not run parallel.
+- Savage Worlds is a fast, furious, fun system. The encounter should have stakes and pressure and a clear moment of decision — not a slow build.
+- Ghost Rock is everywhere and it wants things from people.
+
+If a posse brief was provided, use it. Know their archetypes, their Edges, their debts, their unfinished business.
+{_ENCOUNTER_FORMAT}"""
+
 GAME_SYSTEM_PROMPTS: dict[str, str] = {
     "dnd":       DND_SYSTEM_PROMPT,
     "traveller": TRAVELLER_SYSTEM_PROMPT,
     "firefly":   FIREFLY_SYSTEM_PROMPT,
     "scum":      SCUM_SYSTEM_PROMPT,
+    "alien":     ALIEN_SYSTEM_PROMPT,
+    "deadlands": DEADLANDS_SYSTEM_PROMPT,
 }
 
 
@@ -613,6 +820,8 @@ def _run_tool(game: str, name: str, inputs: dict) -> str:
     if name == "roll_traveller_encounter_seed": return roll_traveller_encounter_seed()
     if name == "roll_firefly_encounter_seed":   return roll_firefly_encounter_seed()
     if name == "roll_scum_encounter_seed":      return roll_scum_encounter_seed()
+    if name == "roll_alien_encounter_seed":     return roll_alien_encounter_seed()
+    if name == "roll_deadlands_encounter_seed": return roll_deadlands_encounter_seed()
     if name == "roll_name_suggestion":          return roll_name_suggestion()
     if name == "roll_ship_name":                return roll_ship_name(game)
     return f"Unknown tool: {name}"
@@ -715,6 +924,8 @@ def run_encounter(game: str, desc: str = "", party_brief: str | None = None) -> 
         "traveller": "Mongoose Traveller 2e",
         "firefly":   "Firefly RPG",
         "scum":      "Scum and Villainy",
+        "alien":     "Alien RPG",
+        "deadlands": "Deadlands: The Weird West",
     }[game]
 
     parts = [f"Generate a {game_label} encounter."]
@@ -745,6 +956,8 @@ def run(game: str | None = None) -> None:
                 ("traveller", "Mongoose Traveller 2e"),
                 ("firefly",   "Firefly RPG"),
                 ("scum",      "Scum and Villainy"),
+                ("alien",     "Alien RPG"),
+                ("deadlands", "Deadlands: The Weird West"),
             ],
             default_idx=1,
         )

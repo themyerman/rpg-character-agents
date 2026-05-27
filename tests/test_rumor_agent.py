@@ -13,6 +13,8 @@ from agents.rumor_agent import (
     roll_traveller_rumor_seed,
     roll_firefly_rumor_seed,
     roll_scum_rumor_seed,
+    roll_alien_rumor_seed,
+    roll_deadlands_rumor_seed,
     save_rumor,
     detect_phase,
     RUMOR_SUBJECTS,
@@ -25,23 +27,27 @@ from agents.rumor_agent import (
     TRAVELLER_RUMOR_SEED_SCHEMA,
     FIREFLY_RUMOR_SEED_SCHEMA,
     SCUM_RUMOR_SEED_SCHEMA,
+    ALIEN_RUMOR_SEED_SCHEMA,
+    DEADLANDS_RUMOR_SEED_SCHEMA,
 )
 
 
-GAMES = ["dnd", "traveller", "firefly", "scum"]
+GAMES = ["dnd", "traveller", "firefly", "scum", "alien", "deadlands"]
 ROLLERS = {
     "dnd":       roll_dnd_rumor_seed,
     "traveller": roll_traveller_rumor_seed,
     "firefly":   roll_firefly_rumor_seed,
     "scum":      roll_scum_rumor_seed,
+    "alien":     roll_alien_rumor_seed,
+    "deadlands": roll_deadlands_rumor_seed,
 }
 
 
 # ── RUMOR_SUBJECTS structure ──────────────────────────────────────────────────
 
 class TestRumorSubjects:
-    def test_all_four_games_present(self):
-        assert set(RUMOR_SUBJECTS.keys()) == {"dnd", "traveller", "firefly", "scum"}
+    def test_all_six_games_present(self):
+        assert set(RUMOR_SUBJECTS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
     def test_each_game_has_at_least_fifteen_subjects(self):
         for game in GAMES:
@@ -160,7 +166,7 @@ class TestRumorToolSchemas:
 
 class TestRumorGameTools:
     def test_all_games_have_tools(self):
-        assert set(GAME_TOOLS.keys()) == {"dnd", "traveller", "firefly", "scum"}
+        assert set(GAME_TOOLS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
     def test_each_game_has_seed_and_name_tool(self):
         for game in GAMES:
@@ -179,7 +185,7 @@ class TestRumorGameTools:
 
 class TestRumorSystemPrompts:
     def test_all_games_have_prompts(self):
-        assert set(GAME_SYSTEM_PROMPTS.keys()) == {"dnd", "traveller", "firefly", "scum"}
+        assert set(GAME_SYSTEM_PROMPTS.keys()) == {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
     def test_prompts_mention_correct_seed_tool(self):
         assert "roll_dnd_rumor_seed" in GAME_SYSTEM_PROMPTS["dnd"]
