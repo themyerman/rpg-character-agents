@@ -48,7 +48,7 @@
 - **Enemy — The Cantor, Iselda Vrasc:** A choir-mistress of a coastal cathedral who knows exactly what Vashka uncovered in her isolation, wants it for her own order, and has begun sending polite, well-dressed people with knives.
 
 ### Equipment
-- A longsword with a copper-wire grip she rewound herself
+- A longsword with a copper-wire grip she rewound herself — *1d8 slashing, versatile (1d10)*
 - A battered kite shield bearing no heraldry — she scraped the previous owner's sigil off with a stone
 - Chainmail that smells faintly of cave-damp no matter how often she airs it
 - A holy symbol carved from a single piece of antler

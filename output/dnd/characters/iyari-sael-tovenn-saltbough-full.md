@@ -48,8 +48,8 @@
 - **Enemy — First Mate Caedran Vell:** The man whose decision sank the *Marrow-Gull* in a squall he was warned about; he survived, made it home, and has been telling a very different version of events in the dockside taverns of Port Aushen.
 
 ### Equipment
-- A leather-wrapped wooden scimitar with barnacle scars along the grip
-- A sling and a pouch of smooth river stones
+- A leather-wrapped wooden scimitar with barnacle scars along the grip — *1d6 slashing, finesse, light*
+- A sling and a pouch of smooth river stones — *1d4 bludgeoning, ranged 30/120*
 - A hide cuirass darkened by sea salt
 - A wooden shield carved with a spiral of waves
 - A druidic focus: a length of *Marrow-Gull* rail twisted with living ivy

@@ -46,8 +46,8 @@
 - **Enemy — Vance Coppersmile:** The smiling, well-dressed human who runs the Tallowfingers crew and took Pip's brother three years ago; he doesn't remember her name, which makes her angrier than anything else he's done.
 
 ### Equipment
-- A rapier she's named "Last Word" — won in a dice game; the previous owner is *probably* fine
-- A shortbow with a quiver of twenty arrows, kept in better condition than her boots
+- A rapier she's named "Last Word" — won in a dice game; the previous owner is *probably* fine — *1d8 piercing, finesse*
+- A shortbow with a quiver of twenty arrows, kept in better condition than her boots — *1d6 piercing, ranged 80/320*
 - Leather armor that fits a halfling because she stole it off a halfling
 - Thieves' tools wrapped in oilcloth — her real treasure, kept dry at all costs
 - A disguise kit: mostly soot, a wig, and three hats of decreasing quality
