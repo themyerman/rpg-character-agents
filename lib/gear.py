@@ -11,6 +11,55 @@ import json
 import random
 
 
+# ── D&D weapon damage lookup ──────────────────────────────────────────────────
+# Ordered from most-specific to least-specific so "hand crossbow" matches
+# before "crossbow" and "greataxe" before "axe".
+
+_WEAPON_DAMAGE: list[tuple[str, str, str]] = [
+    # (keyword,          damage die,          key properties)
+    ("greataxe",         "1d12 slashing",     "Heavy, two-handed"),
+    ("maul",             "2d6 bludgeoning",   "Heavy, two-handed"),
+    ("bastard sword",    "1d10 slashing",     "Two-handed"),
+    ("hand crossbow",    "1d6 piercing",      "Ranged 30/120, light"),
+    ("light crossbow",   "1d8 piercing",      "Ranged 80/320"),
+    ("heavy crossbow",   "1d10 piercing",     "Ranged 100/400, heavy"),
+    ("longbow",          "1d8 piercing",      "Ranged 150/600, heavy"),
+    ("shortbow",         "1d6 piercing",      "Ranged 80/320"),
+    ("longsword",        "1d8 slashing",      "Versatile (1d10)"),
+    ("shortsword",       "1d6 piercing",      "Finesse, light"),
+    ("warhammer",        "1d8 bludgeoning",   "Versatile (1d10)"),
+    ("battleaxe",        "1d8 slashing",      "Versatile (1d10)"),
+    ("handaxe",          "1d6 slashing",      "Light, thrown 20/60"),
+    ("rapier",           "1d8 piercing",      "Finesse"),
+    ("scimitar",         "1d6 slashing",      "Finesse, light"),
+    ("quarterstaff",     "1d6 bludgeoning",   "Versatile (1d8)"),
+    ("staff",            "1d6 bludgeoning",   "Versatile (1d8)"),
+    ("spear",            "1d6 piercing",      "Versatile (1d8), thrown 20/60"),
+    ("flail",            "1d8 bludgeoning",   ""),
+    ("mace",             "1d6 bludgeoning",   ""),
+    ("morningstar",      "1d8 piercing",      ""),
+    ("war pick",         "1d8 piercing",      ""),
+    ("sickle",           "1d4 slashing",      "Light"),
+    ("whip",             "1d4 slashing",      "Finesse, reach 10 ft"),
+    ("javelin",          "1d6 piercing",      "Thrown 30/120"),
+    ("dagger",           "1d4 piercing",      "Finesse, light, thrown 20/60"),
+    ("knife",            "1d4 piercing",      "Finesse, light, thrown 20/60"),
+    ("club",             "1d4 bludgeoning",   "Light"),
+]
+
+
+def _match_weapon_damage(weapon_str: str) -> dict:
+    """Return a damage dict for the weapon closest-matching the description."""
+    s = weapon_str.lower()
+    for keyword, damage, properties in _WEAPON_DAMAGE:
+        if keyword in s:
+            result: dict = {"damage": damage}
+            if properties:
+                result["properties"] = properties
+            return result
+    return {"damage": "varies", "properties": "see weapon type"}
+
+
 # ── D&D gear by class ─────────────────────────────────────────────────────────
 
 _DND_GEAR: dict[str, dict[str, list[str]]] = {
@@ -210,11 +259,15 @@ def roll_dnd_gear(class_name: str) -> str:
     weapon   = random.choice(gear["weapons"])
     kit      = random.sample(gear["kit"], min(2, len(gear["kit"])))
     personal = random.choice(_DND_PERSONAL)
+    dmg      = _match_weapon_damage(weapon)
     return json.dumps({
         "gear": [weapon] + kit + [personal],
+        "weapon_damage": dmg,
         "note": (
             "Include every item in the Equipment section. "
-            "Each should read as something this specific person carries — worn in, "
+            "For the weapon, append its damage in italics after the description: "
+            "e.g. '…still perfectly balanced — *1d8 piercing, finesse*'. "
+            "Each item should read as something this specific person carries — worn in, "
             "maintained or neglected in a way that says something about them. "
             "The personal item hints at history; give it one sentence."
         ),

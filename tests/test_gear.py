@@ -7,6 +7,8 @@ import pytest
 from lib.gear import (
     _DND_GEAR,
     _DND_PERSONAL,
+    _WEAPON_DAMAGE,
+    _match_weapon_damage,
     roll_dnd_gear,
     DND_GEAR_TOOL_SCHEMA,
     _TRAVELLER_GEAR,
@@ -123,6 +125,108 @@ class TestDndGearRoller:
     def test_note_is_non_empty_string(self):
         data = self._roll("Rogue")
         assert isinstance(data["note"], str) and data["note"].strip()
+
+    def test_weapon_damage_key_present(self):
+        """roll_dnd_gear must include weapon_damage in the returned JSON."""
+        for cls in DND_CLASSES:
+            data = self._roll(cls)
+            assert "weapon_damage" in data, f"{cls}: 'weapon_damage' key missing"
+
+    def test_weapon_damage_has_damage_field(self):
+        """weapon_damage must always have a 'damage' sub-key."""
+        for cls in DND_CLASSES:
+            data = self._roll(cls)
+            dmg = data["weapon_damage"]
+            assert "damage" in dmg, f"{cls}: weapon_damage missing 'damage'"
+
+    def test_weapon_damage_is_non_empty_string(self):
+        for cls in DND_CLASSES:
+            data = self._roll(cls)
+            assert isinstance(data["weapon_damage"]["damage"], str)
+            assert data["weapon_damage"]["damage"].strip()
+
+    def test_note_mentions_damage_and_italics(self):
+        """The updated note should tell Claude to append damage in italics."""
+        data = self._roll("Fighter")
+        note = data["note"]
+        assert "damage" in note.lower()
+        assert "italic" in note.lower()
+
+
+# ── _match_weapon_damage ─────────────────────────────────────────────────────
+
+class TestMatchWeaponDamage:
+    def test_weapon_damage_list_has_entries(self):
+        assert len(_WEAPON_DAMAGE) >= 20
+
+    def test_each_entry_is_three_element_tuple(self):
+        for entry in _WEAPON_DAMAGE:
+            assert len(entry) == 3, f"Entry {entry!r} is not a 3-tuple"
+
+    def test_all_damage_strings_contain_die(self):
+        """Every damage string should look like NdN or NdN+N."""
+        for keyword, damage, _ in _WEAPON_DAMAGE:
+            assert "d" in damage, f"'{keyword}' damage '{damage}' has no die notation"
+
+    def test_longsword_returns_1d8_slashing(self):
+        result = _match_weapon_damage("a longsword with a notch in the blade")
+        assert result["damage"] == "1d8 slashing"
+        assert "Versatile" in result.get("properties", "")
+
+    def test_greataxe_returns_1d12_slashing(self):
+        result = _match_weapon_damage("a greataxe with a repaired haft")
+        assert result["damage"] == "1d12 slashing"
+
+    def test_rapier_returns_1d8_piercing_finesse(self):
+        result = _match_weapon_damage("a rapier in a cracked leather scabbard, still perfectly balanced")
+        assert result["damage"] == "1d8 piercing"
+        assert "Finesse" in result.get("properties", "")
+
+    def test_dagger_returns_1d4_piercing(self):
+        result = _match_weapon_damage("three daggers in various states of concealment")
+        assert result["damage"] == "1d4 piercing"
+
+    def test_hand_crossbow_not_matched_as_crossbow(self):
+        """'hand crossbow' must hit the hand crossbow entry, not a generic crossbow."""
+        result = _match_weapon_damage("a hand crossbow worn under the coat with twelve bolts")
+        assert result["damage"] == "1d6 piercing"          # hand crossbow
+        assert "light" in result.get("properties", "").lower()
+
+    def test_shortbow_not_confused_with_longbow(self):
+        result = _match_weapon_damage("a shortbow and a quiver of twenty arrows")
+        assert result["damage"] == "1d6 piercing"
+
+    def test_longbow_returns_1d8_piercing(self):
+        result = _match_weapon_damage("a longbow of yew, strung only when needed")
+        assert result["damage"] == "1d8 piercing"
+
+    def test_quarterstaff_returns_1d6_bludgeoning(self):
+        result = _match_weapon_damage("a quarterstaff with grips worn smooth")
+        assert result["damage"] == "1d6 bludgeoning"
+
+    def test_warhammer_returns_1d8_bludgeoning(self):
+        result = _match_weapon_damage("a warhammer with the deity's symbol stamped into the head")
+        assert result["damage"] == "1d8 bludgeoning"
+
+    def test_unknown_weapon_returns_varies(self):
+        result = _match_weapon_damage("a halberd of great antiquity")
+        assert result["damage"] == "varies"
+
+    def test_empty_string_returns_varies(self):
+        result = _match_weapon_damage("")
+        assert result["damage"] == "varies"
+
+    def test_all_dnd_weapon_strings_get_a_match(self):
+        """Every weapon string in _DND_GEAR should resolve to a known damage die."""
+        no_match = []
+        for cls, gear in _DND_GEAR.items():
+            for weapon in gear["weapons"]:
+                result = _match_weapon_damage(weapon)
+                if result["damage"] == "varies":
+                    no_match.append((cls, weapon))
+        # Allow up to 2 misses (some weapon strings are intentionally vague)
+        assert len(no_match) <= 2, \
+            f"Too many unmatched weapons ({len(no_match)}): {no_match}"
 
 
 # ── Traveller gear ────────────────────────────────────────────────────────────

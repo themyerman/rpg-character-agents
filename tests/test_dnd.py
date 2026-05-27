@@ -1227,3 +1227,18 @@ class TestRollVillainProfile:
         import inspect, agents.dnd_agent as m
         source = inspect.getsource(m.run)
         assert "villain" in source
+
+
+# ── Weapon damage integration ─────────────────────────────────────────────────
+
+class TestSystemPromptWeaponDamage:
+    """SYSTEM_PROMPT should instruct Claude to use the weapon_damage field."""
+
+    def test_system_prompt_mentions_weapon_damage(self):
+        import agents.dnd_agent as m
+        assert "weapon_damage" in m.SYSTEM_PROMPT
+
+    def test_system_prompt_mentions_damage_italics(self):
+        import agents.dnd_agent as m
+        # The prompt should tell Claude to write damage in italics
+        assert "italic" in m.SYSTEM_PROMPT.lower()

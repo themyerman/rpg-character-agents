@@ -659,10 +659,10 @@ BACKGROUNDS = {
     },
     "Faction Agent": {
         "description": "You serve an organization — political, religious, arcane, or criminal — that operates across borders and keeps its own counsel",
-        "skills": ["Insight", "one skill determined by faction"],
+        "skills": ["Insight", "Persuasion"],
         "tools": [],
         "languages": 2,
-        "feature": "Safe Haven — members of your faction will shelter, feed, and pass messages for you; you have access to the faction's network even in unfamiliar cities",
+        "feature": "Safe Haven — members of your faction will shelter, feed, and pass messages for you; you have access to the faction's network even in unfamiliar cities. (Background grants Insight + one faction-appropriate skill — Persuasion listed as default; swap for Arcana, History, Nature, Religion, Medicine, or Stealth based on the faction.)",
         "personality_seeds": {
             "traits": ["I always know which people in a room have power and who they owe it to", "I am loyal to my organization's ideals, and more flexible about its current leadership"],
             "ideals": ["The Cause — the faction's goal is worth the cost; I believe that", "Loyalty — the network survives because everyone holds up their part"],
@@ -673,10 +673,10 @@ BACKGROUNDS = {
     },
     "Urban Bounty Hunter": {
         "description": "You hunt people for money — not in the wilderness, but in cities, among people who know how to hide in plain sight",
-        "skills": ["Deception", "Insight", "Stealth", "Persuasion"],
+        "skills": ["Deception", "Stealth"],
         "tools": ["Thieves' tools or musical instrument or gaming set"],
         "languages": 0,
-        "feature": "Ear to the Ground — you have contacts in the underworld who know where people are; you can get information about specific individuals in a city faster than most",
+        "feature": "Ear to the Ground — you have contacts in the underworld who know where people are; you can get information about specific individuals in a city faster than most. (Background grants 2 skills chosen from: Deception, Insight, Persuasion, Stealth — Deception and Stealth listed here as defaults; swap for Insight or Persuasion if they fit the concept better.)",
         "personality_seeds": {
             "traits": ["I read people quickly and rarely need to be told twice", "I'm patient in ways that other people find unnerving"],
             "ideals": ["The Contract — I took the job; the job gets done", "Fair Payment — I provide a service and I deserve to be compensated honestly for it"],
@@ -2161,6 +2161,8 @@ Work through these steps in order, using your tools at each stage:
    Do not write "this character is [alignment]" in the backstory — let it live in what they do.
 
 6. GEAR & AC & COMBAT — Call roll_dnd_gear(class_name="[chosen class]") — all returned items must appear in Equipment.
+   The result includes a weapon_damage field with the weapon's damage die and properties — append this
+   to the weapon entry in Equipment in italics, e.g. "…still perfectly balanced — *1d8 piercing, finesse*".
    Then immediately call calculate_ac:
    - Use the armor_type from the class's typical_armor field, adjusted if the gear roll returned different armor
    - Pass the DEX modifier
@@ -2229,6 +2231,7 @@ Categories: Ally, Contact, Enemy, Rival.
 
 ### Equipment
 [List every item returned by roll_dnd_gear — don't skip any. Each item is on its own line with a dash.
+The weapon entry ends with its damage in italics from the weapon_damage field: *1d8 piercing, finesse*.
 The weapon should feel worn in, not new off a table. The personal item (always last) gets one additional
 sentence: what it suggests about who this person is or was.]
 
