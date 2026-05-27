@@ -10,6 +10,7 @@ Also keeps the pick() UI helper that was already here.
 """
 
 import re
+import unicodedata
 from pathlib import Path
 
 import anthropic
@@ -57,8 +58,15 @@ def strip_preamble(text: str) -> str:
 
 
 def slug(text: str) -> str:
-    """Lowercase, collapse non-alphanumeric runs to dashes, strip leading/trailing dashes."""
-    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    """Lowercase, transliterate accented/diacritic chars, collapse non-alphanumeric runs to dashes.
+
+    Uses NFKD decomposition to strip combining marks so accented characters
+    map to their base letter (é→e, š→s, ȟ→h, á→a). Characters that don't
+    decompose this way (e.g. ŋ, ø, æ) fall back to a dash.
+    """
+    normalized = unicodedata.normalize("NFKD", text.lower())
+    ascii_text = "".join(c for c in normalized if unicodedata.category(c) != "Mn")
+    return re.sub(r"[^a-z0-9]+", "-", ascii_text).strip("-")
 
 
 # ── Agentic loop ───────────────────────────────────────────────────────────────

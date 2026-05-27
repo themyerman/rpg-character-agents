@@ -80,6 +80,33 @@ class TestSlug:
         result = slug("!@#$%^")
         assert result == "" or not result.startswith("-")
 
+    # ── Unicode / diacritic handling ──────────────────────────────────────────
+
+    def test_accented_latin_chars_decompose(self):
+        # é, à, ü etc. should map to their base letter
+        assert slug("Élodie Renard") == "elodie-renard"
+
+    def test_spanish_accents(self):
+        assert slug("María José Vásquez") == "maria-jose-vasquez"
+
+    def test_nordic_chars(self):
+        assert slug("Björn Ångström") == "bjorn-angstrom"
+
+    def test_caron_diacritics(self):
+        # š → s, ȟ → h, č → c (common in Slavic and Lakȟóta romanization)
+        assert slug("Tȟašína") == "thasina"
+
+    def test_mixed_unicode_readable(self):
+        # Full Lakȟóta name — ŋ doesn't decompose but result should be legible
+        result = slug("Tȟašína Wakíŋyaŋ")
+        assert result.startswith("thasina")
+        assert "waki" in result
+        assert result != "t-a-na-wak-ya-"   # the old broken output
+
+    def test_pure_ascii_unchanged(self):
+        assert slug("Selam Desta") == "selam-desta"
+        assert slug("Dr. Kwabena Puma") == "dr-kwabena-puma"
+
 
 # ── save_character ────────────────────────────────────────────────────────────
 
