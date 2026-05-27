@@ -13,6 +13,8 @@ from agents import dnd_agent
 from agents import traveller_agent
 from agents import firefly_agent
 from agents import scum_villainy_agent
+from agents import alien_agent
+from agents import deadlands_agent
 from agents import party_agent
 from agents import npc_cluster_agent
 from agents import encounter_agent
@@ -30,6 +32,29 @@ from lib.safety import sanitize_desc, screen_desc
 # character modes are embedded directly so labels use game-appropriate terms
 
 GAME_ACTIONS: dict[str, list[tuple[str, str]]] = {
+    "alien": [
+        ("cinematic",  "Cinematic pre-gen character"),
+        ("npc",        "NPC sketch"),
+        ("contact",    "Corporate contact"),
+        ("scenario",   "Cinematic scenario framework"),
+        ("party",      "Crew"),
+        ("cluster",    "NPC cluster"),
+        ("encounter",  "Encounter"),
+        ("location",   "Location"),
+        ("rumor",      "Rumor"),
+        ("event",      "Event"),
+    ],
+    "deadlands": [
+        ("full",       "Full character sheet"),
+        ("npc",        "NPC sketch"),
+        ("contact",    "Patron contact"),
+        ("party",      "Posse"),
+        ("cluster",    "NPC cluster"),
+        ("encounter",  "Encounter"),
+        ("location",   "Location"),
+        ("rumor",      "Rumor"),
+        ("event",      "Event"),
+    ],
     "dnd": [
         ("full",        "Full character sheet"),
         ("npc",         "NPC sketch"),
@@ -90,6 +115,8 @@ CHARACTER_RUNNERS: dict[str, callable] = {
     "traveller": traveller_agent.run,
     "firefly":   firefly_agent.run,
     "scum":      scum_villainy_agent.run,
+    "alien":     alien_agent.run,
+    "deadlands": deadlands_agent.run,
 }
 
 # Human-readable labels for the description prompt
@@ -100,6 +127,9 @@ MODE_LABELS: dict[str, str] = {
     "patron":        "patron",
     "jobcontact":    "job contact",
     "scorecontact":  "score contact",
+    "contact":       "contact",
+    "cinematic":     "cinematic pre-gen",
+    "scenario":      "cinematic scenario",
     "alien":         "alien character",
     "synthetic":     "droid or AI NPC",
     "stardancer":    "Stardancer character",
@@ -111,6 +141,8 @@ GAMES: list[tuple[str, str]] = [
     ("traveller", "Mongoose Traveller 2e"),
     ("firefly",   "Firefly RPG"),
     ("scum",      "Scum and Villainy"),
+    ("alien",     "Alien RPG"),
+    ("deadlands", "Deadlands: The Weird West"),
 ]
 
 

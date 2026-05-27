@@ -144,16 +144,18 @@ class TestGetSpellSuggestions:
             assert data["class"] == cls
 
     def test_returns_five_or_six_spells(self):
-        # Paladin and Ranger have no cantrips, so they return 4 spells (3 low + 1 high)
+        # API returns cantrips and spells separately; total should be 4-6
+        # Paladin and Ranger have no cantrips, so they return 4 leveled spells
         no_cantrip_classes = {"Paladin", "Ranger"}
         for cls in SPELLCASTING_CLASSES:
             data = json.loads(get_spell_suggestions(cls))
+            total = len(data.get("cantrips", [])) + len(data["spells"])
             if cls in no_cantrip_classes:
-                assert 4 <= len(data["spells"]) <= 5, \
-                    f"{cls} returned {len(data['spells'])} spells, expected 4-5"
+                assert 4 <= total <= 5, \
+                    f"{cls} returned {total} total spells, expected 4-5"
             else:
-                assert 5 <= len(data["spells"]) <= 6, \
-                    f"{cls} returned {len(data['spells'])} spells, expected 5-6"
+                assert 5 <= total <= 6, \
+                    f"{cls} returned {total} total spells, expected 5-6"
 
     def test_each_spell_has_required_keys(self):
         data = json.loads(get_spell_suggestions("Cleric"))
@@ -163,19 +165,18 @@ class TestGetSpellSuggestions:
             assert "school" in spell
             assert "hook" in spell
 
-    def test_level_is_cantrip_or_level_n(self):
+    def test_level_is_level_n(self):
+        # "spells" only contains leveled spells (cantrips are in "cantrips" key)
         data = json.loads(get_spell_suggestions("Druid"))
         for spell in data["spells"]:
             lvl = spell["level"]
-            assert lvl == "Cantrip" or lvl.startswith("Level "), \
-                f"Unexpected level format: {lvl!r}"
+            assert lvl.startswith("Level "), \
+                f"Unexpected level format in spells list: {lvl!r}"
 
     def test_selection_includes_cantrip(self):
-        # Run 20 times to account for randomness
-        for _ in range(20):
-            data = json.loads(get_spell_suggestions("Wizard"))
-            cantrips = [s for s in data["spells"] if s["level"] == "Cantrip"]
-            assert len(cantrips) >= 1, "Expected at least 1 cantrip"
+        # Cantrips are returned in the separate "cantrips" key, not in "spells"
+        data = json.loads(get_spell_suggestions("Wizard"))
+        assert len(data.get("cantrips", [])) >= 1, "Expected at least 1 cantrip"
 
     def test_selection_includes_higher_level_spell(self):
         for _ in range(20):

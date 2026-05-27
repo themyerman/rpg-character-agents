@@ -123,8 +123,8 @@ class TestCharacterRunners:
 # ── GAMES list ────────────────────────────────────────────────────────────────────
 
 class TestGamesList:
-    def test_four_games_listed(self):
-        assert len(main.GAMES) == 4
+    def test_six_games_listed(self):
+        assert len(main.GAMES) == 6
 
     def test_all_game_keys_match_game_actions(self):
         listed_keys = {k for k, _ in main.GAMES}

@@ -791,6 +791,324 @@ def roll_scum_gear(playbook: str) -> str:
     })
 
 
+# ── Alien RPG gear by role ────────────────────────────────────────────────────
+
+_ALIEN_GEAR: dict[str, dict[str, list[str]]] = {
+    "Colonial Marine": {
+        "weapons": [
+            "an M41A Pulse Rifle with a drum magazine worn smooth from handling — the counter reads thirty-seven rounds and has read thirty-seven rounds since Sector Seven",
+            "an M4A3 Service Pistol in a thigh rig, checked and cleared so many times the action is silk",
+            "a combat shotgun borrowed from the armory and not yet signed back in",
+        ],
+        "kit": [
+            "M3 Personnel Armor, the chest plate repaired at the left shoulder with industrial sealant",
+            "a motion tracker worn on the wrist, the display cracked in the corner — still accurate",
+            "eight chemical flares in a belt pouch, six of which still light reliably",
+            "a combat knife in a boot sheath, used for everything except combat",
+            "a field ration pack and a water filtration kit",
+        ],
+    },
+    "Company Agent": {
+        "weapons": [
+            "a compact M4A3 pistol in a shoulder holster under the jacket, never drawn in front of anyone",
+            "a stun baton collapsed to baton length in an inner pocket — registered as a personal defense tool",
+        ],
+        "kit": [
+            "a W-Y data tablet with encrypted partition access — the visible partition has quarterly reports",
+            "a surveillance kit: passive audio pickup, micro-lens, signal recorder the size of a thumb",
+            "two identity credentials on separate chips, one for each name",
+            "a burner comm unit with four preset contacts and a sixth-month expiry",
+            "a sealed case of personal items that is never opened where anyone can see",
+        ],
+    },
+    "Colonial Marshal": {
+        "weapons": [
+            "a Watatsumi DV-303 bolt pistol in a service holster, the marshal's number engraved on the grip",
+            "a pump-action shotgun in a soft case, technically for 'transit security'",
+        ],
+        "kit": [
+            "a marshal's badge and credentials — genuine, registered, recognized in eleven systems",
+            "two sets of magnetic restraints on a belt clip",
+            "a portable forensic kit: evidence containers, scanner, documentation recorder",
+            "a personal comm with direct links to three colonial authority offices, two of which answer",
+            "a worn case file — physical, not digital — of something that isn't on this mission and shouldn't be",
+        ],
+    },
+    "Roughneck": {
+        "weapons": [
+            "an industrial cutting torch rated for hull work — the safety guard has been removed",
+            "a heavy wrench that fits in a side holster and is also, empirically, a weapon",
+        ],
+        "kit": [
+            "a work suit with the company logo half-peeled off — underneath is a different company's logo",
+            "a personal tool belt with seventeen specialized tools, each in the right pocket from muscle memory",
+            "a hardhat with a cracked brim and three stickers that are there for a reason",
+            "a handheld diagnostic scanner, screen scratched, still more accurate than the official system",
+            "a canteen, a tin of something edible, and a cigarette case with two left",
+        ],
+    },
+    "Scientist": {
+        "weapons": [
+            "an M4A3 Service Pistol, acquired with obvious reluctance and carried with visible discomfort",
+        ],
+        "kit": [
+            "a PDAT scanner, custom-modified — the manufacturer's warranty voided three modifications ago",
+            "twelve specimen containers in a padded case, four of which are already labeled in a private notation system",
+            "a research notebook with the last forty pages written in a personal cipher",
+            "a hazmat suit folded to a field pack, rated for biological and chemical — worn at the collar from repeated donning",
+            "a data chip containing research that officially does not exist",
+        ],
+    },
+    "Pilot": {
+        "weapons": [
+            "an M4A3 Service Pistol carried at the hip — the holster strap has never been unsnapped",
+            "a survival blade in a boot sheath, more useful than the pistol in most situations",
+        ],
+        "kit": [
+            "a flight suit patched at the left elbow, a name tag removed but the outline still visible",
+            "a personal navigation computer — hand-calibrated, backed up in two locations",
+            "an emergency beacon reset to non-standard frequencies",
+            "a survival kit: thermal blanket, 96-hour rations, medical patch, purification tabs",
+            "a lucky item that is not spoken about in functional terms",
+        ],
+    },
+    "Medic": {
+        "weapons": [
+            "an M4A3 Service Pistol — carried with professional neutrality, as if it is one more tool",
+        ],
+        "kit": [
+            "a comprehensive medkit stocked to field surgical standards with three items that are not in the manifest",
+            "stimulants in a dedicated inner pocket, the dose carefully calibrated for each crew member's body mass",
+            "surgical tools in a padded case maintained to sterile standard regardless of circumstances",
+            "a biohazard-rated examination suit, folded to a carry case",
+            "a patient file — physical — that should not exist on this mission, for a crew member who should not have needed one",
+        ],
+    },
+}
+
+_ALIEN_PERSONAL: list[str] = [
+    "a photograph of somewhere that is not a station or a ship — green, flat, open",
+    "a personal comm with a contact list that no longer connects to anything",
+    "a child's drawing, folded carefully, never explained",
+    "a physical key to something they no longer have access to",
+    "a letter they started and never finished, addressed to a name that isn't in any crew manifest",
+    "a company loyalty chip from their first posting — kept, they say, for the irony",
+    "a small carved figure from somewhere before the Frontier, worn smooth from handling",
+    "a physical photograph of a crew they're no longer part of",
+    "a sealed vial of something that is not medication — they don't explain it",
+    "a journal with the last three months of entries removed",
+    "a name and a system number written on a piece of hull plating",
+    "a ring worn on a chain instead of a finger",
+]
+
+
+def roll_alien_gear(role_name: str) -> str:
+    """Return a starting gear kit for an Alien RPG character by role."""
+    gear = _ALIEN_GEAR.get(role_name, {
+        "weapons": ["a standard-issue sidearm, unremarkable and functional"],
+        "kit": ["a personal kit appropriate to their work", "basic survival supplies"],
+    })
+    weapon   = random.choice(gear["weapons"])
+    kit      = random.sample(gear["kit"], min(2, len(gear["kit"])))
+    personal = random.choice(_ALIEN_PERSONAL)
+    return json.dumps({
+        "gear": [weapon] + kit + [personal],
+        "note": (
+            "Include every item in the Equipment section. "
+            "Items should feel used — maintained or neglected in ways specific to this person. "
+            "The personal item raises a question about who they were before this mission."
+        ),
+    })
+
+
+# ── Deadlands gear by archetype ───────────────────────────────────────────────
+
+_DEADLANDS_GEAR: dict[str, dict[str, list[str]]] = {
+    "Gunfighter": {
+        "weapons": [
+            "a Colt Single Action Army, worn smooth at the cylinder from a draw practiced until it was unconscious",
+            "a pair of Remington revolvers in a cross-draw rig — not a trick, just how they learned",
+            "a Colt Peacemaker and a short-barreled backup revolver in a coat pocket — for when close quarters make the difference",
+        ],
+        "kit": [
+            "a leather holster rig, oiled and fitted to this specific weapon's frame",
+            "a cleaning kit carried in a belt pouch — the pistol is cleaned every evening without exception",
+            "spare ammunition in a cartridge belt, loops kept full",
+            "a long coat that has been shot at more than once and still functions",
+            "a bottle of good whiskey kept for specific occasions that keep presenting themselves",
+        ],
+    },
+    "Blessed": {
+        "weapons": [
+            "a twelve-gauge shotgun carried in a saddle scabbard — God's mercy has limits",
+            "a revolver worn with obvious reluctance, visible as an admission of how the West actually works",
+            "a walking staff, heavy and iron-shod — the Apostles did not wait for firearms",
+        ],
+        "kit": [
+            "a worn Bible, spine replaced twice, pages annotated in three different inks",
+            "a medic's kit: bandages, carbolic, needle and thread, laudanum in a locked compartment",
+            "a small supply of holy water, blessed personally, treated as the limited resource it is",
+            "simple clothes of good quality if examined closely — not wealth, but care",
+            "a congregation's donation, in cash, meant for a place they haven't reached yet",
+        ],
+    },
+    "Huckster": {
+        "weapons": [
+            "a Derringer in a wrist holster under the coat sleeve, the oldest trick and the most reliable",
+            "a revolver worn in a quick-draw holster that doesn't quite match the rest of the outfit",
+        ],
+        "kit": [
+            "a marked deck — not obviously, not detectably, but marked — kept for professional use",
+            "a clean deck for friendly games, kept separate and visibly clean",
+            "a good coat with hidden pockets sewn in by a professional",
+            "a roll of coin for stakes, bribery, and entry fees into the right conversations",
+            "a small locked box containing something that is not cards and is not explained",
+        ],
+    },
+    "Shaman": {
+        "weapons": [
+            "a lever-action rifle — practical, maintained, carried without apology",
+            "a traditional weapon appropriate to their nation — not decorative",
+            "a revolver obtained through necessity, carried through pragmatism",
+        ],
+        "kit": [
+            "a medicine bundle — the contents specific to their nation and their compact with the Spirits",
+            "trail equipment suited for long travel through contested land",
+            "a supply of remedies that are effective and cannot be bought in any town pharmacy",
+            "practical clothes suited to the territory and the season",
+            "a physical record of something they are carrying back to their people",
+        ],
+    },
+    "Mad Scientist": {
+        "weapons": [
+            "their most recent invention — still warm, not entirely stable, capable of doing something the manufacturer of any reasonable weapon would call impossible",
+            "a standard revolver as backup, for when the invention is recharging or on fire",
+        ],
+        "kit": [
+            "ghost rock samples in a lead-lined case, each labeled in a notation system only they understand",
+            "engineering tools in a worn leather roll — each one custom-modified",
+            "protective goggles, scorched at the frame, worn at all times when working",
+            "blueprints for three active projects and one they haven't told anyone about",
+            "a journal of results, including the results they haven't reported to anyone funding this work",
+        ],
+    },
+    "Harrowed": {
+        "weapons": [
+            "the weapon they carried in life — the same one, maintained with a care that goes beyond habit",
+            "a pair of revolvers that are never holstered in the same configuration twice",
+        ],
+        "kit": [
+            "minimal provisions — the dead don't hunger, but it's easier to pretend",
+            "a flask that is never quite empty by morning, regardless of how much was in it the night before",
+            "a wanted poster for someone — folded and refolded, the edges worn through",
+            "something that belonged to the person they were before — kept, but not worn",
+            "a letter that was never sent — the handwriting changes halfway through",
+        ],
+    },
+    "Bounty Hunter": {
+        "weapons": [
+            "a Winchester repeating rifle, maintained to a standard that would satisfy a sergeant-major",
+            "a revolver worn cross-draw for a dismounted fast-draw and a backup blade in the boot",
+            "a sawn-off shotgun on a saddle ring — close work pays the same as distance work",
+        ],
+        "kit": [
+            "a collection of wanted posters, sorted by reward amount",
+            "tracking supplies: prints mold, canteen, three days of hard rations, compass",
+            "manacles and a length of rope, both maintained and functional",
+            "a field kit for overnight tracking in rough country",
+            "a single wanted poster that is not a job — folded separately, handled differently",
+        ],
+    },
+    "Doc": {
+        "weapons": [
+            "a scalpel in a wrist sheath — surprisingly effective and deeply unsettling",
+            "a revolver carried in a bag pocket rather than a holster, technically concealed, practically accessible",
+        ],
+        "kit": [
+            "a medical bag stocked to professional standards, with field additions the medical college would not have approved",
+            "laudanum in a locked compartment — the combination only they know",
+            "surgical tools in a padded case, kept clean regardless of conditions",
+            "a reference text with margin annotations that disagree with the printed text",
+            "a patient file that has never been closed — not labeled with a name, labeled with a date",
+        ],
+    },
+    "Drifter": {
+        "weapons": [
+            "a revolver that has been through three owners and survived all of them",
+            "a knife that is the most reliable thing they own — used for everything, cleaned after each use",
+        ],
+        "kit": [
+            "a bedroll that has been in worse places than this",
+            "one change of clothes, slightly better than what's being worn",
+            "a tin cup, a fork, and three days of food that will be replaced as needed",
+            "a deck of cards, missing one face card, worn smooth",
+            "a photograph of somewhere that might still exist, possibly with someone who might still be there",
+        ],
+    },
+    "Cowboy": {
+        "weapons": [
+            "a Winchester Model 1873 repeating rifle in a saddle scabbard — the ranch brand is no longer on the stock",
+            "a Colt Single Action Army at the hip, for snakes and worse",
+        ],
+        "kit": [
+            "a rope — always, without exception",
+            "saddlebags with trail gear: farrier tools, fire kit, three days of rations",
+            "spurs, gloves worn through at the thumb, a good hat",
+            "a whetstone and a belt knife used for everything from cooking to fencing",
+            "a photograph from a drive they don't talk about — everyone in it is still alive in the photograph",
+        ],
+    },
+    "Lawman": {
+        "weapons": [
+            "a double-barreled shotgun — the universal language of crowd control",
+            "a Colt Army revolver on the hip, the serial number registered in three jurisdictions",
+        ],
+        "kit": [
+            "a badge — worn visibly, polished, the authority it represents increasingly theoretical",
+            "handcuffs and a deputy's warrant book, kept current",
+            "a notebook of ongoing cases — far more than one jurisdiction's worth",
+            "a wanted poster they've carried for years, the paper worn at the folds",
+            "a letter from someone they haven't been able to get back to",
+        ],
+    },
+}
+
+_DEADLANDS_PERSONAL: list[str] = [
+    "a daguerreotype of someone who is not in any other part of their story",
+    "a coin from a Confederate state, kept for a reason they don't explain",
+    "a military medal from a unit they're not supposed to have served in",
+    "a folded letter, read so many times the creases have gone white",
+    "a small carved figure — rough, clearly made by someone who was trying hard",
+    "a religious token from a faith they no longer practice",
+    "a deed to a property they've never seen and may not exist",
+    "a lock of hair in a paper envelope — the paper has a name on the outside",
+    "a watch that stopped at a specific time and is kept wound anyway",
+    "a newspaper clipping about something that happened in a town they've never visited, involving a name they recognize",
+    "a Wanted poster with their name on it and a description that isn't quite accurate",
+    "a letter they were supposed to deliver and didn't",
+]
+
+
+def roll_deadlands_gear(archetype_name: str) -> str:
+    """Return a starting gear kit for a Deadlands character by archetype."""
+    gear = _DEADLANDS_GEAR.get(archetype_name, {
+        "weapons": ["a reliable revolver, nothing fancy"],
+        "kit": ["practical clothes and trail gear", "a canteen and a week of provisions"],
+    })
+    weapon   = random.choice(gear["weapons"])
+    kit      = random.sample(gear["kit"], min(2, len(gear["kit"])))
+    personal = random.choice(_DEADLANDS_PERSONAL)
+    return json.dumps({
+        "gear": [weapon] + kit + [personal],
+        "note": (
+            "Include every item in the Equipment section. "
+            "Items should feel earned — worn in, maintained or neglected in ways "
+            "that say something about who this person is and what they've been through. "
+            "The personal item hints at something unresolved; let it stay that way."
+        ),
+    })
+
+
 # ── Tool schemas ──────────────────────────────────────────────────────────────
 
 DND_GEAR_TOOL_SCHEMA: dict = {
@@ -878,5 +1196,49 @@ SCUM_GEAR_TOOL_SCHEMA: dict = {
             },
         },
         "required": ["playbook"],
+    },
+}
+
+ALIEN_GEAR_TOOL_SCHEMA: dict = {
+    "name": "roll_alien_gear",
+    "description": (
+        "Get a starting equipment kit for an Alien RPG character based on their role. "
+        "Returns 4 items: the role's signature weapon or tool, 2 role-appropriate items, "
+        "and one personal item. "
+        "Call this after committing to the character's role. "
+        "Every returned item must appear in the Equipment section."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "role_name": {
+                "type": "string",
+                "description": "The character's role.",
+                "enum": list(_ALIEN_GEAR.keys()),
+            },
+        },
+        "required": ["role_name"],
+    },
+}
+
+DEADLANDS_GEAR_TOOL_SCHEMA: dict = {
+    "name": "roll_deadlands_gear",
+    "description": (
+        "Get a starting gear kit for a Deadlands character based on their archetype. "
+        "Returns 4 items: the archetype's signature weapon, 2 archetype-appropriate items, "
+        "and one personal item that hints at history. "
+        "Call this after committing to the character's archetype. "
+        "Every returned item must appear in the Equipment section."
+    ),
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "archetype_name": {
+                "type": "string",
+                "description": "The character's archetype.",
+                "enum": list(_DEADLANDS_GEAR.keys()),
+            },
+        },
+        "required": ["archetype_name"],
     },
 }
