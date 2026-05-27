@@ -2,7 +2,7 @@
 
 AI-powered GM tools for tabletop RPGs, built with the Anthropic Claude API. Each generator runs an agentic tool-use loop — Claude calls dice rollers, rules lookups, name generators, and seed tables, gets real random results back, and uses them to produce output that feels like it actually lived through something.
 
-Supports **D&D 5e**, **Mongoose Traveller 2e**, **Firefly RPG (Cortex System)**, and **Scum and Villainy (Forged in the Dark)**.
+Supports **D&D 5e**, **Mongoose Traveller 2e**, **Firefly RPG (Cortex System)**, **Scum and Villainy (Forged in the Dark)**, **Alien RPG (Year Zero Engine)**, and **Deadlands: The Weird West (Savage Worlds)**.
 
 The `output/` folder contains examples generated during development — characters, NPCs, parties, encounters, ships, locations, rumors, and events ready to use or adapt.
 
@@ -39,11 +39,15 @@ Two menus: pick your game, then pick what to build.
 - Mongoose Traveller 2e
 - Firefly RPG
 - Scum and Villainy
+- Alien RPG
+- Deadlands: The Weird West
 
 **What to build:**
 - Full character sheet
 - NPC sketch
-- Hook encounter (quest giver / patron / job contact / score contact)
+- Hook encounter (quest giver / patron / job contact / score contact / corporate contact)
+- Cinematic pre-gen *(Alien RPG only)*
+- Cinematic scenario framework *(Alien RPG only)*
 - Alien character *(Traveller only)*
 - Droid or AI NPC *(Traveller only)*
 - First contact encounter *(Traveller only — fully procedural)*
@@ -51,7 +55,7 @@ Two menus: pick your game, then pick what to build.
 - Party / crew
 - NPC cluster
 - Encounter
-- Ship
+- Ship *(D&D, Traveller, Firefly, Scum and Villainy)*
 - Location
 - Rumor
 - Event
@@ -63,6 +67,8 @@ python agents/dnd_agent.py
 python agents/traveller_agent.py
 python agents/firefly_agent.py
 python agents/scum_villainy_agent.py
+python agents/alien_agent.py
+python agents/deadlands_agent.py
 python agents/party_agent.py
 python agents/npc_cluster_agent.py
 python agents/encounter_agent.py
@@ -146,12 +152,60 @@ Character output saves to `output/scum_villainy/characters/`. Stardancer output 
 
 ---
 
+### Alien RPG — `alien_agent.py`
+
+Year Zero Engine character generation for one-shot cinematic scenarios. Attributes are d6/d10 dice pools; each role has four attributes summing to 12 for cinematic play. The horror comes from the Stress mechanic — accumulating Stress dice boost rolls but risk Panic, and the Panic table is not kind.
+
+**Modes:**
+- `cinematic` — Cinematic pre-gen: role, attribute block (Strength/Agility/Wits/Empathy summing to 12), key skills, career talents, equipment, and a Personal Agenda. The Personal Agenda is printed as a GM-only section — a secret goal that may put the character sideways with the rest of the crew. The GM tears it off and hands it to the player privately.
+- `npc` — Quick sketch: role, attributes, demeanor, want, secret, hook
+- `contact` — Corporate contact encounter with the four-truth structure. Truth 4 is always **The Company Knew** — Weyland-Yutani had full intelligence on the site before the crew shipped out and sent them anyway.
+- `scenario` — Cinematic scenario framework: type, location, central complication, escalation beats, and GM notes
+
+**Roles:** Colonial Marine, Company Agent, Colonial Marshal, Roughneck, Scientist, Pilot, Medic. Each has a fixed attribute distribution — the Marine is Strength/Agility heavy; the Scientist maxes Wits; the Pilot tops out at Agility 5.
+
+**Personal Agendas** — 5 per role, rolled randomly. They're designed to create pressure without requiring betrayal: a Medic's agenda might be to keep a specific person alive at any cost; a Company Agent's might be to retrieve a sample regardless of crew survival. The GM decides how much weight they carry.
+
+**Scenario hooks** — 8 types with 3 complications each: Derelict Investigation, Outbreak Response, Corporate Retrieval, Survivor Rescue, Research Gone Wrong, Military Engagement, First Contact, and Sabotage.
+
+Character and NPC output saves to `output/alien/characters/`. Scenario output saves to `output/alien/scenarios/`.
+
+---
+
+### Deadlands: The Weird West — `deadlands_agent.py`
+
+Savage Worlds character generation for the American West of 1876 — an alternate history where the Civil War ground to a bloody stalemate, the dead walk, and something called the Reckoning is poisoning the land itself. Attributes are trait dice (d4–d12); Edges are bought with points funded by Hindrances.
+
+**Modes:**
+- `full` — Full character sheet: archetype, five attributes (Agility/Smarts/Spirit/Strength/Vigor) with die ratings, 6–8 skills, 1–3 Edges, 1–2 Hindrances (written as this specific person's version, not the generic description), arcane background (if applicable), wounds and bennies, equipment, personality, connections, and a two- to three-paragraph backstory ending with the specific moment the Weird West cracked the ordinary world open for this character
+- `npc` — Quick sketch: archetype, key attributes, demeanor, want, secret, hook
+- `contact` — Patron encounter with the four-truth structure. Truth 4 is always **The Real West** — the posse is on the wrong side of history, being used as instruments against people who have done nothing wrong. The contact may believe their own version of events.
+
+**Archetypes:** Gunfighter, Blessed, Huckster, Shaman, Mad Scientist, Harrowed, Bounty Hunter, Doc, Drifter, Cowboy, Lawman.
+
+Five archetypes have **Arcane Backgrounds** that are treated as relationships, not mechanics:
+- *Blessed* — miracles powered by genuine faith; power fades if the character loses their way
+- *Huckster* — hexes powered by gambling against a manitou; losing a hand has consequences
+- *Shaman* — spirit powers tied to a specific nation and its sacred compact with the land
+- *Mad Scientist* — ghost rock powered gadgets; the more powerful the device, the more it costs the inventor
+- *Harrowed* — undead with supernatural abilities; the manitou inside can seize control when the character is weak
+
+The Shaman archetype includes an explicit note in the data requiring grounding in a specific Native nation (Sioux, Cheyenne, Apache, Comanche, etc.) and calling out that the Sioux Confederacy holds the Hunting Grounds with real sovereign power. Generic pan-Native treatment is flagged to avoid.
+
+**Hindrances** — 22 total (10 Major, 12 Minor). Each has a description written as lived experience, not a rules summary. Rolled 1–2 times per character; the system prompt instructs the model to write each Hindrance as this specific person's version rather than copying the generic text.
+
+**Weird West hooks** — 8 job types: Bounty Contract, Railroad Commission, Agency Assignment, Missing Person, Haunted Territory, Texas Ranger Request, Ghost Rock Trouble, Cattle Drive. Each has 3 complications that establish who's really holding the power, what the contact left out, or what the crew is about to step into.
+
+Output saves to `output/deadlands/characters/`.
+
+---
+
 ## Party & Crew Builder — `party_agent.py`
 
 Assembles a party or crew with connective tissue — shared history, fault lines, secrets, and a first session hook. Works with your saved characters, generates fresh ones, or mixes both.
 
 **Interactive flow:**
-1. Game: `dnd` / `traveller` / `firefly` / `scum`
+1. Game: `dnd` / `traveller` / `firefly` / `scum` / `alien` / `deadlands`
 2. Party/crew size (default: 4)
 3. Mode: `folder` (pick from saved characters) / `generate` (all fresh) / `mix` (some of each)
 4. If folder or mix: pick characters by number from a displayed list
@@ -163,6 +217,8 @@ Assembles a party or crew with connective tissue — shared history, fault lines
 Output saves to `output/parties/{game}/`.
 
 **Examples:** The Hannox Detour (D&D), Lost Causes (Traveller), La Drona del Río (Firefly), Quiet Verdict (Scum and Villainy)
+
+Alien RPG parties are called **Crews**; Deadlands parties are called **Posses**. The party agent uses game-appropriate terminology automatically.
 
 ---
 
@@ -189,6 +245,8 @@ Each game has 20 entries per seed category (80 seeds total per game):
 - **Traveller** — Class C downports, megacorp extraction facilities, gas giant skimming stations, decommissioned Scout bases
 - **Firefly** — Rim settlements, border moon agricultural communities, derelict transports, Core transit hubs
 - **Scum and Villainy** — Hegemony transit hubs, fringe stations, Ur-ruin sites, Guild shipyard districts, Mystic enclaves
+- **Alien RPG** — colony installations, derelict ships, Weyland-Yutani facilities, frontier outposts
+- **Deadlands** — frontier towns, mining camps, railroad depots, haunted territories
 
 Output saves to `output/{game}/locations/`.
 
@@ -201,7 +259,7 @@ Generates GM-ready rumors with a spoken version (as someone would actually say i
 **Optionally loads a saved location brief** to anchor the rumor to a specific place.
 
 **Seed structure:**
-- **Subject** (game-specific, ~18 per game) — what the rumor is fundamentally about: thieves' guild succession disputes, megacorp acquisitions, Alliance troop movements, Hegemony faction moves
+- **Subject** (game-specific, ~18 per game) — what the rumor is fundamentally about: thieves' guild succession disputes, megacorp acquisitions, Alliance troop movements, Hegemony faction moves, Weyland-Yutani site classifications, railroad land grabs
 - **Truth-angle** (shared, 6 options) — how the rumor relates to reality: mostly true / misunderstood / false but acted on / the wrong people know it / outdated / deliberate plant
 - **Tone** (shared, 6 options) — how it's being told: urgently over a drink / offhand as old news / third-hand / as a warning / as an opportunity / whispered
 
@@ -224,6 +282,8 @@ Each game has 15 contexts and 15 events (225 possible combinations per game):
 - **Traveller** — jump transit, port inspections, patron meetings, gas giant refuelling; sensor anomalies, personal messages, comms log irregularities, rival crews
 - **Firefly** — jobs in progress, ship laid up for repairs, Alliance patrols passing through; war veterans, Companion needs, cargo with extras, cortex records with convenient errors
 - **Scum and Villainy** — score approaches, faction meetings, Hegemony checkpoints, Mystic consultations; neutral factions making moves, Ur artifacts surfacing, vice complications, old debts calling in
+- **Alien RPG** — during transit, on-site, quarantine breaks, emergency evacs; Corporate override signals, medical emergencies, contact loss, something in the vents
+- **Deadlands** — on the trail, in town, mid-job, at camp; dead rising, Company interference, Agency arrivals, Reckoner manifestations
 
 Output saves to `output/{game}/events/`.
 
@@ -242,6 +302,8 @@ Each game has 20 entries per seed category (80 seeds total per game):
 - **Traveller** — starports, derelict ships, faction entanglements, Imperial bureaucracy as weather
 - **Firefly** — rim settlements, jobs that become something else, the war still casting a shadow
 - **Scum and Villainy** — half-completed scores, faction intermediaries, Ur artifacts, things the crew wasn't told
+- **Alien RPG** — derelict sites, colony installations, corporate facilities, deep space transit
+- **Deadlands** — frontier towns, open trail, haunted territory, railroad right-of-way
 
 Output saves to `output/encounters/{game}/`.
 
@@ -291,7 +353,7 @@ Called by `dnd_agent.py` during full character and NPC generation for spellcasti
 
 ### `gear.py` — Starting Equipment
 
-**`roll_dnd_gear(class_name)`**, **`roll_traveller_gear(career)`**, **`roll_firefly_gear(role)`**, **`roll_scum_gear(playbook)`** — returns 4 items as JSON: a signature weapon or tool (always appropriate for the class/career/role), 2 supporting items drawn from a game-specific pool, and one personal item drawn from a shared pool that hints at history. Story-first — items have brief characterful descriptions, not stat blocks.
+**`roll_dnd_gear(class_name)`**, **`roll_traveller_gear(career)`**, **`roll_firefly_gear(role)`**, **`roll_scum_gear(playbook)`**, **`roll_alien_gear(role_name)`**, **`roll_deadlands_gear(archetype_name)`** — returns 4 items as JSON: a signature weapon or tool (always appropriate for the class/career/role), 2 supporting items drawn from a game-specific pool, and one personal item drawn from a shared pool that hints at history. Story-first — items have brief characterful descriptions, not stat blocks.
 
 The personal item is always last. The system prompt instructs the model to give it one additional sentence about what it reveals about who the character is or was.
 
@@ -302,6 +364,8 @@ Each game has its own weapon pools, kit pools, and personal item list:
 - **Traveller** — 12 careers × 2–3 weapon options + 5 kit options; 12 shared personal items (star charts, data chips, hull-plating notes)
 - **Firefly** — 9 roles × 1–3 weapon options + 5 kit options; 12 shared personal items ('Verse-specific: war medals, Cortex clippings, warranty cards)
 - **Scum and Villainy** — 6 playbooks × 2–3 weapon options + 5 kit options; 12 shared personal items (data chips, faction tokens, Ur material)
+- **Alien RPG** — 7 roles × weapon + kit options; 12 shared personal items (dog tags, cracked tablets, family photos, contraband)
+- **Deadlands** — 11 archetypes × weapon + kit options; 12 shared personal items (wanted posters, pocket Bibles, war letters, ghost rock samples)
 
 ---
 
@@ -480,7 +544,9 @@ rpg-character-agents/
 │   ├── traveller_agent.py    # Mongoose Traveller 2e — character, NPC, patron
 │   ├── firefly_agent.py      # Firefly RPG — character, NPC, job contact
 │   ├── scum_villainy_agent.py# Scum and Villainy — character, NPC, score contact
-│   ├── party_agent.py        # Party / crew builder (all four games)
+│   ├── alien_agent.py        # Alien RPG — cinematic pre-gen, NPC, contact, scenario
+│   ├── deadlands_agent.py    # Deadlands: The Weird West — character, NPC, patron
+│   ├── party_agent.py        # Party / crew builder (all six games)
 │   ├── npc_cluster_agent.py  # Connected NPC group with internal relationships
 │   ├── encounter_agent.py    # Encounter generator with seed tables
 │   ├── ship_agent.py         # Ship builder with stats, history, quirks
@@ -490,7 +556,7 @@ rpg-character-agents/
 │
 ├── lib/                      # Pure Python — no API calls, fully tested
 │   ├── dice.py               # Dice rolling and rules lookups
-│   ├── gear.py               # Starting equipment — 4 games, class/career/role-specific
+│   ├── gear.py               # Starting equipment — 6 games, class/career/role-specific
 │   ├── names.py              # Name pools — 15+ traditions + D&D race pools
 │   ├── aliens.py             # Alien races + first contact — Traveller major/minor races, procedural species
 │   ├── synthetics.py         # Droids, AI systems, aux AI — Traveller + S&V Stardancer playbook
@@ -505,6 +571,8 @@ rpg-character-agents/
 │   ├── test_traveller.py
 │   ├── test_firefly.py
 │   ├── test_scum.py
+│   ├── test_alien_rpg.py
+│   ├── test_deadlands.py
 │   ├── test_party.py
 │   ├── test_npc_cluster.py
 │   ├── test_dice.py
@@ -555,13 +623,30 @@ rpg-character-agents/
     │   ├── locations/
     │   ├── rumors/
     │   └── events/
-    └── scum_villainy/
+    ├── scum_villainy/
+    │   ├── characters/
+    │   ├── synthetics/
+    │   ├── parties/
+    │   ├── clusters/
+    │   ├── encounters/
+    │   ├── ships/
+    │   ├── locations/
+    │   ├── rumors/
+    │   └── events/
+    ├── alien/
+    │   ├── characters/
+    │   ├── scenarios/
+    │   ├── parties/
+    │   ├── clusters/
+    │   ├── encounters/
+    │   ├── locations/
+    │   ├── rumors/
+    │   └── events/
+    └── deadlands/
         ├── characters/
-        ├── synthetics/
         ├── parties/
         ├── clusters/
         ├── encounters/
-        ├── ships/
         ├── locations/
         ├── rumors/
         └── events/
