@@ -1,0 +1,30 @@
+## **The Assay Office Burns**
+*Fires when the posse is in town for the night and a fire breaks out at the assay office — a fire that spreads faster than it should, draws the whole town to the street, and empties every building in a two-block radius of anyone paying attention to what's behind them.*
+
+### When It Fires
+It is past midnight. The posse is in their rooms, at the saloon, or wherever they've settled for the night. The fire alarm goes up — shouting first, then a bell, then the orange glow of something burning hot and fast. The assay office, a brick building on the main street, is fully involved: flames through the windows, smoke pouring from the roof, and the building going so fast that the volunteer fire brigade, by the time they arrive with their pump, can do nothing but wet the neighboring buildings and let it burn.
+
+### What Happens
+The assay office has records of every registered claim in the county — survey reports, ownership documents, the map of the ghost-rock deposits the company agents were buying up last month. All of it is burning. The assessor himself, **Marbury Holt**, is in the street in his nightshirt saying he got out in time; he left his record ledgers. He seems more stunned than devastated. He was known to sleep in the office on busy weeks.
+
+While the town watches the fire, two things are happening that nobody is watching:
+
+First: a man named **Calvin Steen** is not in the crowd. Steen owns the livery at the east end of town, keeps irregular hours, and was seen by the posse's most observant member going into the alley behind the assay office approximately twelve minutes before the alarm went up. He is not present. His horse is also not in the livery.
+
+Second: the bank on the opposite side of the street is dark and locked — as it should be at midnight — except that a window on the second floor has been opened from inside, a clean 8-inch crack, just enough for a rope. And in the alley below that window, when the fire is at its height and every eye in Sagewick is pointing at the flames, there are fresh wheel-marks in the mud from a wagon that was loaded and departed in the last half hour.
+
+### The Party's Position
+They can chase the fire, help the brigade, comfort the assessor, ask the obvious questions. Or they can look the other way while the fire does its work. The fire is already out of their hands — it's burning and it's going to keep burning — but the bank window and the absence of Calvin Steen are both things that are going to stop being available evidence in about twenty minutes.
+
+### Possible Responses
+1. **Follow the wagon tracks.** East road, heavy load, recent — trackable for someone with the skill. The tracks lead four miles out to a dry creek bed where a wagon was loaded onto a larger freight conveyance. The transfer point has two things: the fresh scent of horse and money (paper currency, in volume) and a single glove, woman's-size, fine leather, left behind in the mud. The initials inside the glove are "E.T.R."
+2. **Find Calvin Steen.** He comes back to town by noon the next day, acting normal, saying he took a night ride to clear his head. He is a bad liar — everyone in town knows it — but he has a plausible story and no direct evidence against him. He is also scared of something and is not going to admit it. The thing he's scared of is not the posse.
+3. **Talk to Holt the assessor.** He was awake when the fire started. He is hiding that he was awake because someone had been in his office the previous afternoon looking at the survey maps — a woman he didn't recognize, well-dressed, who said she was from the county land office and produced paperwork he now cannot find because it burned. He didn't get a good look at her face. He got a very good look at her hands.
+
+### Complications
+- The assay office contained not only claim records but a sealed W-Y deposit box that Holt was paid to hold and instructed never to open. The box is the hottest point of the fire — the wall where it was stored is the origin point — and whoever set the fire set it specifically there, which means they knew about the box, which means either they were the ones who put it there or they found out from someone who was.
+- "E.T.R." The glove belongs to **Evangeline T. Ramirez-Voss**, daughter of a San Antonio banking family and currently wanted by the Pinkertons for three counts of wire fraud and one count of arson in the New Mexico Territory. The Pinkertons have an open file on her. She has, on two documented occasions, started fires to destroy property records that she subsequently purchased from distressed owners at fraction-of-market prices. She is good at this. She is better at the next part.
+- Steen's night ride. He was not setting the fire — he doesn't have the nerve for it. He was delivering a message on behalf of someone who does, to someone at the freight conveyance point. The message was a single line: *"The box is clear."* He read it. He has been spending carefully-folded banknotes for two weeks. He will not talk unless the posse gives him a better reason to talk than the reason he has to stay quiet.
+
+### GM Notes
+Run this as a heist aftermath rather than a fire rescue — the fire is the distraction, and the real story is what the distraction was covering. Ramirez-Voss is not a villain in the melodrama sense; she is a professional, a land-shark operating at a scale that treats ghost-rock claim-jumping as a capital enterprise, and she has people in place and a three-move plan already in motion before the posse showed up. The W-Y deposit box is the escalation lever: what was in it, and what does "the box is clear" mean — destroyed, extracted, or confirmed empty? If the box contained something W-Y wanted kept in that town, someone at W-Y is going to notice it's gone, and they are going to ask the most recent arrivals in Sagewick what they know. Escalate by having a W-Y agent ride in the following morning with a very specific list of questions about a very specific deposit, and with the authority to make the posse's lives complicated in ways that have nothing to do with Ramirez-Voss.

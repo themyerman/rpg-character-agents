@@ -1,0 +1,34 @@
+## The Hard Road South Posse
+
+### Members
+- **Jericho Vance** — Gunfighter — The man who leads by being too dangerous to argue with; he sets the pace, picks the camp, and makes decisions that involve bullets with the efficiency of someone who stopped feeling bad about it a long time ago. He is genuinely good at keeping a group alive, which is not the same as being good for a group.
+- **Amaryllis "Rye" Hollowell** — Blessed (Circuit Rider) — She carries a battered Methodist hymnal and a Peacemaker and has a direct line to something she calls the Lord and others call luck, and whether those are the same thing is the argument this posse has quietly every night. She patches the wounded, buries the dead, and holds the center in ways nobody asked her to but everyone depends on.
+- **Phineas Quek** — Mad Scientist — He has an invention in his pack that he won't fully explain, a journal of designs that he sleeps on, and a habit of muttering during gunfights as if he's running calculations on outcomes that haven't happened yet. He is dangerous in the way of all people who are confident they understand the situation better than they do.
+- **Esperanza "Spranza" Delgado-Ruiz** — Drifter (former vaquera) — She has been riding the territories since before she was a legal adult and knows more about moving through dangerous country quietly than anyone here. She does not discuss her past. She carries a photograph in her boot. She has been with this posse for three months and still will not say where she was before.
+- **Deputy Marshal Obadiah Fenwick** — Lawman — Still technically holds a deputy's commission from a county that was swallowed by a land company two years ago, which gives him just enough legal standing to make things awkward and not enough to make them official. He wants order restored. He is not naive enough to think that means the current order.
+- **Huītzīl** *(called "Wits" by Fenwick, not acknowledged by anyone else)* — Bounty Hunter — A Nahua bounty hunter out of southern Texas with a list of outstanding warrants she works through methodically and a composure in violence that unnerves even Vance. She travels with the posse because three of her outstanding warrants overlap with people they're already looking for, which is a working arrangement she has extended twice without further explanation.
+
+**Trait Dice** (notable):
+- Vance: Shooting d10, Fighting d8
+- Hollowell: Faith d10, Healing d8
+- Quek: Smarts d10, Repair d8
+- Delgado-Ruiz: Riding d10, Stealth d8
+- Fenwick: Persuasion d8, Notice d8
+- Huītzīl: Fighting d10, Tracking d8
+
+### How They Came Together
+Six months ago, none of them knew each other. Vance, Delgado-Ruiz, and Fenwick all arrived at the same burned-out relay station on the same night — all three following different trails that converged there, for different reasons, with the same three bodies cooling in the wreckage. The bodies were: a W-Y-contracted surveyor who'd been mapping ghost-rock deposits, a federal courier whose dispatch bag was missing, and a local rancher who had no business being at a relay station at all. Hollowell arrived the next morning to bury them. Quek had been sheltering in the station's back room for two days and hadn't touched anything, which Fenwick accepted as implausible but chose to believe. Huītzīl arrived the following morning with a warrant for one of the dead men — which moved the dead man from victim to subject, which moved the trail from a dead end to a live one.
+
+They followed it together because it was going the same direction they were all going anyway, and because whatever burned the station was still out there, and because five people with guns are statistically harder to kill than one.
+
+### What Holds Them Together
+The trail. Whatever killed those three people is connected to the missing dispatch bag, which is connected to the ghost-rock survey, which is connected to something Quek will not tell them but clearly knows more about than he's said. Delgado-Ruiz tracks because she is a tracker. Fenwick follows because it's the law's business. Hollowell stays because somebody has to make sure they don't become the thing they're hunting. Vance stays because there's money at the end of it, which he believes, and because he hasn't felt like being alone, which he doesn't say. Huītzīl is working her warrant. When the warrant is closed, she'll assess.
+
+### The Fault Line
+Vance and Fenwick. Fenwick is trying to bring someone back alive for a trial. Vance doesn't care about the trial and is very clear about that. Three times in the past six months, Fenwick has put himself between Vance and a man Vance was going to shoot, and three times Vance has let Fenwick have his way — not because he agreed, but because Hollowell asked him to, and Vance has a weakness for Hollowell's judgment that he covers with professional arguments. The fourth time, when Fenwick is wrong about who needs to live, Vance will not be stopped, and Fenwick will have to decide whether his commission means anything when the county that issued it doesn't exist anymore.
+
+### Shared Secret
+They all know Quek built something from the schematics in that dead surveyor's pack. He didn't ask permission. He assembled it in three nights in a barn outside Laramie and he won't show anyone what it does except to say that it "responds to ghost-rock concentrations at range." What they don't know — and what they're all separately pretending not to suspect — is that the device also responds to Reckoner influence, which means it goes wild near Harrowed, near hexes, near anything the Reckoners have touched. And when it goes wild, it makes a sound that Hollowell describes as "a note I know from somewhere I shouldn't." Quek has been writing down every reading. He has not shared the data. The data suggests they are walking toward something that has been gathering power for longer than the Reckoning has been happening.
+
+### First Session Hook
+They've ridden into a town called Cutter's Ford that was a mining camp two years ago and is now a proper settlement — a hotel, a bank, a Wells Fargo office, and a church that got finished last month. The Wells Fargo office is new. The bank is new. The church is new. The hotel is old, and the bartender there, a woman named Constance Vex who has been in Cutter's Ford longer than any of the new buildings, quietly tells Rye that the three men who funded all the new construction arrived the same week as six miners went missing in the lower shafts and nobody has talked about it since. Quek's device starts going wrong in his pack before he's finished his first drink. Vance notices. Huītzīl notices. Outside the hotel window, the Wells Fargo office has two people standing in front of it who are watching the hotel with the particular patience of people who have been waiting for the posse to arrive.
