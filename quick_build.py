@@ -3,13 +3,13 @@
 Usage:
     python quick_build.py <game>
 
-Games: dnd | traveller | firefly | scum
+Games: dnd | traveller | firefly | scum | alien | deadlands
 
 Generates without prompting:
-    • 3 full characters
+    • 3 full characters (cinematic pre-gens for Alien)
     • 1 NPC
     • 1 location
-    • 1 hook (quest giver / patron / job contact / score contact)
+    • 1 hook (quest giver / patron / job contact / score contact / corporate contact)
     • 2 rumors
 
 All files land in output/ exactly where the interactive agents would put them.
@@ -21,18 +21,21 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from lib.utils import run_agent_loop, strip_preamble
 from agents import dnd_agent, traveller_agent, firefly_agent, scum_villainy_agent
+from agents import alien_agent, deadlands_agent
 from agents import location_agent, rumor_agent
 
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
-VALID_GAMES = {"dnd", "traveller", "firefly", "scum"}
+VALID_GAMES = {"dnd", "traveller", "firefly", "scum", "alien", "deadlands"}
 
 GAME_LABELS = {
     "dnd":       "D&D 5e",
     "traveller": "Mongoose Traveller 2e",
     "firefly":   "Firefly RPG",
     "scum":      "Scum and Villainy",
+    "alien":     "Alien RPG",
+    "deadlands": "Deadlands: The Weird West",
 }
 
 CHARACTER_AGENTS = {
@@ -40,6 +43,28 @@ CHARACTER_AGENTS = {
     "traveller": traveller_agent,
     "firefly":   firefly_agent,
     "scum":      scum_villainy_agent,
+    "alien":     alien_agent,
+    "deadlands": deadlands_agent,
+}
+
+# Character mode for the 3 generated characters
+CHARACTER_MODES = {
+    "dnd":       "full",
+    "traveller": "full",
+    "firefly":   "full",
+    "scum":      "full",
+    "alien":     "cinematic",
+    "deadlands": "full",
+}
+
+# System prompt to use for the 3 generated characters
+CHARACTER_SYSTEM_PROMPTS = {
+    "dnd":       lambda: dnd_agent.SYSTEM_PROMPT,
+    "traveller": lambda: traveller_agent.SYSTEM_PROMPT,
+    "firefly":   lambda: firefly_agent.SYSTEM_PROMPT,
+    "scum":      lambda: scum_villainy_agent.SYSTEM_PROMPT,
+    "alien":     lambda: alien_agent.SYSTEM_PROMPT,
+    "deadlands": lambda: deadlands_agent.SYSTEM_PROMPT,
 }
 
 HOOK_MODES = {
@@ -47,6 +72,8 @@ HOOK_MODES = {
     "traveller": "patron",
     "firefly":   "jobcontact",
     "scum":      "scorecontact",
+    "alien":     "contact",
+    "deadlands": "contact",
 }
 
 HOOK_PROMPTS = {
@@ -54,6 +81,7 @@ HOOK_PROMPTS = {
     "patron":       "Generate a fully random patron encounter.",
     "jobcontact":   "Generate a fully random job contact encounter.",
     "scorecontact": "Generate a fully random score contact encounter.",
+    "contact":      "Generate a fully random contact encounter.",
 }
 
 
@@ -63,6 +91,8 @@ def _hook_system_prompt(game: str) -> str:
         "traveller": traveller_agent.PATRON_SYSTEM_PROMPT,
         "firefly":   firefly_agent.JOB_CONTACT_SYSTEM_PROMPT,
         "scum":      scum_villainy_agent.SCORE_CONTACT_SYSTEM_PROMPT,
+        "alien":     alien_agent.CONTACT_SYSTEM_PROMPT,
+        "deadlands": deadlands_agent.CONTACT_SYSTEM_PROMPT,
     }[game]
 
 
@@ -99,21 +129,25 @@ def _generate_rumor(game: str) -> Path:
 # ── Session build ─────────────────────────────────────────────────────────────
 
 def build_session(game: str) -> None:
-    agent = CHARACTER_AGENTS[game]
+    agent      = CHARACTER_AGENTS[game]
+    char_mode  = CHARACTER_MODES[game]
+    char_sysprompt = CHARACTER_SYSTEM_PROMPTS[game]()
     paths: list[Path] = []
+
+    char_label = "cinematic pre-gen" if char_mode == "cinematic" else "character"
 
     print(f"\n{'═' * 50}")
     print(f"  Quick Build — {GAME_LABELS[game]}")
-    print(f"  3 characters · 1 NPC · 1 location · 1 hook · 2 rumors")
+    print(f"  3 {char_label}s · 1 NPC · 1 location · 1 hook · 2 rumors")
     print(f"{'═' * 50}")
 
-    # 3 full characters
+    # 3 characters (full or cinematic depending on game)
     for i in range(1, 4):
-        _step(f"Character {i} of 3")
+        _step(f"{char_label.capitalize()} {i} of 3")
         result = strip_preamble(agent.run_agent(
-            "Generate a fully random character.", agent.SYSTEM_PROMPT
+            "Generate a fully random character.", char_sysprompt
         ))
-        path = agent.save_result(result, "full")
+        path = agent.save_result(result, char_mode)
         paths.append(path)
         print(f"  → {path.name}")
 
@@ -162,9 +196,8 @@ def build_session(game: str) -> None:
 
 def main() -> None:
     if len(sys.argv) < 2 or sys.argv[1] not in VALID_GAMES:
-        games = " | ".join(sorted(VALID_GAMES))
         print(f"\nUsage: python quick_build.py <game>")
-        print(f"Games: {games}\n")
+        print(f"Games: dnd | traveller | firefly | scum | alien | deadlands\n")
         sys.exit(1)
 
     build_session(sys.argv[1])
