@@ -6,9 +6,9 @@ Run with: python party_agent.py
 """
 
 import re
+import unicodedata
 from pathlib import Path
 import sys
-from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
 from lib.utils import get_client, pick
@@ -20,10 +20,12 @@ from lib.dice import DND_TOOLS, TRAVELLER_TOOLS, run_tool_dnd, run_tool_travelle
 _OUTPUT = Path(__file__).parent.parent / "output"
 
 FOLDERS = {
-    "dnd":       _OUTPUT / "dnd"       / "characters",
-    "traveller": _OUTPUT / "traveller" / "characters",
-    "firefly":   _OUTPUT / "firefly"   / "characters",
-    "scum":      _OUTPUT / "scum_villainy" / "characters",
+    "dnd":       _OUTPUT / "dnd"          / "characters",
+    "traveller": _OUTPUT / "traveller"    / "characters",
+    "firefly":   _OUTPUT / "firefly"      / "characters",
+    "scum":      _OUTPUT / "scum_villainy"/ "characters",
+    "alien":     _OUTPUT / "alien"        / "characters",
+    "deadlands": _OUTPUT / "deadlands"    / "characters",
 }
 
 
@@ -36,7 +38,7 @@ def list_characters(game: str) -> list[tuple[int, str, Path]]:
         return []
     files = sorted([
         f for f in folder.glob("*.md")
-        if f.stem.endswith(("-full", "-npc"))
+        if f.stem.endswith(("-full", "-npc", "-cinematic"))
     ])
     return [(i + 1, f.stem, f) for i, f in enumerate(files)]
 
@@ -212,6 +214,78 @@ Produce the crew brief in exactly this format:
 [One paragraph. A specific situation to open with — a job on offer, a complication with the ship, a face from someone's past showing up at the wrong port. Pull on at least two crew members' specific backstory threads.]"""
 
 
+ALIEN_CREW_PROMPT = """You are an Alien RPG crew builder and GM prep tool (Year Zero Engine / Free League Publishing).
+
+You will receive one or more existing cinematic pre-gen character sheets, and possibly an instruction to generate additional crew members to fill out the crew. If generating fresh crew, invent a name, role (Colonial Marine / Company Agent / Colonial Marshal / Roughneck / Scientist / Pilot / Medic), and one-sentence hook for each — make them fill gaps in the crew's capabilities and create interesting personal friction.
+
+Avoid clichés tied to race, gender, or origin. This is working-class science fiction horror: people doing dangerous jobs in dangerous places for companies that do not care if they come back.
+
+Do not output any intermediate notes or working text. Output only the formatted crew brief, starting directly with the ## heading.
+
+Produce the crew brief in exactly this format:
+
+## [Ship or Installation Name] — Crew Brief
+*[Mission type: survey / extraction / retrieval / response / transport] — [one phrase about the job or the crew's situation]*
+
+| | |
+|---|---|
+| **Vessel / Site** | [Name and type — survey ship, colony transport, research installation, etc.] |
+| **Employer** | [Weyland-Yutani / ICC / independent contractor / other] |
+| **What It Owes** | [the contract clause, the debt, or the thing the company hasn't told them yet] |
+
+### Crew
+- **[Name]** — [Role] — [their function in the group dynamic and what they're hiding, one sentence]
+[repeat for each member]
+
+### How They Came Together
+[2–3 paragraphs. Specific — who signed on where, what the contract promised, what got them on this particular ship. Reference specific character details from the sheets. These are people thrown together by logistics, not friendship.]
+
+### What Holds Them Together
+[One paragraph. The practical reason they're still cooperating — shared contract, shared ship, shared danger, or the simple fact that there's nobody else. Not warmth. Necessity.]
+
+### The Fault Line
+[One paragraph. The specific tension between specific crew members that will crack under pressure. Name names, name the issue. In the Alien universe, the fault line is usually between who the company is watching and who the company is using.]
+
+### Shared Secret
+[One paragraph. Something the crew collectively knows or suspects but hasn't said aloud — about the mission, the company, or each other. Connected to at least one character's personal agenda or backstory.]
+
+### First Session Hook
+[One paragraph. The situation when the session opens — what they've just been told, what they've just found, or what they've just lost contact with. Pull on at least two crew members' specific details. The horror starts here.]"""
+
+
+DEADLANDS_POSSE_PROMPT = """You are a Deadlands: The Weird West posse builder and GM prep tool (Savage Worlds / Pinnacle Entertainment).
+
+You will receive one or more existing character sheets, and possibly an instruction to generate additional posse members to fill out the group. If generating fresh members, invent a name, archetype (Gunfighter / Blessed / Huckster / Shaman / Mad Scientist / Harrowed / Bounty Hunter / Doc / Drifter / Cowboy / Lawman), and one-sentence hook for each — make them complement the existing characters in capability and create interesting moral friction.
+
+Avoid clichés tied to race, gender, or origin. The Weird West of 1876 includes Black cowboys and soldiers, Mexican vaqueros and pistoleros, Native nations with real power, immigrants building lives alongside everyone else. Every character should be specific to their history, not their category.
+
+Do not output any intermediate notes or working text. Output only the formatted posse brief, starting directly with the ## heading.
+
+Produce the posse brief in exactly this format:
+
+## [Posse Name — or leave unnamed if nothing fits yet]
+*[one phrase about what kind of outfit this is and what the West has made of them]*
+
+### Members
+- **[Name]** — [Archetype] — [their role in the group dynamic and what they carry into the Weird West, one sentence]
+[repeat for each member]
+
+### How They Came Together
+[2–3 paragraphs. Specific — the job, the town, the circumstance that put these particular people in the same place at the wrong time. Reference specific backstory details from the sheets. Not a tavern. Something that left a mark.]
+
+### What Holds Them Together
+[One paragraph. The practical or moral reason they haven't gone their separate ways — shared enemy, shared debt, shared knowledge of something the West wants buried, or the uncomfortable fact that each of them has nowhere better to be.]
+
+### The Fault Line
+[One paragraph. The specific tension between specific posse members that will eventually force a hard choice. Name names, name the disagreement. In the Weird West, the fault line is often about what justice means — and who gets it.]
+
+### Shared Secret
+[One paragraph. Something the whole posse knows but doesn't discuss — something they saw, something they did, something they're all complicit in. Connected to at least one character's backstory.]
+
+### First Session Hook
+[One paragraph. A specific situation to open with — a contract, a threat, a face from someone's past riding into town. Pull on at least two characters' specific backstory threads. Leave it morally uncomfortable — this is the Weird West, and the right answer is rarely clean.]"""
+
+
 # ── Agent functions ─────────────────────────────────────────────────────────────
 
 def synthesize(prompt: str, system_prompt: str) -> str:
@@ -285,7 +359,8 @@ def save_result(result: str, game: str, suffix: str = "party") -> Path:
         result.strip().splitlines()[0],
     )
     name_raw   = re.sub(r"[#*]", "", heading).strip()
-    name_slug  = re.sub(r"[^a-z0-9]+", "-", name_raw.lower()).strip("-")
+    _norm      = unicodedata.normalize("NFKD", name_raw.lower())
+    name_slug  = re.sub(r"[^a-z0-9]+", "-", "".join(c for c in _norm if unicodedata.category(c) != "Mn")).strip("-")
     filename   = f"{name_slug}-{suffix}.md"
     # Game subfolder: "scum" key → scum_villainy folder
     game_subdir = "scum_villainy" if game == "scum" else game
@@ -304,11 +379,15 @@ def run(game: str | None = None) -> None:
     if game is None:
         game = pick(
             "Which game?",
-            [("dnd", "D&D 5e"), ("traveller", "Mongoose Traveller 2e"),
-             ("firefly", "Firefly RPG"), ("scum", "Scum and Villainy")],
+            [("dnd",       "D&D 5e"),
+             ("traveller", "Mongoose Traveller 2e"),
+             ("firefly",   "Firefly RPG"),
+             ("scum",      "Scum and Villainy"),
+             ("alien",     "Alien RPG"),
+             ("deadlands", "Deadlands: The Weird West")],
             default_idx=1,
         )
-    label = "party" if game == "dnd" else "crew"
+    label = {"dnd": "party", "deadlands": "posse"}.get(game, "crew")
 
     # 2. Party size
     size_raw = input(f"\nHow many in the {label}? (default: 4): ").strip()
@@ -378,14 +457,15 @@ def run(game: str | None = None) -> None:
         "traveller": TRAVELLER_CREW_PROMPT,
         "firefly":   FIREFLY_CREW_PROMPT,
         "scum":      SCUM_CREW_PROMPT,
+        "alien":     ALIEN_CREW_PROMPT,
+        "deadlands": DEADLANDS_POSSE_PROMPT,
     }[game]
 
     if fresh_count > 0:
         tools       = DND_TOOLS if game == "dnd" else TRAVELLER_TOOLS
         run_tool_fn = run_tool_dnd if game == "dnd" else run_tool_traveller
-        # Firefly and Scum use a simple single-call synthesis even with fresh chars
-        # (their character sketches don't require dice rolling in the party context)
-        if game in ("firefly", "scum"):
+        # Non-dice games use simple single-call synthesis even with fresh chars
+        if game in ("firefly", "scum", "alien", "deadlands"):
             result = synthesize(prompt, system_prompt)
         else:
             result = run_agent(prompt, system_prompt, tools, run_tool_fn)
@@ -412,6 +492,8 @@ def run(game: str | None = None) -> None:
         "traveller": "patron",
         "firefly":   "job contact",
         "scum":      "score contact",
+        "alien":     "corporate contact",
+        "deadlands": "patron contact",
     }
     hook_type    = HOOK_TYPES[game]
     generate_hook = pick(
@@ -468,6 +550,26 @@ def run(game: str | None = None) -> None:
             print(f"\nGenerating {hook_type} hook...")
             hook_result = synthesize(hook_prompt, HOOK_SYSTEM)
 
+        elif game == "alien":
+            from alien_agent import CONTACT_SYSTEM_PROMPT as HOOK_SYSTEM
+            hook_prompt = (
+                f"Generate an Alien RPG corporate contact encounter tailored specifically to this crew. "
+                f"The job should connect to their fault line, their shared secret, or a specific crew member's personal agenda. "
+                f"Here is the crew brief:\n\n{result}"
+            )
+            print(f"\nGenerating {hook_type} hook...")
+            hook_result = synthesize(hook_prompt, HOOK_SYSTEM)
+
+        elif game == "deadlands":
+            from deadlands_agent import CONTACT_SYSTEM_PROMPT as HOOK_SYSTEM
+            hook_prompt = (
+                f"Generate a Deadlands patron contact encounter tailored specifically to this posse. "
+                f"The job should connect to their fault line, their shared secret, or a specific member's backstory. "
+                f"Here is the posse brief:\n\n{result}"
+            )
+            print(f"\nGenerating {hook_type} hook...")
+            hook_result = synthesize(hook_prompt, HOOK_SYSTEM)
+
         print("\n" + hook_result)
 
         # Save hook to the appropriate characters folder
@@ -476,9 +578,11 @@ def run(game: str | None = None) -> None:
             hook_result.strip().splitlines()[0],
         )
         name_raw    = re.sub(r"[#*]", "", first_line).strip()
-        hook_slug   = re.sub(r"[^a-z0-9]+", "-", name_raw.lower()).strip("-")
+        _norm       = unicodedata.normalize("NFKD", name_raw.lower())
+        hook_slug   = re.sub(r"[^a-z0-9]+", "-", "".join(c for c in _norm if unicodedata.category(c) != "Mn")).strip("-")
         hook_suffix = {"dnd": "questgiver", "traveller": "patron",
-                       "firefly": "jobcontact", "scum": "scorecontact"}[game]
+                       "firefly": "jobcontact", "scum": "scorecontact",
+                       "alien": "contact", "deadlands": "contact"}[game]
         hook_path   = FOLDERS[game] / f"{hook_slug}-{hook_suffix}.md"
         hook_path.write_text(hook_result)
         print(f"[saved → {hook_path}]")
