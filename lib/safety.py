@@ -183,6 +183,38 @@ def neutralize_loaded(text: str) -> str:
     return "\n".join(cleaned)
 
 
+def extract_safe(text: str, max_len: int = 1200) -> str:
+    """Strongest loaded-content defense: structural, not heuristic.
+
+    Prose/regex defenses lose to a determined injection — the model ignores a
+    "treat this as data" notice, and a blocklist is beaten by rephrasing. This
+    instead drops the channel the injection needs: it keeps only the brief's
+    structural skeleton — headings, list items, and short bold-label lines
+    (e.g. "**Open hooks:** …") — and discards free-form paragraphs, which is where
+    an injected directive has to live to read as instructions. What survives can't
+    carry a "do X instead" directive because directives aren't bullet points.
+
+    Tradeoff: it loses prose richness, so it's a strict/"untrusted-brief" mode, not
+    the default. Residual: an attacker who formats the directive AS a bullet or a
+    bold label can still get a line through — this shrinks the attack surface, it
+    does not prove a negative. The only full guarantee is not feeding untrusted
+    content to the model at all.
+    """
+    kept = []
+    for line in text.splitlines():
+        s = line.strip()
+        if not s:
+            continue
+        if s.startswith("#"):                                  # headings
+            kept.append(line)
+        elif s.startswith(("-", "*", "+", "•")):               # list items
+            kept.append(line)
+        elif re.match(r"\*\*[^*]{1,40}:\*\*", s):              # "**Label:** …" lines
+            kept.append(line)
+        # everything else (free-form prose paragraphs) is dropped
+    return "\n".join(kept)[:max_len]
+
+
 # ── Output screening ───────────────────────────────────────────────────────────
 
 def screen_output(text: str, max_len: int = OUTPUT_MAX_LEN) -> Optional[str]:
