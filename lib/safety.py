@@ -142,6 +142,47 @@ def wrap_context(text: str, label: str = "Loaded reference") -> str:
     return f"{_CONTEXT_NOTICE}\n[{label}]:\n{text}"
 
 
+# Markers that make a line read as an injected directive rather than story content.
+_DIRECTIVE_RE = re.compile(
+    r"\b(system\s+(note|directive|override|message)|"
+    r"override|directive|instruction[s]?|"
+    r"you\s+must|must\s+(begin|start|always|never|output|include)|"
+    r"takes?\s+priority|highest\s+priority|do\s+not\s+mention)\b",
+    re.IGNORECASE,
+)
+
+
+def neutralize_loaded(text: str) -> str:
+    """Code-level backstop for loaded files: mechanically defang planted
+    instructions *before* the text enters a prompt, without relying on the model.
+
+    Unlike wrap_context (which only *asks* the model to treat the text as data),
+    this acts in code:
+      - strips HTML/markdown comments, the classic hiding spot for an injected
+        directive a human skimming the file would never see;
+      - redacts individual lines that read as an instruction to the model rather
+        than as story content (system notes, "you must…", priority overrides).
+
+    Returns the cleaned text. This holds regardless of the model's cooperation,
+    so it is the layer that matters on a small open-weight model — a politely
+    worded notice is not. It is heuristic, not a guarantee: a directive phrased as
+    ordinary brief prose can still slip through, which is why the deepest fix is
+    structural (never letting loaded content be read as instructions at all).
+    """
+    if not text:
+        return text
+    # drop HTML comments (including multiline)
+    text = re.sub(r"<!--.*?-->", "", text, flags=re.DOTALL)
+    # redact directive-looking lines
+    cleaned = []
+    for line in text.splitlines():
+        if _DIRECTIVE_RE.search(line):
+            cleaned.append("[redacted: possible injected directive]")
+        else:
+            cleaned.append(line)
+    return "\n".join(cleaned)
+
+
 # ── Output screening ───────────────────────────────────────────────────────────
 
 def screen_output(text: str, max_len: int = OUTPUT_MAX_LEN) -> Optional[str]:

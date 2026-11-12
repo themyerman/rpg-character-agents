@@ -23,7 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from lib.names import roll_name_suggestion, NAME_TOOL_SCHEMA
-from lib.safety import sanitize_desc, screen_desc, wrap_desc, wrap_context, screen_output
+from lib.safety import sanitize_desc, screen_desc, wrap_desc, wrap_context, neutralize_loaded, screen_output
 from lib.utils import get_client, run_agent_loop, slug, pick
 
 
@@ -506,6 +506,7 @@ def run(game: str | None = None) -> None:
 
     prompt = "Generate a rumor for the GM."
     if location_brief:
+        location_brief = neutralize_loaded(location_brief)
         for w in screen_desc(location_brief):
             print(f"  [safety] loaded location brief: {w}")
         prompt += f"\n\nThis rumor is set in or connected to the following location:\n\n{wrap_context(location_brief, 'Location brief')}"
