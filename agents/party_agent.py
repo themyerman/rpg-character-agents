@@ -316,7 +316,7 @@ def run_agent(prompt: str, system_prompt: str, tools: list, run_tool_fn) -> str:
 
         if response.stop_reason == "end_turn":
             for block in response.content:
-                if hasattr(block, "text"):
+                if getattr(block, "text", None):   # skip empty/None text blocks
                     return block.text
 
         if response.stop_reason == "tool_use":

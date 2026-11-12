@@ -122,7 +122,7 @@ def run_agent_loop(
 
         if response.stop_reason == "end_turn":
             for block in response.content:
-                if hasattr(block, "text"):
+                if getattr(block, "text", None):   # skip empty/None text blocks (some models emit them)
                     return block.text
             return ""
 
