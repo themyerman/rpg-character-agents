@@ -32,7 +32,7 @@ from lib.ships import (
     DND_SHIP_TOOL_SCHEMA,
     ALIEN_SHIP_TOOL_SCHEMA,
 )
-from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
+from lib.safety import sanitize_desc, screen_desc, wrap_desc, wrap_context, screen_output
 from lib.utils import get_client, run_agent_loop, slug, pick, strip_preamble
 
 
@@ -932,9 +932,12 @@ def run_encounter(game: str, desc: str = "", party_brief: str | None = None) -> 
     if desc:
         parts.append(wrap_desc(desc, "Constraints or themes"))
     if party_brief:
+        for w in screen_desc(party_brief):
+            print(f"  [safety] loaded party brief: {w}")
         parts.append(
             f"\nThe following party brief describes the crew this encounter is for. "
-            f"Use their skills, history, and open hooks to make it personal:\n\n{party_brief}"
+            f"Use their skills, history, and open hooks to make it personal:\n\n"
+            f"{wrap_context(party_brief, 'Party brief')}"
         )
 
     prompt = " ".join(parts)

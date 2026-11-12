@@ -10,7 +10,7 @@ import unicodedata
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
+from lib.safety import sanitize_desc, screen_desc, wrap_desc, wrap_context, screen_output
 from lib.utils import get_client, pick
 from lib.dice import DND_TOOLS, TRAVELLER_TOOLS, run_tool_dnd, run_tool_traveller
 
@@ -342,7 +342,9 @@ def build_prompt(sheets: list[str], fresh_count: int, party_size: int,
     if sheets:
         parts.append(f"Here {'is' if len(sheets) == 1 else 'are'} {len(sheets)} character sheet(s) to build the {label} around:\n\n")
         for i, sheet in enumerate(sheets, 1):
-            parts.append(f"--- CHARACTER {i} ---\n{sheet}\n\n")
+            for w in screen_desc(sheet):
+                print(f"  [safety] loaded character {i}: {w}")
+            parts.append(f"--- CHARACTER {i} ---\n{wrap_context(sheet, f'Character {i} sheet')}\n\n")
     if fresh_count:
         parts.append(f"Generate {fresh_count} additional character sketch(es) to complete a {label} of {party_size}, then synthesize all into the party brief.")
     if theme:

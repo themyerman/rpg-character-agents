@@ -15,6 +15,8 @@ from pathlib import Path
 
 import anthropic
 
+from lib.safety import screen_saved
+
 
 # ── Anthropic client (singleton) ──────────────────────────────────────────────
 
@@ -171,5 +173,7 @@ def save_character(
             filepath = output_dir / f"{stem}-{counter}.md"
             counter  += 1
 
+    for w in screen_saved(content):
+        print(f"  [safety] {w}")
     filepath.write_text(content)
     return filepath
