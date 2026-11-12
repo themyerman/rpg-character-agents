@@ -9,6 +9,7 @@ Centralises the three patterns that were copy-pasted across every agent:
 Also keeps the pick() UI helper that was already here.
 """
 
+import os
 import re
 import unicodedata
 from pathlib import Path
@@ -23,10 +24,22 @@ from lib.safety import screen_saved
 _client: anthropic.Anthropic | None = None
 
 
-def get_client() -> anthropic.Anthropic:
+def get_client():
+    """Return the model client, chosen by RPG_PROVIDER (default: Anthropic).
+
+    RPG_PROVIDER=ollama runs the generators against a local open-weight model
+    (RPG_MODEL, e.g. "llama3.2:3b") via a drop-in shim — same call sites, same
+    tool-use loop. With no env set, behavior is unchanged: Anthropic + claude.
+    """
     global _client
     if _client is None:
-        _client = anthropic.Anthropic()
+        provider = os.environ.get("RPG_PROVIDER", "anthropic").strip().lower()
+        if provider == "ollama":
+            from lib.providers import OllamaClient
+            model = os.environ.get("RPG_MODEL", "llama3.2:3b")
+            _client = OllamaClient(model=model)
+        else:
+            _client = anthropic.Anthropic()
     return _client
 
 

@@ -24,6 +24,24 @@ pip install pytest
 pytest tests/
 ```
 
+### Running against a local open-weight model (optional)
+
+By default the generators use the Anthropic API. For research and offline use, they
+can instead run against a local [Ollama](https://ollama.com) model — same generators,
+same tool-use loop — via a drop-in provider shim. No code changes, no extra
+dependency:
+
+```bash
+ollama serve                     # in another terminal
+ollama pull llama3.2:3b
+export RPG_PROVIDER=ollama
+export RPG_MODEL=llama3.2:3b     # any tool-capable Ollama model
+python main.py
+```
+
+Unset `RPG_PROVIDER` (or set it to `anthropic`) to return to the default. This exists
+so the same prompts can be compared across a small open-weight model and Claude.
+
 ---
 
 ## Running
