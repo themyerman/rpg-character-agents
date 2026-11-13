@@ -77,6 +77,7 @@ Two menus: pick your game, then pick what to build.
 - Location
 - Rumor
 - Event
+- Import an outside brief *(review & trust — see [Loaded-file controls](#loaded-file-controls-stored-injection-defense))*
 
 Each agent can also be run directly:
 
@@ -535,8 +536,30 @@ All user-supplied free-text (character descriptions, themes, constraints, contex
 **Output controls**
 - **Length heuristic** — Responses longer than 12,000 characters (`OUTPUT_MAX_LEN`) print a `[safety]` warning. Unusually long output can indicate a successful injection attempt pushing content beyond the expected character sheet.
 
+### Loaded-file controls (stored-injection defense)
+
+Generated briefs are saved to `output/` and loaded back into later prompts as context — a saved party brief feeds an event, a saved location brief feeds a rumor. That makes a saved file an injection vector: a directive planted in one (by a suggestible model at generation time, by a hand edit, or by a file downloaded from someone else) can fire on a future run. This is *stored* (second-order) prompt injection, and measurably it lands 100% of the time on small and mid-tier models with no defense. So **loaded files are untrusted by default** and pass through a layered screen in `lib/safety.py` before entering any prompt:
+
+- **Structural extraction (`extract_safe`)** — the load-bearing layer. A loaded file is reduced to its skeleton — headings, list items, and short `**Label:**` lines — and free-form prose, where a directive has to live to read as an instruction, is dropped. This is *structural*: it works on the shape of the text, not on the model's judgment, so it holds regardless of which model is behind the app. (A capable model resists injection on its own; a cheaper one does not, and model choice is an ops/cost decision, not a security control — so the defense can't depend on it.)
+- **Directive redaction (`neutralize_loaded`)** — a regex backstop that strips comments and defangs lines that read as instructions ("you must…", "takes priority", system notes). Heuristic, not a guarantee; a layer, not the whole defense.
+- **Context wrapping (`wrap_context`)** — a security notice prepended to the block telling the model to treat it as data, not instructions. Useful only on a capable model; it is the weakest layer and never relied on alone.
+
+**Provenance — trusting the app's own work (`lib/provenance.py`)**
+
+The structural strip also flattens *your own* saved files, costing their prose. To avoid paying that on trusted content, the app records a SHA-256 hash of every file it saves. On load, a file whose hash matches an unmodified save is trusted and kept **whole**; anything else is stripped to the skeleton. This answers "did I make this, untampered?" (a hash comparison, computable) instead of "is this content dangerous?" (not reliably computable). The manifest lives at `output/.provenance.json` and **fails closed** — a missing or unreadable manifest means nothing is trusted. Rebuild it for shipped example content with `python scripts/build_provenance.py`.
+
+**Importing outside material (`lib/importer.py`, `scripts/import_file.py`)**
+
+Trusting only the app's own files strangles a legitimate case: bringing in a brief you wrote elsewhere, or got from a friend, or pulled out of a PDF. It has no provenance hash, so it would be skeletonized like any other foreign file. The **import** flow is the human-in-the-loop way in. It shows the file in full, runs the same write-boundary screen a generated file gets, and makes you type `trust` before it records the file as yours and saves it under `output/` — with full prose preserved from then on. Declining writes nothing and trusts nothing.
+
+```bash
+python scripts/import_file.py path/to/brief.md --game dnd --kind party
+```
+
+(Also available as **Import an outside brief** in the main menu, per game. Omit `--game`/`--kind` to be prompted.) Importable kinds are the briefs the generators load back as context: `party` and `location`. Importing does **not** make the content safe — a human can still be talked into vouching for a poisoned file — it makes the trust decision *explicit, one-time, and visible*, instead of the app silently trusting every file it ever loads.
+
 **Design intent**
-This is a single-user local CLI. The controls are proportionate — they prevent accidental injection and future-proof for web or multi-user deployment, not harden against a dedicated adversary. No network egress, no user accounts, no stored secrets.
+This is a single-user local CLI, so the user-input controls above are proportionate — accidental-injection prevention and future-proofing, not a hardened perimeter. The loaded-file controls are deliberately stronger: saved files get reused and *shared*, so a stored injection reaches other people, and the structural + provenance defenses hold there regardless of the model behind the app. No network egress, no user accounts, no stored secrets.
 
 ---
 
@@ -581,10 +604,17 @@ rpg-character-agents/
 │   ├── aliens.py             # Alien races + first contact — Traveller major/minor races, procedural species
 │   ├── synthetics.py         # Droids, AI systems, aux AI — Traveller + S&V Stardancer playbook
 │   ├── psi.py                # Psionics/Mystic/Reader — 3 games, rarity rolls
-│   ├── safety.py             # Input sanitization + output screening (DESC_MAX_LEN=500, injection detection)
+│   ├── safety.py             # Input sanitization, output screening, loaded-file defense (extract_safe/neutralize_loaded/wrap_context)
+│   ├── provenance.py         # Trust the app's own unmodified output by SHA-256 hash (output/.provenance.json)
+│   ├── importer.py           # Human-in-the-loop import: review -> screen -> explicit 'trust' -> record + save
+│   ├── providers.py          # Drop-in Ollama provider shim (local open-weight models)
 │   ├── ships.py              # Ship name pools — 4 games, distinct registers
 │   ├── spells.py             # D&D spell pools — 8 classes, story-first hooks
 │   └── utils.py              # Shared infrastructure
+│
+├── scripts/
+│   ├── build_provenance.py   # (Re)build the provenance manifest for shipped example files
+│   └── import_file.py        # CLI: import an outside brief into the trusted set
 │
 ├── tests/
 │   ├── test_dnd.py
@@ -606,6 +636,8 @@ rpg-character-agents/
 │   ├── test_encounter_agent.py
 │   ├── test_main.py
 │   ├── test_safety.py
+│   ├── test_provenance.py
+│   ├── test_importer.py
 │   ├── test_ship_agent.py
 │   ├── test_location_agent.py
 │   ├── test_rumor_agent.py
