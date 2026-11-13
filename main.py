@@ -109,6 +109,12 @@ GAME_ACTIONS: dict[str, list[tuple[str, str]]] = {
     ],
 }
 
+# Every game can import an outside brief (a party or location written elsewhere)
+# into its trusted set — the human-in-the-loop way past the structural strip.
+for _actions in GAME_ACTIONS.values():
+    _actions.append(("import", "Import an outside brief (review & trust)"))
+
+
 # Character agent runners — accept (mode, desc)
 CHARACTER_RUNNERS: dict[str, callable] = {
     "dnd":       dnd_agent.run,
@@ -187,6 +193,19 @@ def main() -> None:
     # ── Event ─────────────────────────────────────────────────────────────────
     if action == "event":
         event_agent.run(game=game)
+        return
+
+    # ── Import an outside brief (review & vouch, then trust) ──────────────────
+    if action == "import":
+        from lib import importer
+        output_root = Path(__file__).parent / "output"
+        kind = pick("What kind of brief is it?", [(k, k) for k in sorted(importer.KIND_SUBFOLDERS)])
+        raw_path = input("\nPath to the file to import:\n> ").strip()
+        src = Path(raw_path).expanduser()
+        if not src.is_file():
+            print(f"  No such file: {src}")
+            return
+        importer.run_import(src, output_root, game, kind)
         return
 
     # ── First contact (fully procedural — no description prompt) ─────────────
