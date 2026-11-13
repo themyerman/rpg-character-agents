@@ -11,6 +11,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from lib.safety import sanitize_desc, screen_desc, wrap_desc, wrap_context, neutralize_loaded, extract_safe, screen_output
+from lib import provenance
 from lib.utils import get_client, pick
 from lib.dice import DND_TOOLS, TRAVELLER_TOOLS, run_tool_dnd, run_tool_traveller
 
@@ -342,8 +343,9 @@ def build_prompt(sheets: list[str], fresh_count: int, party_size: int,
     if sheets:
         parts.append(f"Here {'is' if len(sheets) == 1 else 'are'} {len(sheets)} character sheet(s) to build the {label} around:\n\n")
         for i, sheet in enumerate(sheets, 1):
-            sheet = extract_safe(sheet)
-            sheet = neutralize_loaded(sheet)
+            if not provenance.is_trusted(_OUTPUT, sheet):
+                sheet = extract_safe(sheet)
+                sheet = neutralize_loaded(sheet)
             for w in screen_desc(sheet):
                 print(f"  [safety] loaded character {i}: {w}")
             parts.append(f"--- CHARACTER {i} ---\n{wrap_context(sheet, f'Character {i} sheet')}\n\n")
@@ -372,6 +374,7 @@ def save_result(result: str, game: str, suffix: str = "party") -> Path:
     game_dir.mkdir(parents=True, exist_ok=True)
     filepath = game_dir / filename
     filepath.write_text(result)
+    provenance.record(_OUTPUT, result)
     return filepath
 
 

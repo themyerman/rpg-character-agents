@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from lib.names import roll_name_suggestion, NAME_TOOL_SCHEMA
 from lib.safety import sanitize_desc, screen_desc, wrap_desc, wrap_context, neutralize_loaded, extract_safe, screen_output, screen_saved
+from lib import provenance
 from lib.utils import get_client, run_agent_loop, slug, pick
 
 
@@ -551,6 +552,7 @@ def save_event(content: str, game: str) -> Path:
     for w in screen_saved(content):
         print(f"  [safety] {w}")
     filepath.write_text(content)
+    provenance.record(_OUTPUT, content)
     return filepath
 
 
@@ -581,14 +583,16 @@ def run(game: str | None = None) -> None:
 
     prompt = "Generate an event for the GM."
     if party_brief:
-        party_brief = extract_safe(party_brief)        # structural: drop the prose channel
-        party_brief = neutralize_loaded(party_brief)   # redact any directive that survives
+        if not provenance.is_trusted(_OUTPUT, party_brief):   # our own unmodified file? keep its prose
+            party_brief = extract_safe(party_brief)            # untrusted: drop the prose channel
+            party_brief = neutralize_loaded(party_brief)       # and redact any directive that survives
         for w in screen_desc(party_brief):
             print(f"  [safety] loaded party brief: {w}")
         prompt += f"\n\nThe party this event concerns:\n\n{wrap_context(party_brief, 'Party brief')}"
     if location_brief:
-        location_brief = extract_safe(location_brief)
-        location_brief = neutralize_loaded(location_brief)
+        if not provenance.is_trusted(_OUTPUT, location_brief):
+            location_brief = extract_safe(location_brief)
+            location_brief = neutralize_loaded(location_brief)
         for w in screen_desc(location_brief):
             print(f"  [safety] loaded location brief: {w}")
         prompt += f"\n\nThe location where this event takes place:\n\n{wrap_context(location_brief, 'Location brief')}"

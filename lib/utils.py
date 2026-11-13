@@ -17,6 +17,7 @@ from pathlib import Path
 import anthropic
 
 from lib.safety import screen_saved
+from lib import provenance
 
 
 # ── Anthropic client (singleton) ──────────────────────────────────────────────
@@ -189,4 +190,5 @@ def save_character(
     for w in screen_saved(content):
         print(f"  [safety] {w}")
     filepath.write_text(content)
+    provenance.record(Path(root) / "output", content)   # recognise our own output on reload
     return filepath

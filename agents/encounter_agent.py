@@ -33,6 +33,7 @@ from lib.ships import (
     ALIEN_SHIP_TOOL_SCHEMA,
 )
 from lib.safety import sanitize_desc, screen_desc, wrap_desc, wrap_context, neutralize_loaded, extract_safe, screen_output
+from lib import provenance
 from lib.utils import get_client, run_agent_loop, slug, pick, strip_preamble
 
 
@@ -909,6 +910,7 @@ def save_encounter(content: str, game: str) -> Path:
             counter += 1
 
     filepath.write_text(content)
+    provenance.record(_OUTPUT, content)
     return filepath
 
 
@@ -932,8 +934,9 @@ def run_encounter(game: str, desc: str = "", party_brief: str | None = None) -> 
     if desc:
         parts.append(wrap_desc(desc, "Constraints or themes"))
     if party_brief:
-        party_brief = extract_safe(party_brief)
-        party_brief = neutralize_loaded(party_brief)
+        if not provenance.is_trusted(_OUTPUT, party_brief):
+            party_brief = extract_safe(party_brief)
+            party_brief = neutralize_loaded(party_brief)
         for w in screen_desc(party_brief):
             print(f"  [safety] loaded party brief: {w}")
         parts.append(
