@@ -25,6 +25,7 @@ from lib.names import roll_name_suggestion, NAME_TOOL_SCHEMA
 from lib.ships import roll_ship_name, TRAVELLER_SHIP_TOOL_SCHEMA, FIREFLY_SHIP_TOOL_SCHEMA, SCUM_SHIP_TOOL_SCHEMA, ALIEN_SHIP_TOOL_SCHEMA
 from lib.utils import get_client, run_agent_loop, slug, pick
 from lib.safety import sanitize_desc, screen_desc, wrap_desc, screen_output
+from lib import brief_schema
 
 
 # ── Output path ───────────────────────────────────────────────────────────────
@@ -822,6 +823,8 @@ def save_location(content: str, game: str) -> Path:
         filepath = output_dir / f"{title_slug}-location-{counter}.md"
         counter += 1
 
+    for w in brief_schema.validate("location", content):    # emitted files must fit the schema
+        print(f"  [schema] {w}")
     filepath.write_text(content)
     return filepath
 

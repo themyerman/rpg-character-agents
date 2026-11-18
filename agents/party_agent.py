@@ -11,7 +11,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from lib.safety import sanitize_desc, screen_desc, wrap_desc, wrap_context, neutralize_loaded, extract_safe, screen_output
-from lib import provenance
+from lib import provenance, brief_schema
 from lib.utils import get_client, pick
 from lib.dice import DND_TOOLS, TRAVELLER_TOOLS, run_tool_dnd, run_tool_traveller
 
@@ -373,6 +373,9 @@ def save_result(result: str, game: str, suffix: str = "party") -> Path:
     game_dir    = _OUTPUT / game_subdir / "parties"
     game_dir.mkdir(parents=True, exist_ok=True)
     filepath = game_dir / filename
+    if suffix == "party":                                   # emitted files must fit the schema
+        for w in brief_schema.validate("party", result):
+            print(f"  [schema] {w}")
     filepath.write_text(result)
     provenance.record(_OUTPUT, result)
     return filepath
